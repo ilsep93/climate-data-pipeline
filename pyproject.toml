@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "data-engineering"
+version = "0.1.0"
+description = "Environment for data engineering zoomcamp"
+authors = ["Ilse Paniagua <ilsep@umich.edu>"]
+readme = "README.md"
+packages = [{include = "data_engineering"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pandas = "^1.5.3"
+prefect = "^2.7.11"
+prefect-gcp = "^0.2.5"
+rasterio = "^1.3.5.post1"
+rasterstats = "^0.17.1"
+psycopg2 = "^2.9.5"
+pyarrow = "^11.0.0"
+pandas-gbq = "^0.19.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
