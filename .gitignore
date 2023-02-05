@@ -1,0 +1,6 @@
+*.json
+*.tif
+*.csv
+*.shp
+*.terraform*
+*.prefectignore
