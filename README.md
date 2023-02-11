@@ -4,6 +4,8 @@ This project is my capstone for the [Data Engineering Zoomcamp](https://github.c
 
 # Data
 
+## Raster
+
 CHELSA (Climatologies at high resolution for the earth’s land surface areas) is a very high resolution (30 arc sec, ~1km) global downscaled climate data set currently hosted by the Swiss Federal Institute for Forest, Snow and Landscape Research WSL.
 
 I use climate data simulations carried out under CMIPS5.
@@ -11,6 +13,12 @@ I use climate data simulations carried out under CMIPS5.
 Full citation:
 
  Karger, D.N., Conrad, O., Böhner, J., Kawohl, T., Kreft, H., Soria-Auza, R.W., Zimmermann, N.E., Linder, P., Kessler, M. (2017): Climatologies at high resolution for the Earth land surface areas. Scientific Data. 4 170122. https://doi.org/10.1038/sdata.2017.122
+
+ ## Vector
+
+ Shapefiles for West and Central Africa were sourced from the Humanitarian Data Exchange: https://data.humdata.org/dataset/west-and-central-africa-administrative-boundaries-levels
+
+I used administrative levels 1 and 2 for my analysis.
 
 # Infrastructure as Code
 
