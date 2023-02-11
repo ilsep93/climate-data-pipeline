@@ -17,6 +17,7 @@ psycopg2 = "^2.9.5"
 pyarrow = "^11.0.0"
 pandas-gbq = "^0.19.1"
 geojson = "^3.0.0"
+geopandas = "^0.12.2"
 
 
 [build-system]
