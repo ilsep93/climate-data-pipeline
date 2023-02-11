@@ -1,6 +1,25 @@
-*.json
-*.tif
-*.csv
+#Ignore shapefile extensions
 *.shp
+*.xml
+*.CPG
+*.dbf
+*.prj
+*.sbn
+*.sbx
+*.shx
+
+#Ignore raster objects
+*.tif
+
+#Ignore data objects
+*.json
+*.csv
+
+#Ignore terraform objects
 *.terraform*
+
+#Ignore prefect objects
 *.prefectignore
+
+#Ignore mac objects
+*.DS_Store
