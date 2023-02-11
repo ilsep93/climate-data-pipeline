@@ -1,6 +1,8 @@
 import io
 from pathlib import Path
 from zipfile import ZipFile
+
+import geopandas as gpd
 import rasterio as rio
 import requests
 from prefect import flow, task
@@ -44,6 +46,14 @@ def fetch_vector(url:str) -> None:
     response.raise_for_status()
     z = ZipFile(io.BytesIO(response.content))
     z.extractall(save_path)
+
+@task()
+def mask_raster():
+    # with rasterio.open("tests/data/RGB.byte.tif") as src:
+    # out_image, out_transform = rasterio.mask.mask(src, shapes, crop=True)
+    # out_meta = src.meta
+    ...
+
 
 @flow()
 def main_flow():
