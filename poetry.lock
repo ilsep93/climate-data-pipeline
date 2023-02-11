@@ -358,6 +358,14 @@ ssh = ["paramiko"]
 tqdm = ["tqdm"]
 
 [[package]]
+name = "geojson"
+version = "3.0.0"
+description = "Python bindings and utilities for GeoJSON"
+category = "main"
+optional = false
+python-versions = ">=3.7, <=3.11"
+
+[[package]]
 name = "google-api-core"
 version = "2.11.0"
 description = "Google API client core library"
@@ -1623,8 +1631,8 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.9"
-content-hash = "9594218b10bd88d9ca9dbeda2c2c51b8d12b492080891e58365e0c05b8cbdf6a"
+python-versions = ">=3.9,<=3.11"
+content-hash = "10b62adc90aad1b6e00272561e50f78ca0af32482bc9eecacf2a6b3e8ea42756"
 
 [metadata.files]
 affine = [
@@ -1950,6 +1958,10 @@ fiona = [
 fsspec = [
     {file = "fsspec-2023.1.0-py3-none-any.whl", hash = "sha256:b833e2e541e9e8cde0ab549414187871243177feb3d344f9d27b25a93f5d8139"},
     {file = "fsspec-2023.1.0.tar.gz", hash = "sha256:fbae7f20ff801eb5f7d0bedf81f25c787c0dfac5e982d98fa3884a9cde2b5411"},
+]
+geojson = [
+    {file = "geojson-3.0.0-py3-none-any.whl", hash = "sha256:fae22bb8c69da4cbff743e654d8f55cc45f6aedf19be3c962e7a15f607b5fa4d"},
+    {file = "geojson-3.0.0.tar.gz", hash = "sha256:ea1df8246bdeb2bbf20d0756720911893414f9cee46b336a1e882d2cd60cfba1"},
 ]
 google-api-core = [
     {file = "google-api-core-2.11.0.tar.gz", hash = "sha256:4b9bb5d5a380a0befa0573b302651b8a9a89262c1730e37bf423cec511804c22"},

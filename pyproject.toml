@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "data_engineering"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<=3.11"
 pandas = "^1.5.3"
 prefect = "^2.7.11"
 prefect-gcp = "^0.2.5"
@@ -16,6 +16,7 @@ rasterstats = "^0.17.1"
 psycopg2 = "^2.9.5"
 pyarrow = "^11.0.0"
 pandas-gbq = "^0.19.1"
+geojson = "^3.0.0"
 
 
 [build-system]
