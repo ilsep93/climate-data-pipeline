@@ -1,12 +1,12 @@
-This project is being created as a capstone for the data engineering zoomcamp.
+# Data Pipeline for High Resolution Raster Data
 
-My goal is to download high resolution temperature and precipitation rasters, run raster statistics on each layer, and upload zonal statistics to Big Query.
+This project is my capstone for the [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp) 2023 cohort.
 
 # Data
 
 CHELSA (Climatologies at high resolution for the earth’s land surface areas) is a very high resolution (30 arc sec, ~1km) global downscaled climate data set currently hosted by the Swiss Federal Institute for Forest, Snow and Landscape Research WSL.
 
-I use climate data simulations carried out under CMIPS5, choosing the same model under different time periods.
+I use climate data simulations carried out under CMIPS5.
 
 Full citation:
 
@@ -14,10 +14,14 @@ Full citation:
 
 # Infrastructure as Code
 
-I use Terraform to manage the Google Cloud resources used in this project, including Google Cloud Storage (GCS) and Google Big Query (GBQ).
+I use Terraform to manage the Google Cloud resources used in this project, including Google Cloud Storage (GCS) and Big Query (BQ).
 
 Terraform is used to create, update, and destroy resources used in this project.
 
 # Workflow Orchestration
 
-I use Prefect to orchestrate a downloads of CHELSA climate projection models.
+I use Prefect to orchestrate a downloads of CHELSA climate projection models. The pipeline is built, run, and monitored using Prefect Cloud tools.
+
+# Spatial Analysis
+
+This pipeline is meant to provide country and subnational estimates of climate projections to data analysts. To achieve this goal, I calculate zonal statistics of high resolution geospatial data models for several geographies and climate models.
