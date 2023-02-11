@@ -16,7 +16,7 @@ Full citation:
 
  ## Vector
 
- Shapefiles for West and Central Africa were sourced from the Humanitarian Data Exchange: https://data.humdata.org/dataset/west-and-central-africa-administrative-boundaries-levels
+Shapefiles for (West and Central Africa)[https://data.humdata.org/dataset/west-and-central-africa-administrative-boundaries-levels] were sourced from the Humanitarian Data Exchange (HDX).
 
 I used administrative levels 1 and 2 for my analysis.
 
