@@ -2,6 +2,7 @@ import io
 from pathlib import Path
 from zipfile import ZipFile
 
+import fiona
 import geopandas as gpd
 import rasterio
 import requests
@@ -73,17 +74,27 @@ def extract_geometry(zip: ZipFile, adm_level:str) -> gpd.GeoDataFrame:
     
 
 @task()
-def mask_raster():
-    # with rasterio.open("tests/data/RGB.byte.tif") as src:
-    # out_image, out_transform = rasterio.mask.mask(src, shapes, crop=True)
-    # out_meta = src.meta
-    ...
+def mask_raster(raster_inpath: str, raster_outpath: str, adm_level: str):
+    
+    with fiona.open(f"data/{adm_level}/{shapefile_name}.shp") as shapefile:
+        shapes = [feature["geometry"] for feature in shapefile]
 
+    with rasterio.open(raster_inpath, "r") as raster:
+        print(raster.crs)
+        profile = raster.profile
+        out_image, out_transform = rasterio.mask.mask(raster, shapes, crop=True)
+    
+    with rasterio.open(raster_outpath, "w", **profile) as dest:
+        dest.write(out_image)
+        
 
 @flow()
 def main_flow():
     fetch_raster(rast_url)
     fetch_vector(adm2_url)
+    mask_raster(raster_inpath=f"{raster_inpath}/{raster_name}",
+                raster_outpath=f"{raster_outpath}/masked_{raster_name}",
+                adm_level = adm_level)
 
 
 if __name__ == "__main__":
