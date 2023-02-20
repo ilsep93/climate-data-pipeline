@@ -32,14 +32,13 @@ def fetch_raster(url:str):
 
 @task(log_prints=True)
 def fetch_geometry(url:str) -> ZipFile:
-    """Retrieves and extracts shapefile from Humanitarian Data Exchange
-    Shapefile is saved locally
+    """Retrieves shapefile from Humanitarian Data Exchange
 
     Args:
         url (str): The URL to download the shapefile
 
     Returns:
-        save_path (str): Location of shapefile in local directory
+        response.content (ZipFile): Zipped shapefile
     """
     response = requests.get(url, allow_redirects=True, stream=True)
     response.raise_for_status()
