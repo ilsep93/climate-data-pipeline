@@ -1,4 +1,5 @@
 import io
+import os
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -17,7 +18,7 @@ shapefile_name = adm2_url.split("/")[-1]
 shapefile_name = shapefile_name.replace(".zip", "")
 
 @task(log_prints=True, retries=0)
-def write_local_raster(url:str) -> None:
+def write_local_raster(url:str, raster_inpath: str) -> None:
     """Download CHELSA raster and print descriptive statistics
 
     Args:
@@ -34,7 +35,7 @@ def write_local_raster(url:str) -> None:
         raster = rast.read()
         print(type(raster))
 
-    with rasterio.open(f"data/rasters/{raster_name}", "w", **profile) as dest:
+    with rasterio.open(f"{raster_inpath}/{raster_name}", "w", **profile) as dest:
         print(dest)
         dest.write(raster)
         
@@ -67,12 +68,9 @@ def extract_geometry(zip: ZipFile, adm_level:str) -> gpd.GeoDataFrame:
     """
     shapefile_name = adm2_url.split("/")[-1]
     shapefile_name = shapefile_name.replace(".zip", "")
-    
     zip.extractall(f"data/{adm_level}")
-
     return gpd.read_file(f"data/{adm_level}/{shapefile_name}.shp")
     
-
 @task()
 def mask_raster(raster_inpath: str, raster_outpath: str, adm_level: str):
     
@@ -90,8 +88,10 @@ def mask_raster(raster_inpath: str, raster_outpath: str, adm_level: str):
 
 @flow()
 def main_flow():
-    fetch_raster(rast_url)
-    fetch_vector(adm2_url)
+    adm_level = "adm2"
+    raster_inpath = "data/rasters/raw"
+    raster_outpath = "data/rasters/masked"
+
     mask_raster(raster_inpath=f"{raster_inpath}/{raster_name}",
                 raster_outpath=f"{raster_outpath}/masked_{raster_name}",
                 adm_level = adm_level)
