@@ -52,8 +52,8 @@ def fetch_geometry(url:str) -> ZipFile:
 
     return ZipFile(io.BytesIO(response.content))
     
-
-def extract_geometry(adm_level:str) -> gpd.GeoDataFrame:
+@task(log_prints=True)
+def extract_geometry(zip: ZipFile, adm_level:str) -> gpd.GeoDataFrame:
     """Saves shapefile locally and returns geodataframe
 
     Args:
@@ -66,8 +66,7 @@ def extract_geometry(adm_level:str) -> gpd.GeoDataFrame:
     shapefile_name = adm2_url.split("/")[-1]
     shapefile_name = shapefile_name.replace(".zip", "")
     
-    adm = fetch_geometry(url=adm2_url)
-    adm.extractall(f"data/{adm_level}")
+    zip.extractall(f"data/{adm_level}")
 
     return gpd.read_file(f"data/{adm_level}/{shapefile_name}.shp")
     
