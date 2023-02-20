@@ -92,6 +92,14 @@ def main_flow():
     raster_inpath = "data/rasters/raw"
     raster_outpath = "data/rasters/masked"
 
+    if os.path.exists(f"data/rasters/raw/{raster_name}") is False:
+        print("Downloading raster")
+        write_local_raster(rast_url, raster_inpath=raster_inpath)
+
+    if os.path.exists(f"data/adm2/{shapefile_name}") is False:
+        adm_zip = fetch_geometry(url=adm2_url)
+        shapefile = extract_geometry(zip=adm_zip, adm_level="adm2")
+    
     mask_raster(raster_inpath=f"{raster_inpath}/{raster_name}",
                 raster_outpath=f"{raster_outpath}/masked_{raster_name}",
                 adm_level = adm_level)
