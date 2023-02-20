@@ -2,6 +2,7 @@ import io
 from pathlib import Path
 from zipfile import ZipFile
 
+import fiona
 import geopandas as gpd
 import rasterio as rio
 import requests
@@ -46,10 +47,25 @@ def fetch_geometry(url:str) -> ZipFile:
     return ZipFile(io.BytesIO(response.content))
     
 
-def extract_geometry():
-    adm2 = fetch_geometry(url=adm2_url)
-    adm2.extractall("data/adm2.zip")
+def extract_geometry(adm_level:str):
+    """Saves shapefile locally and saves geometries in session
+
+    Args:
+        adm_level (str): Level of administrative division.
+        Eg. "adm1", "adm2", "adm3"
+
+    Returns:
+        fiona.Collection: Geometries in shapefile
+    """
+    shapefile_name = adm2_url.split("/")[-1]
+    shapefile_name = shapefile_name.replace(".zip", "")
     
+    adm = fetch_geometry(url=adm2_url)
+    adm.extractall(f"data/{adm_level}")
+
+    with fiona.open(f"data/{adm_level}/{shapefile_name}.shp", "r") as shapefile:
+        shapes = [feature["geometry"] for feature in shapefile]
+    return shapes
     
 
 @task()
