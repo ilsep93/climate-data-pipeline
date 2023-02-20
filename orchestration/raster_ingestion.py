@@ -73,6 +73,13 @@ def extract_geometry(zip: ZipFile, adm_level:str) -> gpd.GeoDataFrame:
     
 @task()
 def mask_raster(raster_inpath: str, raster_outpath: str, adm_level: str):
+    """Mask raster with shapefile
+
+    Args:
+        raster_inpath (str): Location of raw raster
+        raster_outpath (str): Save location for masked raster
+        adm_level (str): ADM level (eg. "adm2")
+    """
     
     with fiona.open(f"data/{adm_level}/{shapefile_name}.shp") as shapefile:
         shapes = [feature["geometry"] for feature in shapefile]
