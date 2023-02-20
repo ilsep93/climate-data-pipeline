@@ -46,15 +46,15 @@ def fetch_geometry(url:str) -> ZipFile:
     return ZipFile(io.BytesIO(response.content))
     
 
-def extract_geometry(adm_level:str):
-    """Saves shapefile locally and saves geometries in session
+def extract_geometry(adm_level:str) -> gpd.GeoDataFrame:
+    """Saves shapefile locally and returns geodataframe
 
     Args:
         adm_level (str): Level of administrative division.
         Eg. "adm1", "adm2", "adm3"
 
     Returns:
-        fiona.Collection: Geometries in shapefile
+        gpd.GeoDataFrame: Vector file with all available attributes
     """
     shapefile_name = adm2_url.split("/")[-1]
     shapefile_name = shapefile_name.replace(".zip", "")
@@ -62,9 +62,7 @@ def extract_geometry(adm_level:str):
     adm = fetch_geometry(url=adm2_url)
     adm.extractall(f"data/{adm_level}")
 
-    with fiona.open(f"data/{adm_level}/{shapefile_name}.shp", "r") as shapefile:
-        shapes = [feature["geometry"] for feature in shapefile]
-    return shapes
+    return gpd.read_file(f"data/{adm_level}/{shapefile_name}.shp")
     
 
 @task()
