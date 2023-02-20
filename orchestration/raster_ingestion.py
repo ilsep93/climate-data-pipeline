@@ -30,7 +30,7 @@ def fetch_raster(url:str):
 
 
 @task(log_prints=True)
-def fetch_vector(url:str) -> str:
+def fetch_geometry(url:str) -> ZipFile:
     """Retrieves and extracts shapefile from Humanitarian Data Exchange
     Shapefile is saved locally
 
@@ -40,18 +40,17 @@ def fetch_vector(url:str) -> str:
     Returns:
         save_path (str): Location of shapefile in local directory
     """
-    # Create directory for shapefiles
-    filename = url.split('/')[-1]
-    filename = filename.replace(".zip", "")
-    save_path=f"data/{filename}"
-    Path(save_path).mkdir(parents=True, exist_ok=True)
-    # Download, extract and save zipped contentes
     response = requests.get(url, allow_redirects=True, stream=True)
     response.raise_for_status()
-    z = ZipFile(io.BytesIO(response.content))
-    z.extractall(save_path)
+
+    return ZipFile(io.BytesIO(response.content))
     
-    return save_path
+
+def extract_geometry():
+    adm2 = fetch_geometry(url=adm2_url)
+    adm2.extractall("data/adm2.zip")
+    
+    
 
 @task()
 def mask_raster():
