@@ -9,8 +9,11 @@ from prefect import flow, task
 from rasterio import mask
 
 rast_url = "https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp85_r1i1p1_g025.nc_1_2061-2080_V1.2.tif"
-adm2_url = "https://data.humdata.org/dataset/b20cd345-93fb-43bd-9c6e-7bc7d87b63eb/resource/30b6979a-d3f3-4982-971f-dc53f076bc52/download/wca_admbnda_adm2_ocha.zip"
+raster_name = rast_url.split("/")[-1]
 
+adm2_url = "https://data.humdata.org/dataset/b20cd345-93fb-43bd-9c6e-7bc7d87b63eb/resource/30b6979a-d3f3-4982-971f-dc53f076bc52/download/wca_admbnda_adm2_ocha.zip"
+shapefile_name = adm2_url.split("/")[-1]
+shapefile_name = shapefile_name.replace(".zip", "")
 
 @task(log_prints=True, retries=0)
 def write_local_raster(url:str) -> None:
@@ -19,8 +22,6 @@ def write_local_raster(url:str) -> None:
     Args:
         url (str): URL for raster of interest
     """
-    raster_name = rast_url.split("/")[-1]
-
     with rasterio.open(url, "r") as rast:
         profile = rast.profile
 
