@@ -12,25 +12,32 @@ rast_url = "https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/206
 adm2_url = "https://data.humdata.org/dataset/b20cd345-93fb-43bd-9c6e-7bc7d87b63eb/resource/30b6979a-d3f3-4982-971f-dc53f076bc52/download/wca_admbnda_adm2_ocha.zip"
 
 
-@task(retries=3, log_prints=True)
-def fetch_raster(url:str):
+@task(log_prints=True, retries=0)
+def write_local_raster(url:str) -> None:
     """Download CHELSA raster and print descriptive statistics
 
     Args:
         url (str): URL for raster of interest
-
-    Returns:
-        _type_: rasterio object
     """
-    with rio.open(url) as rast:
-        print(type(rast))
+    raster_name = rast_url.split("/")[-1]
+
+    with rasterio.open(url, "r") as rast:
+        profile = rast.profile
+
         print(f"Number of bands: {rast.count}")
         print(f"Raster profile: {rast.profile}")
         print(f"Bounds: {rast.bounds}")
-    return rast
+        print(f"Dimensions: {rast.shape}")
 
+        raster = rast.read()
+        print(type(raster))
 
-@task(log_prints=True)
+    with rasterio.open(f"data/rasters/{raster_name}", "w", **profile) as dest:
+        print(dest)
+        dest.write(raster)
+        
+    
+@task(log_prints=True, retries=3)
 def fetch_geometry(url:str) -> ZipFile:
     """Retrieves shapefile from Humanitarian Data Exchange
 
