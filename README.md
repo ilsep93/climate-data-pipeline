@@ -33,3 +33,6 @@ I use Prefect to orchestrate a downloads of CHELSA climate projection models. Th
 # Spatial Analysis
 
 This pipeline is meant to provide country and subnational estimates of climate projections to data analysts. To achieve this goal, I calculate zonal statistics of high resolution geospatial data models for several geographies and climate models.
+
+References: 
+* https://geobgu.xyz/py/rasterio.html
