@@ -12,8 +12,8 @@ adm2_url = "https://data.humdata.org/dataset/b20cd345-93fb-43bd-9c6e-7bc7d87b63e
 
 
 @task(retries=3, log_prints=True)
-def fetch_raster(url:str) -> None:
-    """Download CHELSA raster
+def fetch_raster(url:str):
+    """Download CHELSA raster and print descriptive statistics
 
     Args:
         url (str): URL for raster of interest
@@ -23,18 +23,22 @@ def fetch_raster(url:str) -> None:
     """
     with rio.open(url) as rast:
         print(type(rast))
-        print(rast.count)
-        print(rast.profile)
-        print(rast.bounds)
+        print(f"Number of bands: {rast.count}")
+        print(f"Raster profile: {rast.profile}")
+        print(f"Bounds: {rast.bounds}")
     return rast
 
 
 @task(log_prints=True)
-def fetch_vector(url:str) -> None:
-    """Retrieves shapefile from Humanitarian Data Exchange
+def fetch_vector(url:str) -> str:
+    """Retrieves and extracts shapefile from Humanitarian Data Exchange
+    Shapefile is saved locally
 
     Args:
         url (str): The URL to download the shapefile
+
+    Returns:
+        save_path (str): Location of shapefile in local directory
     """
     # Create directory for shapefiles
     filename = url.split('/')[-1]
@@ -46,6 +50,8 @@ def fetch_vector(url:str) -> None:
     response.raise_for_status()
     z = ZipFile(io.BytesIO(response.content))
     z.extractall(save_path)
+    
+    return save_path
 
 @task()
 def mask_raster():
