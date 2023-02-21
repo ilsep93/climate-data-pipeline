@@ -20,6 +20,7 @@ adm2_url = "https://data.humdata.org/dataset/b20cd345-93fb-43bd-9c6e-7bc7d87b63e
 shapefile_name = adm2_url.split("/")[-1]
 shapefile_name = shapefile_name.replace(".zip", "")
 
+
 @task(log_prints=True, retries=0)
 def write_local_raster(url:str, out_path: str) -> None:
     """Download CHELSA raster and print descriptive statistics
@@ -29,7 +30,6 @@ def write_local_raster(url:str, out_path: str) -> None:
     """
     with rasterio.open(url, "r") as rast:
         profile = rast.profile
-
         print(f"Number of bands: {rast.count}")
         print(f"Raster profile: {rast.profile}")
         print(f"Bounds: {rast.bounds}")
@@ -57,7 +57,8 @@ def fetch_geometry(url:str) -> ZipFile:
     response.raise_for_status()
 
     return ZipFile(io.BytesIO(response.content))
-    
+
+
 @task(log_prints=True)
 def extract_geometry(zip: ZipFile, shp_path:str, adm_level: str) -> gpd.GeoDataFrame:
     """Saves shapefile locally and returns geodataframe
@@ -74,6 +75,7 @@ def extract_geometry(zip: ZipFile, shp_path:str, adm_level: str) -> gpd.GeoDataF
     zip.extractall(f"data/{adm_level}")
     return gpd.read_file(f"{shp_path}")
     
+
 @task()
 def mask_raster(raw_path: str, masked_path: str, shp_path: str):
     """Mask raster with shapefile
@@ -94,9 +96,9 @@ def mask_raster(raw_path: str, masked_path: str, shp_path: str):
     with rasterio.open(masked_path, "w", **profile) as dest:
         dest.write(out_image)
 
+
 @task(log_prints=True)
 def create_zonal_statistics(masked_rast: str, zs_path: str, shp_path: str) -> None:
-    
     with rasterio.open(f"{masked_rast}", "r") as src:
         array = src.read(1)
         affine = src.transform
@@ -110,6 +112,7 @@ def create_zonal_statistics(masked_rast: str, zs_path: str, shp_path: str) -> No
                             geojson_out=True)
         stats = pd.DataFrame(stats)
         stats.to_csv(f"{zs_path}", index=False)
+
 
 @flow(log_prints=True)
 def main_flow():
