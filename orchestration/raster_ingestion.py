@@ -44,37 +44,18 @@ def write_local_raster(url:str, out_path: str) -> None:
         
     
 @task(log_prints=True, retries=3)
-def fetch_geometry(url:str) -> ZipFile:
+def write_local_geometry(url:str, adm_level:str, shp_path:str) -> None:
     """Retrieves shapefile from Humanitarian Data Exchange
+    and writes local shapefile
 
     Args:
         url (str): The URL to download the shapefile
-
-    Returns:
-        response.content (ZipFile): Zipped shapefile
     """
     response = requests.get(url, allow_redirects=True, stream=True)
     response.raise_for_status()
+    data = ZipFile(io.BytesIO(response.content))
+    data.extractall(f"data/{adm_level}")
 
-    return ZipFile(io.BytesIO(response.content))
-
-
-@task(log_prints=True)
-def extract_geometry(zip: ZipFile, shp_path:str, adm_level: str) -> gpd.GeoDataFrame:
-    """Saves shapefile locally and returns geodataframe
-
-    Args:
-        adm_level (str): Level of administrative division.
-        Eg. "adm1", "adm2", "adm3"
-
-    Returns:
-        gpd.GeoDataFrame: Vector file with all available attributes
-    """
-    shapefile_name = adm2_url.split("/")[-1]
-    shapefile_name = shapefile_name.replace(".zip", "")
-    zip.extractall(f"data/{adm_level}")
-    return gpd.read_file(f"{shp_path}")
-    
 
 @task()
 def mask_raster(raw_path: str, masked_path: str, shp_path: str):
@@ -131,9 +112,7 @@ def main_flow():
 
     if os.path.exists(f"data/adm2/{shapefile_name}.shp") is False:
         print("Downloading shapefile")
-        adm_zip = fetch_geometry(url=adm2_url)
-        extract_geometry(
-            zip=adm_zip,
+        write_local_geometry(url=adm2_url,
             adm_level=adm_level,
             shp_path=shp_path
             )
