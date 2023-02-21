@@ -98,6 +98,12 @@ def write_zonal_statistics(masked_rast: str, shp_path: str, zs_path: str) -> Non
         full_df.to_csv(f"{zs_path}", index=False)
 
 
+@task(log_prints=True)
+def write_gcs():
+    gcp_bucket = GcsBucket.load("green-taxi-rides")
+    gcp_bucket.upload_from_path(from_path=path, to_path=path)
+
+
 @flow(log_prints=True)
 def main_flow():
     rast_url = "https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp85_r1i1p1_g025.nc_1_2061-2080_V1.2.tif"
