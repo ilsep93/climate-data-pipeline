@@ -18,6 +18,7 @@ def write_local_raster(url:str, out_path: str) -> None:
 
     Args:
         url (str): URL for raster of interest
+        out_path (str): Save location of raw raster
     """
     with rasterio.open(url, "r") as rast:
         profile = rast.profile
@@ -33,12 +34,13 @@ def write_local_raster(url:str, out_path: str) -> None:
         
     
 @task(log_prints=True, retries=3)
-def write_local_geometry(url:str, adm_level:str, shp_path:str) -> None:
+def write_local_geometry(url:str, adm_level:str) -> None:
     """Retrieves shapefile from Humanitarian Data Exchange
     and writes local shapefile
 
     Args:
         url (str): The URL to download the shapefile
+        adm_level (str): Administrative division level
     """
     response = requests.get(url, allow_redirects=True, stream=True)
     response.raise_for_status()
@@ -51,9 +53,9 @@ def mask_raster(raw_path: str, masked_path: str, shp_path: str):
     """Mask raster with shapefile
 
     Args:
-        raw_path (str): Location of raw raster
+        raw_path (str): Path to raw raster
         masked_path (str): Save location for masked raster
-        adm_level (str): ADM level (eg. "adm2")
+        shp_path (str): Path to shapefile
     """
     
     with fiona.open(f"{shp_path}") as shapefile:
@@ -68,7 +70,14 @@ def mask_raster(raw_path: str, masked_path: str, shp_path: str):
 
 
 @task(log_prints=True)
-def create_zonal_statistics(masked_rast: str, zs_path: str, shp_path: str) -> None:
+def write_zonal_statistics(masked_rast: str, shp_path: str, zs_path: str) -> None:
+    """Write zonal statistics to local directory
+
+    Args:
+        masked_rast (str): Path to masked raster (only area that intersects with shapefile)
+        shp_path (str): Path to shapefile
+        zs_path (str): Path to write zonal statistics
+    """
     shapefile = gpd.read_file(f"{shp_path}")
     
     with rasterio.open(f"{masked_rast}", "r") as src:
@@ -115,8 +124,7 @@ def main_flow():
     if os.path.exists(f"data/adm2/{shapefile_name}.shp") is False:
         print("Downloading shapefile")
         write_local_geometry(url=adm2_url,
-            adm_level=adm_level,
-            shp_path=shp_path
+            adm_level=adm_level
             )
     
     if os.path.exists(f"{masked_path}/masked_{raster_name}.tif") is False:
@@ -128,7 +136,7 @@ def main_flow():
                     )
 
     if os.path.exists(f"{zs_path}/zs_{raster_name}") is False:
-        create_zonal_statistics(
+        write_zonal_statistics(
             masked_rast=f"{masked_path}/masked_{raster_name}.tif",
             shp_path=f"{shp_path}",
             zs_path=f"{zs_path}/zs_{raster_name}.csv"
