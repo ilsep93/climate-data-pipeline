@@ -99,7 +99,7 @@ def write_zonal_statistics(masked_rast: str, shp_path: str, zs_path: str) -> Non
 
 
 @task(log_prints=True)
-def write_gcs():
+def write_gcs() -> None:
     gcp_bucket = GcsBucket.load("green-taxi-rides")
     gcp_bucket.upload_from_path(from_path=path, to_path=path)
 
