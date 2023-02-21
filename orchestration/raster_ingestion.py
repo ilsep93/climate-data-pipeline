@@ -12,14 +12,6 @@ from prefect import flow, task
 from rasterio import mask
 from rasterstats import zonal_stats
 
-rast_url = "https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp85_r1i1p1_g025.nc_1_2061-2080_V1.2.tif"
-raster_name = rast_url.split("/")[-1]
-raster_name = raster_name.replace(".tif", "")
-
-adm2_url = "https://data.humdata.org/dataset/b20cd345-93fb-43bd-9c6e-7bc7d87b63eb/resource/30b6979a-d3f3-4982-971f-dc53f076bc52/download/wca_admbnda_adm2_ocha.zip"
-shapefile_name = adm2_url.split("/")[-1]
-shapefile_name = shapefile_name.replace(".zip", "")
-
 
 @task(log_prints=True, retries=0)
 def write_local_raster(url:str, out_path: str) -> None:
@@ -97,6 +89,14 @@ def create_zonal_statistics(masked_rast: str, zs_path: str, shp_path: str) -> No
 
 @flow(log_prints=True)
 def main_flow():
+    rast_url = "https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp85_r1i1p1_g025.nc_1_2061-2080_V1.2.tif"
+    raster_name = rast_url.split("/")[-1]
+    raster_name = raster_name.replace(".tif", "")
+
+    adm2_url = "https://data.humdata.org/dataset/b20cd345-93fb-43bd-9c6e-7bc7d87b63eb/resource/30b6979a-d3f3-4982-971f-dc53f076bc52/download/wca_admbnda_adm2_ocha.zip"
+    shapefile_name = adm2_url.split("/")[-1]
+    shapefile_name = shapefile_name.replace(".zip", "")
+
     adm_level = "adm2"
     shp_path = f"data/{adm_level}/{shapefile_name}.shp"
     raw_path = "data/rasters/raw"
