@@ -10,6 +10,7 @@
 
 #Ignore raster objects
 *.tif
+*.msk
 
 #Ignore data objects
 *.json
