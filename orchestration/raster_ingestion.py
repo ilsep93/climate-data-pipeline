@@ -28,10 +28,8 @@ def write_local_raster(url:str, out_path: str) -> None:
         print(f"Dimensions: {rast.shape}")
 
         raster = rast.read()
-        print(type(raster))
 
     with rasterio.open(f"{out_path}", "w", **profile) as dest:
-        print(dest)
         dest.write(raster)
         
     
