@@ -5,10 +5,13 @@ from zipfile import ZipFile
 
 import fiona
 import geopandas as gpd
+import numpy as np
+import pandas as pd
 import rasterio
 import requests
 from prefect import flow, task
 from rasterio import mask
+from rasterstats import zonal_stats
 
 rast_url = "https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp85_r1i1p1_g025.nc_1_2061-2080_V1.2.tif"
 raster_name = rast_url.split("/")[-1]
@@ -93,6 +96,23 @@ def mask_raster(raster_inpath: str, raster_outpath: str, adm_level: str):
         dest.write(out_image)
         
 
+@task(log_prints=True)
+def create_zonal_statistics(masked_rast: str, zs_path: str, shp_path: str) -> None:
+    
+    with rasterio.open(f"{masked_rast}", "r") as src:
+        array = src.read(1)
+        affine = src.transform
+        nodata = src.nodata
+
+        stats = zonal_stats(f"{shp_path}",
+                            array,
+                            nodata=nodata,
+                            affine=affine,
+                            stats="count min mean max median",
+                            geojson_out=True)
+        stats = pd.DataFrame(stats)
+        stats.to_csv(f"{zs_path}", index=False)
+
 @flow(log_prints=True)
 def main_flow():
     adm_level = "adm2"
@@ -113,6 +133,12 @@ def main_flow():
         mask_raster(raster_inpath=f"{raster_inpath}/{raster_name}",
                     raster_outpath=f"{raster_outpath}/masked_{raster_name}",
                     adm_level = adm_level)
+    if os.path.exists(f"{zs_path}/zs_{raster_name}") is False:
+        create_zonal_statistics(
+            masked_rast=f"{masked_path}/masked_{raster_name}.tif",
+            shp_path=f"{shp_path}",
+            zs_path=f"{zs_path}/zs_{raster_name}.csv"
+                                )
 
 
 if __name__ == "__main__":
