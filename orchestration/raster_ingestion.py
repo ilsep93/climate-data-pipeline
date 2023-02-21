@@ -72,19 +72,24 @@ def mask_raster(raw_path: str, masked_path: str, shp_path: str):
 
 @task(log_prints=True)
 def create_zonal_statistics(masked_rast: str, zs_path: str, shp_path: str) -> None:
+    shapefile = gpd.read_file(f"{shp_path}")
+    
     with rasterio.open(f"{masked_rast}", "r") as src:
         array = src.read(1)
         affine = src.transform
         nodata = src.nodata
 
-        stats = zonal_stats(f"{shp_path}",
+        stats = zonal_stats(shapefile,
                             array,
                             nodata=nodata,
                             affine=affine,
-                            stats="count min mean max median",
-                            geojson_out=True)
-        stats = pd.DataFrame(stats)
-        stats.to_csv(f"{zs_path}", index=False)
+                            stats="min mean max median",
+                            geojson_out=False)
+
+        df = pd.DataFrame(stats)
+        full_df = shapefile.join(df, how="left")
+        full_df.drop(['geometry', 'Shape_Leng', "Shape_Area", 'validOn', 'validTo'], axis=1, inplace=True)
+        full_df.to_csv(f"{zs_path}", index=False)
 
 
 @flow(log_prints=True)
