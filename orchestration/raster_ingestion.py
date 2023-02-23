@@ -101,6 +101,12 @@ def write_zonal_statistics(masked_rast: str, shp_path: str, zs_path: str) -> Non
 
 @task(log_prints=True)
 def write_gcs(from_path: str, to_path:str) -> None:
+    """Upload local CSV to Google Cloud Bucket
+
+    Args:
+        from_path (str): Location of local CSV
+        to_path (str): Location of GCS
+    """
     gcp_zs_bucket.upload_from_path(from_path=from_path, to_path=to_path)
     print("Uploaded to GCS")
 
