@@ -1,5 +1,5 @@
 locals {
-  data_lake_bucket = "chelsa_zonal_statistics"
+  data_lake_bucket = "chelsa-zonal-stats"
 }
 
 variable "project" {
