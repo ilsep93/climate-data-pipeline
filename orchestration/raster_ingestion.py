@@ -101,6 +101,11 @@ def write_zonal_statistics(masked_rast: str, shp_path: str, zs_path: str) -> Non
 
 
 @task(log_prints=True)
+def kelvin_to_celsius():
+    ...
+
+
+@task(log_prints=True)
 def write_gcs(from_path: str, to_path:str) -> None:
     """Upload local CSV to Google Cloud Bucket
 
@@ -154,6 +159,7 @@ def etl_web_to_gcs(month: int):
                                 )
         write_gcs(from_path=f"{zs_path}/zs_{raster_name}.csv",
                   to_path=f"{zs_path}/zs_{raster_name}.csv")
+
 
 @flow()
 def etl_parent_flow(months: list[int] = [1, 2]):
