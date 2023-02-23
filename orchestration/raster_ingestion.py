@@ -112,8 +112,8 @@ def write_gcs(from_path: str, to_path:str) -> None:
     print("Uploaded to GCS")
 
 @flow(log_prints=True)
-def etl_web_to_gcs():
-    rast_url = "https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp85_r1i1p1_g025.nc_1_2061-2080_V1.2.tif"
+def etl_web_to_gcs(month: int):
+    rast_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp45_r1i1p1_g025.nc_{month}_2061-2080_V1.2.tif"
     raster_name = rast_url.split("/")[-1].replace(".tif", "")
 
     adm2_url = "https://data.humdata.org/dataset/b20cd345-93fb-43bd-9c6e-7bc7d87b63eb/resource/30b6979a-d3f3-4982-971f-dc53f076bc52/download/wca_admbnda_adm2_ocha.zip"
@@ -155,6 +155,11 @@ def etl_web_to_gcs():
         write_gcs(from_path=f"{zs_path}/zs_{raster_name}.csv",
                   to_path=f"{zs_path}/zs_{raster_name}.csv")
 
+@flow()
+def etl_parent_flow(months: list[int] = [1, 2]):
+    for month in months:
+        etl_web_to_gcs(month)
 
 if __name__ == "__main__":
-    etl_web_to_gcs()
+    months = [1,2,3]
+    etl_parent_flow(months)
