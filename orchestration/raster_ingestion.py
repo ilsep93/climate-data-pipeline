@@ -52,6 +52,7 @@ def write_local_geometry(url:str, adm_level:str) -> None:
 @task()
 def mask_raster(raw_path: str, masked_path: str, shp_path: str):
     """Mask raster with shapefile
+    Note mask raster works best with features from fiona
 
     Args:
         raw_path (str): Path to raw raster
