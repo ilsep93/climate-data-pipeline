@@ -139,7 +139,7 @@ def etl_web_to_gcs():
             masked_path=f"{masked_path}/masked_{raster_name}.tif"
                     )
 
-    if os.path.exists(f"{zs_path}/zs_{raster_name}") is False:
+    if os.path.exists(f"{zs_path}/zs_{raster_name}.csv") is False:
         write_zonal_statistics(
             masked_rast=f"{masked_path}/masked_{raster_name}.tif",
             shp_path=f"{shp_path}",
