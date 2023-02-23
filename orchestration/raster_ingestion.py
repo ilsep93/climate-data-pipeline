@@ -7,6 +7,7 @@ import geopandas as gpd
 import pandas as pd
 import rasterio
 import requests
+from make_gcp_blocks import gcp_zs_bucket
 from prefect import flow, task
 from rasterio import mask
 from rasterstats import zonal_stats
@@ -99,10 +100,9 @@ def write_zonal_statistics(masked_rast: str, shp_path: str, zs_path: str) -> Non
 
 
 @task(log_prints=True)
-def write_gcs() -> None:
-    gcp_bucket = GcsBucket.load("green-taxi-rides")
-    gcp_bucket.upload_from_path(from_path=path, to_path=path)
-
+def write_gcs(from_path: str, to_path:str) -> None:
+    gcp_zs_bucket.upload_from_path(from_path=from_path, to_path=to_path)
+    print("Uploaded to GCS")
 
 @flow(log_prints=True)
 def main_flow():
@@ -147,6 +147,8 @@ def main_flow():
             shp_path=f"{shp_path}",
             zs_path=f"{zs_path}/zs_{raster_name}.csv"
                                 )
+        write_gcs(from_path=f"{zs_path}/zs_{raster_name}.csv",
+                  to_path=f"{zs_path}/zs_{raster_name}.csv")
 
 
 if __name__ == "__main__":
