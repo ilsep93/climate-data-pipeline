@@ -107,12 +107,10 @@ def write_gcs(from_path: str, to_path:str) -> None:
 @flow(log_prints=True)
 def etl_web_to_gcs():
     rast_url = "https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp85_r1i1p1_g025.nc_1_2061-2080_V1.2.tif"
-    raster_name = rast_url.split("/")[-1]
-    raster_name = raster_name.replace(".tif", "")
+    raster_name = rast_url.split("/")[-1].replace(".tif", "")
 
     adm2_url = "https://data.humdata.org/dataset/b20cd345-93fb-43bd-9c6e-7bc7d87b63eb/resource/30b6979a-d3f3-4982-971f-dc53f076bc52/download/wca_admbnda_adm2_ocha.zip"
-    shapefile_name = adm2_url.split("/")[-1]
-    shapefile_name = shapefile_name.replace(".zip", "")
+    shapefile_name = adm2_url.split("/")[-1].replace(".zip", "")
 
     adm_level = "adm2"
     shp_path = f"data/{adm_level}/{shapefile_name}.shp"
