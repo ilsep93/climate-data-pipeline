@@ -6,6 +6,11 @@ from utils import (mask_raster, write_local_geometry, write_local_raster,
                    write_zonal_statistics)
 
 
+@task()
+def web_to_postgres():
+    ...
+
+
 @flow(log_prints=True)
 def main_flow(month: int):
     rast_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp45_r1i1p1_g025.nc_{month}_2061-2080_V1.2.tif"
