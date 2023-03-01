@@ -10,7 +10,7 @@ from utils import (mask_raster, write_local_geometry, write_local_raster,
 
 
 @task()
-def web_to_postgres(zs_path: Path) -> None:
+def web_to_postgres(zs_path: str, raster_name:str) -> None:
     username=os.getenv("POSTGRES_USER"),
     password=os.getenv("POSTGRES_PASS"),  # plain (unescaped) text
     host=os.getenv("POSTGRES_HOST"),
@@ -19,16 +19,13 @@ def web_to_postgres(zs_path: Path) -> None:
     table=raster_name
 
     engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
-
     df = pd.read_csv(zs_path)
-
     df.head(n=0).to_sql(name=table, con=engine, if_exists='replace')
-
     df.to_sql(name=table, con=engine, if_exists='replace')
 
 
 @flow(log_prints=True)
-def main_flow(month: int):
+def postgres_ingestion(month: int):
     rast_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp45_r1i1p1_g025.nc_{month}_2061-2080_V1.2.tif"
     raster_name = rast_url.split("/")[-1].replace(".tif", "")
 
@@ -66,14 +63,16 @@ def main_flow(month: int):
         write_zonal_statistics(
             masked_rast=f"{masked_path}/masked_{raster_name}.tif",
             shp_path=f"{shp_path}",
-            zs_path=f"{zs_path}/zs_{raster_name}.csv"
-                                )
+            zs_path=f"{zs_path}/zs_{raster_name}.csv")
         
-if __name__=="main":
-    #main_flow(month=1)
-    zs_path = "data/zonal_statistics"
-    rast_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp45_r1i1p1_g025.nc_{month}_2061-2080_V1.2.tif"
-    raster_name = rast_url.split("/")[-1].replace(".tif", "")
+        web_to_postgres(zs_path=f"{zs_path}/zs_{raster_name}.csv",
+                        raster_name=raster_name)
+        
+@flow()
+def postgres_ingestion_parent_flow(months: list[int] = [1, 2]):
+    for month in months:
+       postgres_ingestion(month)
 
-    zs_path = f"{zs_path}/zs_{raster_name}.csv"
-    web_to_postgres(zs_path=Path(zs_path))
+if __name__=="main":
+    months = [1,2,3]
+    postgres_ingestion_parent_flow(months)
