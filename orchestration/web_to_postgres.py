@@ -1,14 +1,22 @@
 import os
 
-import sqlalchemy
 from prefect import flow, task
+from sqlalchemy import create_engine
+from sqlalchemy.engine import URL
 from utils import (mask_raster, write_local_geometry, write_local_raster,
                    write_zonal_statistics)
 
 
 @task()
 def web_to_postgres():
-    ...
+    url_object = URL.create(
+    "postgresql+pg8000",
+    username=os.getenv("POSTGRES_USER"),
+    password=os.getenv("POSTGRES_PASS"),  # plain (unescaped) text
+    host=os.getenv("POSTGRES_HOST"),
+    database=os.getenv("POSTGRES_DB"),
+    )   
+    engine = create_engine(url_object)
 
 
 @flow(log_prints=True)
