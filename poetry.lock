@@ -978,7 +978,7 @@ pytzdata = ">=2020.1"
 
 [[package]]
 name = "prefect"
-version = "2.7.11"
+version = "2.8.3"
 description = "Workflow orchestration and management."
 category = "main"
 optional = false
@@ -2471,8 +2471,8 @@ pendulum = [
     {file = "pendulum-2.1.2.tar.gz", hash = "sha256:b06a0ca1bfe41c990bbf0c029f0b6501a7f2ec4e38bfec730712015e8860f207"},
 ]
 prefect = [
-    {file = "prefect-2.7.11-py3-none-any.whl", hash = "sha256:48b6e658c058e6c282a360c968199bb72ac2bdfd67c9ef5512a57f34d9994997"},
-    {file = "prefect-2.7.11.tar.gz", hash = "sha256:eb8d7bc2b9a15748215697fffcb21af244b0005c9dbe76260ff8147d1b98ed00"},
+    {file = "prefect-2.8.3-py3-none-any.whl", hash = "sha256:44e678818ca69917e7c22ca7c0053a48a89c379887c60470ad5ac86e8eede012"},
+    {file = "prefect-2.8.3.tar.gz", hash = "sha256:9abe382ac37305ddf28d256c488771505db402617ef478a6faa9d0f9fed74ff7"},
 ]
 prefect-gcp = [
     {file = "prefect-gcp-0.2.5.tar.gz", hash = "sha256:b7cfea5a6377e773fcfcacda2cc723cfc2e95a9fe484ec8a855ca1fbc89f487e"},
