@@ -1,5 +1,7 @@
 import os
+from pathlib import Path
 
+import pandas as pd
 from prefect import flow, task
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
@@ -8,15 +10,21 @@ from utils import (mask_raster, write_local_geometry, write_local_raster,
 
 
 @task()
-def web_to_postgres():
-    url_object = URL.create(
-    "postgresql+pg8000",
+def web_to_postgres(zs_path: Path) -> None:
     username=os.getenv("POSTGRES_USER"),
     password=os.getenv("POSTGRES_PASS"),  # plain (unescaped) text
     host=os.getenv("POSTGRES_HOST"),
-    database=os.getenv("POSTGRES_DB"),
-    )   
-    engine = create_engine(url_object)
+    db=os.getenv("POSTGRES_DB")
+    port=os.getenv("LOCAL_PORT")
+    table=raster_name
+
+    engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
+
+    df = pd.read_csv(zs_path)
+
+    df.head(n=0).to_sql(name=table, con=engine, if_exists='replace')
+
+    df.to_sql(name=table, con=engine, if_exists='replace')
 
 
 @flow(log_prints=True)
