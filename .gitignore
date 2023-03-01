@@ -25,3 +25,6 @@
 
 #Ignore mac objects
 *.DS_Store
+
+#Ignore .env files
+*.env
