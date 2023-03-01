@@ -70,4 +70,10 @@ def main_flow(month: int):
                                 )
         
 if __name__=="main":
-    main_flow(month=1)
+    #main_flow(month=1)
+    zs_path = "data/zonal_statistics"
+    rast_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp45_r1i1p1_g025.nc_{month}_2061-2080_V1.2.tif"
+    raster_name = rast_url.split("/")[-1].replace(".tif", "")
+
+    zs_path = f"{zs_path}/zs_{raster_name}.csv"
+    web_to_postgres(zs_path=Path(zs_path))
