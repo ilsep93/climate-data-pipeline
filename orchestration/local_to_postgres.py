@@ -4,6 +4,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from prefect import flow, task
 from sqlalchemy import create_engine
+from sqlalchemy.exc import OperationalError
 
 load_dotenv("docker/.env")
 
@@ -31,6 +32,10 @@ def local_to_postgres(
         print("table exists")
         pass
     else:
+    try:
+        print(engine)
+        engine.connect()
+        print("Connection established!")
         df = pd.read_csv(f"{in_path}.csv")
         df.head(n=0).to_sql(name=table, con=engine, if_exists='replace')
         df.to_sql(name=table, con=engine, if_exists='replace')
@@ -39,6 +44,10 @@ def local_to_postgres(
 def local_to_postgres_parent_flow(months: list[int]):
     rast_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp45_r1i1p1_g025.nc_{month}_2061-2080_V1.2.tif"
     raster_name = rast_url.split("/")[-1].replace(".tif", "")
+    except(OperationalError):
+        print("Could not connect to postgres")
+        pass
+
 
     for month in months:
        local_to_postgres(
