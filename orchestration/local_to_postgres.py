@@ -14,12 +14,12 @@ def local_to_postgres(
     docker_run: bool,
     ) -> None:
 
-    username=os.getenv("POSTGRES_USER"),
-    password=os.getenv("POSTGRES_PASS"),  # plain (unescaped) text
-    host=os.getenv("POSTGRES_HOST"),
+    username=os.getenv("POSTGRES_USER")
+    password=os.getenv("POSTGRES_PASSWORD")
+    host=os.getenv("POSTGRES_HOST")
     db=os.getenv("POSTGRES_DB")
     port=os.getenv("LOCAL_PORT")
-    table=raster_name
+    table=in_path
 
     engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
     
@@ -49,9 +49,8 @@ def local_to_postgres_parent_flow(months: list[int]):
 
     for month in months:
        local_to_postgres(
-           in_path=f"data/zonal_statistics/zs_{raster_name}.csv",
-           rast_url=rast_url,
-           month=month)
+           in_path=file,
+           docker_run=True)
 
 if __name__=="main":
     months = [1,2,3]
