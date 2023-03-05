@@ -11,13 +11,8 @@ load_dotenv("docker/.env")
 @task(log_prints=True)
 def local_to_postgres(
     in_path: str,
-    rast_url: str,
-    month:int
     docker_run: bool,
     ) -> None:
-
-    rast_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp45_r1i1p1_g025.nc_{month}_2061-2080_V1.2.tif"
-    raster_name = rast_url.split("/")[-1].replace(".tif", "")
 
     username=os.getenv("POSTGRES_USER"),
     password=os.getenv("POSTGRES_PASS"),  # plain (unescaped) text
@@ -47,8 +42,6 @@ def local_to_postgres(
 
 @flow()
 def local_to_postgres_parent_flow(months: list[int]):
-    rast_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp45_r1i1p1_g025.nc_{month}_2061-2080_V1.2.tif"
-    raster_name = rast_url.split("/")[-1].replace(".tif", "")
     except(OperationalError):
         print("Could not connect to postgres")
         pass
