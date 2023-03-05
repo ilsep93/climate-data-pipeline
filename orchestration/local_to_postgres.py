@@ -20,6 +20,18 @@ def web_to_postgres(zs_path: str, raster_name:str) -> None:
 
     engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
     df = pd.read_csv(zs_path)
+
+    if engine.dialect.has_table(engine, table):  # If table don't exist, Create.
+        print("table exists")
+        # metadata = MetaData(engine)
+        # # Create a table with the appropriate Columns
+        # Table(Variable_tableName, metadata,
+        #     Column('Id', Integer, primary_key=True, nullable=False), 
+        #     Column('Date', Date), Column('Country', String),
+        #     Column('Brand', String), Column('Price', Float),
+        # # Implement the creation
+        # metadata.create_all()
+
     df.head(n=0).to_sql(name=table, con=engine, if_exists='replace')
     df.to_sql(name=table, con=engine, if_exists='replace')
 
@@ -74,5 +86,5 @@ def postgres_ingestion_parent_flow(months: list[int] = [1, 2]):
        postgres_ingestion(month)
 
 if __name__=="main":
-    months = [1,2,3]
+    months = [5,6]
     postgres_ingestion_parent_flow(months)
