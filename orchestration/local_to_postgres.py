@@ -21,12 +21,6 @@ def local_to_postgres(
     port=os.getenv("LOCAL_PORT")
     table=in_path
 
-    engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
-    
-
-    if engine.dialect.has_table(engine, table):  # If table don't exist, Create.
-        print("table exists")
-        pass
     if docker_run:
         engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
     else:
@@ -40,14 +34,16 @@ def local_to_postgres(
         df.head(n=0).to_sql(name=table, con=engine, if_exists='replace')
         df.to_sql(name=table, con=engine, if_exists='replace')
 
-@flow()
-def local_to_postgres_parent_flow(months: list[int]):
     except(OperationalError):
         print("Could not connect to postgres")
         pass
 
 
-    for month in months:
+@flow()
+def local_to_postgres_flow() -> None:
+    
+    for file in os.listdir("data/zonal_statistics/"):
+       print(f"Uploading: {file}")
        local_to_postgres(
            in_path=file,
            docker_run=True)
