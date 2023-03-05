@@ -159,7 +159,7 @@ def raster_processing_flow(month: int) -> None:
     )
 
 @flow()
-def raster_processing_parent_flow(months: list):
+def raster_processing_parent_flow(months: list[int]):
     for month in months:
         raster_processing_flow(month)
 
