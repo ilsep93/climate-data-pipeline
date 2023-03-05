@@ -13,6 +13,7 @@ def local_to_postgres(
     in_path: str,
     rast_url: str,
     month:int
+    docker_run: bool,
     ) -> None:
 
     rast_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp45_r1i1p1_g025.nc_{month}_2061-2080_V1.2.tif"
@@ -31,7 +32,11 @@ def local_to_postgres(
     if engine.dialect.has_table(engine, table):  # If table don't exist, Create.
         print("table exists")
         pass
+    if docker_run:
+        engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
     else:
+        engine = create_engine(f'postgresql://{username}:{password}@localhost:4000/{db}')
+
     try:
         print(engine)
         engine.connect()
