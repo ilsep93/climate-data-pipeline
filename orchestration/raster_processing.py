@@ -24,6 +24,7 @@ def write_local_raster(
     Args:
         url (str): URL for raster of interest
         out_path (str): Save location of raw raster
+        month (str): Month of year for projected data
     """
     rast_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp45_r1i1p1_g025.nc_{month}_2061-2080_V1.2.tif"
     raster_name = rast_url.split("/")[-1].replace(".tif", "")
@@ -55,7 +56,6 @@ def write_local_geometry(
     Args:
         out_path (str): Save location of shapefile
         url (str): The URL to download the shapefile
-        adm_level (str): Administrative division level
     """
     shapefile_name = url.split("/")[-1].replace(".zip", "")
 
@@ -77,8 +77,8 @@ def mask_raster(
     Note mask raster works best with features from fiona
 
     Args:
-        raw_path (str): Path to raw raster
-        masked_path (str): Save location for masked raster
+        in_path (str): Path to raw raster
+        out_path (str): Save location for masked raster
         shp_path (str): Path to shapefile
     """
     if os.path.exists(f"{in_path}.tif") is False:
@@ -103,9 +103,9 @@ def write_zonal_statistics(
     """Write zonal statistics to local directory
 
     Args:
-        masked_rast (str): Path to masked raster (only area that intersects with shapefile)
+        in_path (str): Path to masked raster (only area that intersects with shapefile)
+        out_path (str): Path to write zonal statistics
         shp_path (str): Path to shapefile
-        zs_path (str): Path to write zonal statistics
     """
     if os.path.exists(f"{in_path}.csv") is False:
 
