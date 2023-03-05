@@ -52,6 +52,5 @@ def local_to_postgres_parent_flow(months: list[int]):
            in_path=file,
            docker_run=True)
 
-if __name__=="main":
-    months = [1,2,3]
-    local_to_postgres_parent_flow(months)
+if __name__ == "__main__":
+    local_to_postgres_flow()
