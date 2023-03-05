@@ -1,5 +1,3 @@
-import os
-
 from make_gcp_blocks import gcp_zs_bucket
 from prefect import flow, task
 
