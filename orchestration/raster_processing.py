@@ -83,15 +83,15 @@ def mask_raster(
     """
     if os.path.exists(f"{in_path}.tif") is False:
         print("Masking raster")
-    with fiona.open(f"{shp_path}") as shapefile:
-        shapes = [feature["geometry"] for feature in shapefile]
+        with fiona.open(f"{shp_path}") as shapefile:
+            shapes = [feature["geometry"] for feature in shapefile]
 
-    with rasterio.open(in_path, "r") as raster:
-        profile = raster.profile
-        out_image, out_transform = mask.mask(raster, shapes, crop=True)
-    
-    with rasterio.open(out_path, "w", **profile) as dest:
-        dest.write(out_image)
+        with rasterio.open(in_path, "r") as raster:
+            profile = raster.profile
+            out_image, out_transform = mask.mask(raster, shapes, crop=True)
+        
+        with rasterio.open(out_path, "w", **profile) as dest:
+            dest.write(out_image)
 
 
 @task(log_prints=True)
