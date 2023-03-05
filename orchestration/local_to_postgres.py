@@ -1,9 +1,11 @@
 import os
 
 import pandas as pd
+from dotenv import load_dotenv
 from prefect import flow, task
 from sqlalchemy import create_engine
 
+load_dotenv("docker/.env")
 
 @task(log_prints=True)
 def local_to_postgres(
