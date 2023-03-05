@@ -5,8 +5,16 @@ from prefect import flow, task
 from sqlalchemy import create_engine
 
 
-@task()
-def web_to_postgres(zs_path: str, raster_name:str) -> None:
+@task(log_prints=True)
+def local_to_postgres(
+    in_path: str,
+    rast_url: str,
+    month:int
+    ) -> None:
+
+    rast_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp45_r1i1p1_g025.nc_{month}_2061-2080_V1.2.tif"
+    raster_name = rast_url.split("/")[-1].replace(".tif", "")
+
     username=os.getenv("POSTGRES_USER"),
     password=os.getenv("POSTGRES_PASS"),  # plain (unescaped) text
     host=os.getenv("POSTGRES_HOST"),
