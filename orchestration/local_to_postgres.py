@@ -23,25 +23,18 @@ def local_to_postgres(
     table=raster_name
 
     engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
-    df = pd.read_csv(zs_path)
+    
 
     if engine.dialect.has_table(engine, table):  # If table don't exist, Create.
         print("table exists")
-        # metadata = MetaData(engine)
-        # # Create a table with the appropriate Columns
-        # Table(Variable_tableName, metadata,
-        #     Column('Id', Integer, primary_key=True, nullable=False), 
-        #     Column('Date', Date), Column('Country', String),
-        #     Column('Brand', String), Column('Price', Float),
-        # # Implement the creation
-        # metadata.create_all()
+        pass
+    else:
+        df = pd.read_csv(f"{in_path}.csv")
+        df.head(n=0).to_sql(name=table, con=engine, if_exists='replace')
+        df.to_sql(name=table, con=engine, if_exists='replace')
 
-    df.head(n=0).to_sql(name=table, con=engine, if_exists='replace')
-    df.to_sql(name=table, con=engine, if_exists='replace')
-
-
-@flow(log_prints=True)
-def postgres_ingestion(month: int):
+@flow()
+def local_to_postgres_parent_flow(months: list[int]):
     rast_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp/CHELSA_tas_mon_ACCESS1-0_rcp45_r1i1p1_g025.nc_{month}_2061-2080_V1.2.tif"
     raster_name = rast_url.split("/")[-1].replace(".tif", "")
 
