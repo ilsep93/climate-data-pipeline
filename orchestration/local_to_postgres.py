@@ -1,4 +1,5 @@
 import os
+import re
 
 import pandas as pd
 from dotenv import load_dotenv
@@ -14,12 +15,14 @@ def local_to_postgres(
     docker_run: bool,
     ) -> None:
 
+    table_name = re.search('/(?<=nc).*$/',in_path)
+
     username=os.getenv("POSTGRES_USER")
     password=os.getenv("POSTGRES_PASSWORD")
     host=os.getenv("POSTGRES_HOST")
     db=os.getenv("POSTGRES_DB")
     port=os.getenv("LOCAL_PORT")
-    table=in_path
+    table=table_name
 
     if docker_run:
         engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
@@ -30,7 +33,8 @@ def local_to_postgres(
         print(engine)
         engine.connect()
         print("Connection established!")
-        df = pd.read_csv(f"{in_path}.csv")
+
+        df = pd.read_csv(f"{in_path}", encoding= 'unicode_escape')
         df.head(n=0).to_sql(name=table, con=engine, if_exists='replace')
         df.to_sql(name=table, con=engine, if_exists='replace')
 
@@ -41,12 +45,12 @@ def local_to_postgres(
 
 @flow()
 def local_to_postgres_flow() -> None:
-    
     for file in os.listdir("data/zonal_statistics/"):
-       print(f"Uploading: {file}")
-       local_to_postgres(
-           in_path=file,
-           docker_run=True)
+       if file.endswith(".csv"):
+        print(f"Uploading: {file}")
+        local_to_postgres(
+            in_path=f"data/zonal_statistics/{file}",
+            docker_run=False)
 
 if __name__ == "__main__":
     local_to_postgres_flow()
