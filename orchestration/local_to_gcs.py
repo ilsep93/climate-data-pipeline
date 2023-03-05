@@ -12,8 +12,8 @@ def write_gcs(
     """Upload local CSV to Google Cloud Bucket
 
     Args:
-        from_path (str): Location of local CSV
-        to_path (str): Location of GCS
+        in_path (str): Location of local CSV
+        out_path (str): Location of GCS
     """
     gcp_zs_bucket.upload_from_path(in_path=in_path, to_path=out_path)
     print("Uploaded to GCS")
