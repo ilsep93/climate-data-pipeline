@@ -15,7 +15,7 @@ def local_to_postgres(
     docker_run: bool,
     ) -> None:
 
-    table_name = re.search('/(?<=nc).*$/',in_path)
+    table_name = re.search('_\d_2061-2080_V1',in_path).group(0)
 
     username=os.getenv("POSTGRES_USER")
     password=os.getenv("POSTGRES_PASSWORD")
