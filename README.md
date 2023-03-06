@@ -16,7 +16,7 @@ Full citation:
 
  ## Vector
 
-Shapefiles for (West and Central Africa)[https://data.humdata.org/dataset/west-and-central-africa-administrative-boundaries-levels] were sourced from the Humanitarian Data Exchange (HDX).
+Shapefiles for [West and Central Africa](https://data.humdata.org/dataset/west-and-central-africa-administrative-boundaries-levels) were sourced from the Humanitarian Data Exchange (HDX).
 
 I used administrative levels 1 and 2 for my analysis.
 
@@ -28,22 +28,25 @@ Terraform is used to create, update, and destroy resources used in this project.
 
 # Workflow Orchestration
 
-I use Prefect to orchestrate a downloads of CHELSA climate projection models. The pipeline is built, run, and monitored using Prefect Cloud tools.
-
-# PostGRES SQL
-
-Data can then be ingested to Postgres, either locally or through a Docker container (see docker folder).
-
-Sample query:
-
-```SQL
-SELECT * FROM public."CHELSA_tas_mon_ACCESS1-0_rcp45_r1i1p1_g025.nc_1_2061-2080_V1.2"
-LIMIT 100
-```
+I use Prefect to orchestrate a downloads of CHELSA climate projection models. The pipelines are run and monitored using Prefect Cloud tools.
 
 # Spatial Analysis
 
-This pipeline is meant to provide country and subnational estimates of climate projections to data analysts. To achieve this goal, I calculate zonal statistics of high resolution geospatial data models for several geographies and climate models.
+This pipeline will provide country and subnational estimates of climate projections to data analysts. To achieve this goal, I calculate zonal statistics of high resolution geospatial data models for several geographies and climate models.
 
 References: 
 * https://geobgu.xyz/py/rasterio.html
+
+# PostgreSQL
+
+Zonal statistics can then be ingested to Postgres, either locally or through a Docker container (see docker folder).
+
+Sample query for one of the generated tables:
+
+```SQL
+SELECT * FROM public."_1_2061-2080_V1"
+LIMIT 100
+```
+
+TODO:
+* Use dbt to create data models
