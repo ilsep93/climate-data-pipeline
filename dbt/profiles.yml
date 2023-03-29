@@ -1,13 +1,15 @@
-jaffle_shop: # this needs to match the profile in your dbt_project.yml file
+climate_pipeline:
   target: dev
   outputs:
     dev:
-      type: bigquery
-      method: service-account
-      keyfile: /Users/BBaggins/.dbt/dbt-tutorial-project-331118.json # replace this with the full path to your keyfile
-      project: grand-highway-265418 # Replace this with your project id
-      dataset: dbt_bbagins # Replace this with dbt_your_name, e.g. dbt_bilbo
+      type: postgres
+      host: localhost
+      user: "{{ env_var('DBT_USER') }}"
+      password: "{{ env_var('DBT_PASSWORD') }}"
+      port: 4000
+      schema: public
+      dbname: "{{ env_var('DBT_DB') }}"
       threads: 1
-      timeout_seconds: 300
-      location: US
-      priority: interactive
+      keepalives_idle: 0
+      connect_timeout: 10
+      retries: 1
