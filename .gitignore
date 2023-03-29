@@ -28,3 +28,6 @@
 
 #Ignore .env files
 *.env
+
+#Ignore dbt cookies
+*.user.yml
