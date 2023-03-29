@@ -19,6 +19,7 @@ pandas-gbq = "^0.19.1"
 geojson = "^3.0.0"
 geopandas = "^0.12.2"
 numpy = "^1.24.2"
+python-dotenv = "^1.0.0"
 
 
 [build-system]
