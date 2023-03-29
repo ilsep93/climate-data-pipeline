@@ -7,7 +7,7 @@ from prefect import flow, task
 from sqlalchemy import create_engine
 from sqlalchemy.exc import OperationalError
 
-load_dotenv("docker/.env")
+load_dotenv("../.env")
 
 @task(log_prints=True)
 def local_to_postgres(
