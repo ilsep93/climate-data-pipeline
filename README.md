@@ -50,3 +50,5 @@ LIMIT 100
 
 TODO:
 * Use dbt to create data models
+* Write unit tests
+* Create Dash dashboard to visualize climate projections
