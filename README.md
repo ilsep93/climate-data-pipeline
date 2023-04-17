@@ -49,7 +49,10 @@ LIMIT 100
 ```
 
 TODO:
-- [ ] Brainstorm appropriate database design from raw to processed data
+- [ ] Brainstorm appropriate database design from raw to processed data. This will be based on dash requirements for time series data, and what is easiest to ingest
 - [ ] Use dbt to create data models
 - [ ] Write unit tests
 - [ ] Create Dash dashboard to visualize climate projections
+  - [ ] User selects ADM in map
+  - [ ] Line graph shows how climate for the ADM is projected to change in 2060-2081, by month
+  - [ ] Map is colored by variability in change, with a darker color showing a greater monthly difference between January and December
