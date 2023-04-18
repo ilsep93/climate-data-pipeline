@@ -40,30 +40,29 @@ class Climatology:
 
         if os.path.exists(raw_path) is False:
             os.makedirs(raw_path)
+        
+        if len(os.listdir(raw_path)) != 12:
+            print(f"Downloading raw rasters for {self.climatology}")
+            for month in range(1,13):
+                rast_url = f"{self.climatology_url}_{month}_2061-2080_V1.2.tif"
+                raster_name = rast_url.split("/")[-1].replace(".tif", "")
+                
+                if os.path.exists(f"{raw_path}/{raster_name}.tif") is False:
+                    with rasterio.open(rast_url, "r") as rast:
+                        profile = rast.profile
+                        print(f"Number of bands: {rast.count}")
+                        print(f"Raster profile: {rast.profile}")
+                        print(f"Bounds: {rast.bounds}")
+                        print(f"Dimensions: {rast.shape}")
 
-        for month in range(1,13):
-            rast_url = f"{self.climatology_url}_{month}_2061-2080_V1.2.tif"
-            raster_name = rast_url.split("/")[-1].replace(".tif", "")
-            
-            if os.path.exists(f"{raw_path}/{raster_name}.tif") is False:
-                print("Downloading raster")
+                        raster = rast.read()
 
-                with rasterio.open(rast_url, "r") as rast:
-                    profile = rast.profile
-                    print(f"Number of bands: {rast.count}")
-                    print(f"Raster profile: {rast.profile}")
-                    print(f"Bounds: {rast.bounds}")
-                    print(f"Dimensions: {rast.shape}")
+                    with rasterio.open(f"{raw_path}/{climatology}_{month}.tif", "w", **profile) as dest:
+                        dest.write(raster)
 
-                    raster = rast.read()
-
-                with rasterio.open(f"{raw_path}/{climatology}_{month}.tif", "w", **profile) as dest:
-                    dest.write(raster)
-
-    @task(log_prints=True)
     def mask_raster(
             self,
-            shp_path: str
+            shp_path: str = "data/adm2/wca_admbnda_adm2_ocha.shp",
         ) -> None:
         """Mask raster with shapefile
         Note mask raster works best with features from fiona
@@ -78,8 +77,8 @@ class Climatology:
         if os.path.exists(masked_path) is False:
             os.makedirs(masked_path)
 
-        if len(os.listdir(raw_path)) != 0:
-            print("Masking rasters")
+        if len(os.listdir(raw_path)) != 12:
+            print(f"Masking rasters for {self.climatology}")
             with fiona.open(f"{shp_path}") as shapefile:
                 shapes = [feature["geometry"] for feature in shapefile]
             
@@ -116,8 +115,8 @@ class Climatology:
         if os.path.exists(zonal_path) is False:
             os.makedirs(zonal_path)
 
-        if len(os.listdir(masked_path)) != 0:
-            print("Calculating zonal statistics")
+        if len(os.listdir(masked_path)) != 12:
+            print(f"Calculating zonal statistics for {self.climatology}")
 
             shapefile = gpd.read_file(f"{shp_path}")
             for file in os.listdir(masked_path):
@@ -152,10 +151,10 @@ def raster_processing_flow(
     ) -> None:
 
     for scenario in climatologies:
-        sim = Climatology(climatology_url=scenario)
-        sim.write_local_raster()
-        sim.mask_raster()
-        sim.write_zonal_statistics()
+        cmip_temp = Climatology(climatology_url=scenario)
+        cmip_temp.write_local_raster()
+        cmip_temp.mask_raster()
+        cmip_temp.write_zonal_statistics()
 
 
 if __name__=="__main__":
