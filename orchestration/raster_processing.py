@@ -10,6 +10,7 @@ from prefect import flow, task
 from rasterio import mask
 from rasterstats import zonal_stats
 
+cmip5_temp = "https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/2061-2080/temp"
 
 @task(log_prints=True, retries=0)
 def write_local_raster(
@@ -30,6 +31,11 @@ def write_local_raster(
     
     if os.path.exists(f"{out_path}/{raster_name}.tif") is False:
         print("Downloading raster")
+climatology_base_url = [
+    f"{cmip5_temp}/CHELSA_tas_mon_ACCESS1-0_rcp45_r1i1p1_g025.nc",
+    f"{cmip5_temp}/CHELSA_tas_mon_ACCESS1-0_rcp85_r1i1p1_g025.nc",
+    f"{cmip5_temp}/CHELSA_tas_mon_BNU-ESM_rcp26_r1i1p1_g025.nc",
+]
 
         with rasterio.open(url, "r") as rast:
             profile = rast.profile
