@@ -49,8 +49,9 @@ LIMIT 100
 ```
 
 TODO:
-- [ ] Brainstorm appropriate database design from raw to processed data. This will be based on dash requirements for time series data, and what is easiest to ingest
-- [ ] Use dbt to create data models
+- [X] Brainstorm appropriate database design from raw to processed data. This will be based on dash requirements for time series data, and what is easiest to ingest
+  - [ ] Refactor raster ingestion to create a single table for all months of a given product, and allow for multiple modeling scenearios. There will be one table per scenario.
+- [ ] Use dbt to create country and ADM1 aggregates. There will be one table per country, where each row is a different simulated scenario.
 - [ ] Write unit tests
 - [ ] Create Dash dashboard to visualize climate projections
   - [ ] User selects ADM in map

@@ -9,6 +9,7 @@ zs_path = "data/zonal_statistics/"
 
 li = []
 
+#TODO pull data from postgres instead of locally
 for root, dirs, files in os.walk(zs_path):
     for file in files:
         if file.endswith(".csv"):
