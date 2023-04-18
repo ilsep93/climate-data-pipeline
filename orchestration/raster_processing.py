@@ -6,7 +6,6 @@ import fiona
 import geopandas as gpd
 import pandas as pd
 import rasterio
-from prefect import flow, task
 from rasterio import mask
 from rasterstats import zonal_stats
 
@@ -22,15 +21,12 @@ climatology_base_url = [
 class Climatology:
     climatology_url: str
 
-    @task(log_prints=True)
     def climatology_pathways(self):
         self.climatology = re.search(string=self.climatology_url, pattern="(rcp\d\d+)").group(0)
         self.raw_raster = f"data/rasters/{self.climatology}/raw"
         self.masked_raster = f"data/rasters/{self.climatology}/masked"
         self.zonal_statistics = f"data/zonal_statistics/{self.climatology}/"
 
-
-    @task(log_prints=True, retries=1)
     def write_local_raster(self) -> None:
         """Download CHELSA raster and print descriptive statistics
 
@@ -98,15 +94,12 @@ class Climatology:
         else:
             print("There are no raw rasters available")
 
-
-    @task(log_prints=True)
     def kelvin_to_celcius(
             self,
             col
     ) -> None:
         return col - 273.15
     
-    @task(log_prints=True)
     def write_zonal_statistics(
         self,
         shp_path: str = "data/adm2/wca_admbnda_adm2_ocha.shp",
@@ -154,7 +147,6 @@ class Climatology:
                         file = file.replace(".tif", ".csv")
                         full_df.to_csv(f"{zonal_path}/{file}", index=False)
 
-@flow(log_prints=True)
 def raster_processing_flow(
     climatologies: list
     ) -> None:
