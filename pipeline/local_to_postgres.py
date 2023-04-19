@@ -9,10 +9,27 @@ from sqlalchemy.exc import OperationalError
 
 load_dotenv("docker/.env")
 
+def climatology_yearly_table_generator(
+    climatology: str,
+):
+    
     dir = os.path.join(f"data/zonal_statistics/{climatology}")
     num_files = glob.glob(os.path.join(dir, '*.csv'))
     
+    li = []
     if len(num_files) == 12:
+        print(f"Creating a yearly dataset for {climatology}")
+        for file in num_files:
+            with open(f"{file}", 'r') as f:
+                month = re.search('_\d{1,2}', file).group(0)
+                month = month.replace("_", "")
+                df = pd.read_csv(f, index_col=None, header=0)
+                df['month'] = int(month)
+                li.append(df)
+
+        data = pd.concat(li, axis=0, ignore_index=True)
+        data.sort_values(by=["OBJECTID_1", "month"], inplace=True)
+        data.to_csv(f"data/zonal_statistics/{climatology}/{climatology}_yearly.csv", index=False)
         
     else:
         num_missing = 12 - len(num_files)
