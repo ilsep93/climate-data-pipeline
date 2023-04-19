@@ -9,6 +9,16 @@ from sqlalchemy.exc import OperationalError
 
 load_dotenv("docker/.env")
 
+    dir = os.path.join(f"data/zonal_statistics/{climatology}")
+    num_files = glob.glob(os.path.join(dir, '*.csv'))
+    
+    if len(num_files) == 12:
+        
+    else:
+        num_missing = 12 - len(num_files)
+        print(f"Missing {num_missing} files")
+
+
 @task(log_prints=True)
 def local_to_postgres(
     in_path: str,
