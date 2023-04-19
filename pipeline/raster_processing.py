@@ -59,6 +59,10 @@ class Climatology:
 
                     with rasterio.open(f"{raw_path}/{climatology}_{month}.tif", "w", **profile) as dest:
                         dest.write(raster)
+                        print(f"Raster masked for {climatology}_{month}")
+        else:
+            print(f"All raw rasters are available for {self.climatology}")
+
 
     def mask_raster(
             self,
@@ -77,7 +81,7 @@ class Climatology:
         if os.path.exists(masked_path) is False:
             os.makedirs(masked_path)
 
-        if len(os.listdir(raw_path)) != 12:
+        if len(os.listdir(masked_path)) != 12:
             print(f"Masking rasters for {self.climatology}")
             with fiona.open(f"{shp_path}") as shapefile:
                 shapes = [feature["geometry"] for feature in shapefile]
@@ -91,7 +95,7 @@ class Climatology:
                     with rasterio.open(f"{masked_path}/msk_{file}", "w", **profile) as dest:
                         dest.write(out_image)
         else:
-            print("There are no raw rasters available")
+            print(f"All masked rasters are available for {self.climatology}")
 
     def kelvin_to_celcius(
             self,
@@ -115,7 +119,7 @@ class Climatology:
         if os.path.exists(zonal_path) is False:
             os.makedirs(zonal_path)
 
-        if len(os.listdir(masked_path)) != 12:
+        if len(os.listdir(zonal_path)) != 12:
             print(f"Calculating zonal statistics for {self.climatology}")
 
             shapefile = gpd.read_file(f"{shp_path}")
@@ -145,6 +149,8 @@ class Climatology:
                         #Export as CSV
                         file = file.replace(".tif", ".csv")
                         full_df.to_csv(f"{zonal_path}/{file}", index=False)
+        else:
+            print(f"All zonal statistics are available for {self.climatology}")
 
 def raster_processing_flow(
     climatologies: list
