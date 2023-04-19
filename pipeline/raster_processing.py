@@ -18,7 +18,7 @@ climatology_base_url = [
 ]
 
 @dataclass()
-class Climatology:
+class ClimatologyProcessing:
     climatology_url: str
 
     def climatology_pathways(self):
@@ -158,10 +158,10 @@ def raster_processing_flow(
     ) -> None:
 
     for scenario in climatologies:
-        cmip_temp = Climatology(climatology_url=scenario)
         cmip_temp.write_local_raster()
         cmip_temp.mask_raster()
         cmip_temp.write_zonal_statistics()
+        cmip_temp = ClimatologyProcessing(climatology_url=scenario)
 
 
 if __name__=="__main__":
