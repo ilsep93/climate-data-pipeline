@@ -34,20 +34,19 @@ class ClimatologyProcessing:
             url (str): URL for raster of interest
         """
         
-        self.climatology_pathways()
-        climatology = self.climatology
-        raw_path = self.raw_raster
+        #Update self based on URL
+        self._climatology_pathways()
 
-        if os.path.exists(raw_path) is False:
-            os.makedirs(raw_path)
+        if os.path.exists(self.raw_raster) is False:
+            os.makedirs(self.raw_raster)
         
-        if len(os.listdir(raw_path)) != 12:
+        if len(os.listdir(self.raw_raster)) != 12:
             print(f"Downloading raw rasters for {self.climatology}")
             for month in range(1,13):
                 rast_url = f"{self.climatology_url}_{month}_2061-2080_V1.2.tif"
                 raster_name = rast_url.split("/")[-1].replace(".tif", "")
                 
-                if os.path.exists(f"{raw_path}/{raster_name}.tif") is False:
+                if os.path.exists(f"{self.raw_raster}/{raster_name}.tif") is False:
                     with rasterio.open(rast_url, "r") as rast:
                         profile = rast.profile
                         print(f"Number of bands: {rast.count}")
@@ -57,9 +56,9 @@ class ClimatologyProcessing:
 
                         raster = rast.read()
 
-                    with rasterio.open(f"{raw_path}/{climatology}_{month}.tif", "w", **profile) as dest:
+                    with rasterio.open(f"{self.raw_raster}/{self.climatology}_{month}.tif", "w", **profile) as dest:
                         dest.write(raster)
-                        print(f"Raster masked for {climatology}_{month}")
+                        print(f"Raster masked for {self.climatology}_{month}")
         else:
             print(f"All raw rasters are available for {self.climatology}")
 
@@ -74,25 +73,22 @@ class ClimatologyProcessing:
         Args:
             shp_path (str): Path to shapefile
         """
-        self.climatology_pathways()
-        raw_path = self.raw_raster
-        masked_path = self.masked_raster
 
-        if os.path.exists(masked_path) is False:
-            os.makedirs(masked_path)
+        if os.path.exists(self.masked_raster) is False:
+            os.makedirs(self.masked_raster)
 
-        if len(os.listdir(masked_path)) != 12:
+        if len(os.listdir(self.masked_raster)) != 12:
             print(f"Masking rasters for {self.climatology}")
             with fiona.open(f"{shp_path}") as shapefile:
                 shapes = [feature["geometry"] for feature in shapefile]
             
-            for file in os.listdir(raw_path):
+            for file in os.listdir(self.raw_raster):
                 if file.endswith(".tif"):
-                    with rasterio.open(f"{raw_path}/{file}", "r") as raster:
+                    with rasterio.open(f"{self.raw_raster}/{file}", "r") as raster:
                         profile = raster.profile
                         out_image, out_transform = mask.mask(raster, shapes, crop=True)
                     
-                    with rasterio.open(f"{masked_path}/msk_{file}", "w", **profile) as dest:
+                    with rasterio.open(f"{self.masked_raster}/msk_{file}", "w", **profile) as dest:
                         dest.write(out_image)
         else:
             print(f"All masked rasters are available for {self.climatology}")
@@ -112,20 +108,17 @@ class ClimatologyProcessing:
         Args:
             shp_path (str): Path to shapefile
         """
-        self.climatology_pathways()
-        zonal_path = self.zonal_statistics
-        masked_path = self.masked_raster
 
-        if os.path.exists(zonal_path) is False:
-            os.makedirs(zonal_path)
+        if os.path.exists(self.zonal_statistics) is False:
+            os.makedirs(self.zonal_statistics)
 
-        if len(os.listdir(zonal_path)) != 12:
+        if len(os.listdir(self.zonal_statistics)) != 12:
             print(f"Calculating zonal statistics for {self.climatology}")
 
             shapefile = gpd.read_file(f"{shp_path}")
-            for file in os.listdir(masked_path):
+            for file in os.listdir(self.masked_raster):
                 if file.endswith(".tif"):
-                    with rasterio.open(f"{masked_path}/{file}", "r") as src:
+                    with rasterio.open(f"{self.masked_raster}/{file}", "r") as src:
                         array = src.read(1)
                         affine = src.transform
                         nodata = src.nodata
@@ -149,7 +142,7 @@ class ClimatologyProcessing:
                         #Export as CSV
                         file = file.replace(".tif", ".csv")
                         file = file.replace("msk_", "zs_")
-                        full_df.to_csv(f"{zonal_path}/{file}", index=False)
+                        full_df.to_csv(f"{self.zonal_statistics}/{file}", index=False)
         else:
             print(f"All zonal statistics are available for {self.climatology}")
 
