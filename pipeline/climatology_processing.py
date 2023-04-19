@@ -89,8 +89,13 @@ class ClimatologyProcessing:
 
     def kelvin_to_celcius(
             self,
-            col
-    ) -> None:
+            col: int
+    ) -> float:
+        """Converts Kelvin into Celcius
+
+        Args:
+            col (int): Numeric value to convert to Celcius
+        """
         return col - 273.15
     
     def _write_zonal_statistics(
