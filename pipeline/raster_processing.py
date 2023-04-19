@@ -148,6 +148,7 @@ class Climatology:
                         
                         #Export as CSV
                         file = file.replace(".tif", ".csv")
+                        file = file.replace("msk_", "zs_")
                         full_df.to_csv(f"{zonal_path}/{file}", index=False)
         else:
             print(f"All zonal statistics are available for {self.climatology}")
