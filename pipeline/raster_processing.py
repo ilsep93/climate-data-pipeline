@@ -21,13 +21,13 @@ climatology_base_url = [
 class ClimatologyProcessing:
     climatology_url: str
 
-    def climatology_pathways(self):
+    def _climatology_pathways(self):
         self.climatology = re.search(string=self.climatology_url, pattern="(rcp\d\d+)").group(0)
         self.raw_raster = f"data/rasters/{self.climatology}/raw"
         self.masked_raster = f"data/rasters/{self.climatology}/masked"
         self.zonal_statistics = f"data/zonal_statistics/{self.climatology}/"
 
-    def write_local_raster(self) -> None:
+    def _write_local_raster(self) -> None:
         """Download CHELSA raster and print descriptive statistics
 
         Args:
@@ -64,7 +64,7 @@ class ClimatologyProcessing:
             print(f"All raw rasters are available for {self.climatology}")
 
 
-    def mask_raster(
+    def _mask_raster(
             self,
             shp_path: str = "data/adm2/wca_admbnda_adm2_ocha.shp",
         ) -> None:
@@ -103,7 +103,7 @@ class ClimatologyProcessing:
     ) -> None:
         return col - 273.15
     
-    def write_zonal_statistics(
+    def _write_zonal_statistics(
         self,
         shp_path: str = "data/adm2/wca_admbnda_adm2_ocha.shp",
         ) -> None:
@@ -158,10 +158,10 @@ def raster_processing_flow(
     ) -> None:
 
     for scenario in climatologies:
-        cmip_temp.write_local_raster()
-        cmip_temp.mask_raster()
-        cmip_temp.write_zonal_statistics()
         cmip_temp = ClimatologyProcessing(climatology_url=scenario)
+        cmip_temp._write_local_raster()
+        cmip_temp._mask_raster()
+        cmip_temp._write_zonal_statistics()
 
 
 if __name__=="__main__":
