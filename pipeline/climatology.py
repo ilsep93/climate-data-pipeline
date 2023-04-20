@@ -1,0 +1,2 @@
+class Climatology():
+    climatology:str

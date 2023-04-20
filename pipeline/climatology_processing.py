@@ -6,13 +6,14 @@ import fiona
 import geopandas as gpd
 import pandas as pd
 import rasterio
+from climatology import Climatology
 from climatology_urls import climatology_base_url
 from rasterio import mask
 from rasterstats import zonal_stats
 
 
 @dataclass()
-class ClimatologyProcessing:
+class ClimatologyProcessing(Climatology):
     climatology_url: str
 
     def _climatology_pathways(self):
