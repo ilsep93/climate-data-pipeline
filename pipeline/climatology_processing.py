@@ -21,7 +21,18 @@ class ClimatologyProcessing(Climatology):
         self.raw_raster = f"data/rasters/{self.climatology}/raw"
         self.masked_raster = f"data/rasters/{self.climatology}/masked"
         self.zonal_statistics = f"data/zonal_statistics/{self.climatology}/"
+    def raster_description(self, rast):
+        """Print description of raster
 
+        Args:
+            rast (rasterio): Raster connection via rasterio
+        """
+        print(f"Number of bands: {rast.count}")
+        print(f"Raster profile: {rast.profile}")
+        print(f"Bounds: {rast.bounds}")
+        print(f"Dimensions: {rast.shape}")
+
+    
     def _write_local_raster(self) -> None:
         """Download CHELSA raster and print descriptive statistics
 
@@ -44,11 +55,7 @@ class ClimatologyProcessing(Climatology):
                 if not os.path.exists(f"{self.raw_raster}/{raster_name}.tif"):
                     with rasterio.open(rast_url, "r") as rast:
                         profile = rast.profile
-                        print(f"Number of bands: {rast.count}")
-                        print(f"Raster profile: {rast.profile}")
-                        print(f"Bounds: {rast.bounds}")
-                        print(f"Dimensions: {rast.shape}")
-
+                        self.raster_description(rast)
                         raster = rast.read()
 
                     with rasterio.open(f"{self.raw_raster}/{self.climatology}_{month}.tif", "w", **profile) as dest:
