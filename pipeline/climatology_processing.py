@@ -16,11 +16,6 @@ from rasterstats import zonal_stats
 class ClimatologyProcessing(Climatology):
     climatology_url: str
 
-    def _climatology_pathways(self):
-        self.climatology = re.search(string=self.climatology_url, pattern="(rcp\d\d+)").group(0)
-        self.raw_raster = f"data/rasters/{self.climatology}/raw"
-        self.masked_raster = f"data/rasters/{self.climatology}/masked"
-        self.zonal_statistics = f"data/zonal_statistics/{self.climatology}/"
     def raster_description(self, rast):
         """Print description of raster
 
@@ -41,7 +36,7 @@ class ClimatologyProcessing(Climatology):
         """
         
         #Update self based on URL
-        self._climatology_pathways()
+        self._climatology_pathways(self.climatology_url)
 
         if not os.path.exists(self.raw_raster):
             os.makedirs(self.raw_raster)
