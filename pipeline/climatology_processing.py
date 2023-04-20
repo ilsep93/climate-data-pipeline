@@ -7,7 +7,7 @@ import geopandas as gpd
 import pandas as pd
 import rasterio
 from climatology import Climatology
-from climatology_urls import climatology_base_url
+from climatology_urls import climatology_base_urls
 from rasterio import mask
 from rasterstats import zonal_stats
 
@@ -152,14 +152,14 @@ def raster_processing_flow(
     climatologies: list
     ) -> None:
 
-    for scenario in climatologies:
-        cmip_temp = ClimatologyProcessing(climatology_url=scenario)
+    for url in climatologies:
+        cmip_temp = ClimatologyProcessing(climatology_url=url)
         cmip_temp._write_local_raster()
         cmip_temp._mask_raster()
         cmip_temp._write_zonal_statistics()
 
 
 if __name__=="__main__":
-    raster_processing_flow(climatology_base_url)
+    raster_processing_flow(climatology_base_urls)
 
 
