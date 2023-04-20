@@ -118,8 +118,8 @@ class ClimatologyProcessing(Climatology):
 
                         zs = zonal_stats(shapefile,
                                             array,
-                                            nodata=nodata,
                                             affine=affine,
+                                            nodata=nodata,
                                             stats="min mean max median",
                                             geojson_out=False)
 
