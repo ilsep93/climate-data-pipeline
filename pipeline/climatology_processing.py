@@ -31,7 +31,7 @@ class ClimatologyProcessing:
         #Update self based on URL
         self._climatology_pathways()
 
-        if os.path.exists(self.raw_raster) is False:
+        if not os.path.exists(self.raw_raster):
             os.makedirs(self.raw_raster)
         
         if len(os.listdir(self.raw_raster)) != 12:
@@ -40,7 +40,7 @@ class ClimatologyProcessing:
                 rast_url = f"{self.climatology_url}_{month}_2061-2080_V1.2.tif"
                 raster_name = rast_url.split("/")[-1].replace(".tif", "")
                 
-                if os.path.exists(f"{self.raw_raster}/{raster_name}.tif") is False:
+                if not os.path.exists(f"{self.raw_raster}/{raster_name}.tif"):
                     with rasterio.open(rast_url, "r") as rast:
                         profile = rast.profile
                         print(f"Number of bands: {rast.count}")
@@ -68,7 +68,7 @@ class ClimatologyProcessing:
             shp_path (str): Path to shapefile
         """
 
-        if os.path.exists(self.masked_raster) is False:
+        if not os.path.exists(self.masked_raster):
             os.makedirs(self.masked_raster)
 
         if len(os.listdir(self.masked_raster)) != 12:
@@ -108,7 +108,7 @@ class ClimatologyProcessing:
             shp_path (str): Path to shapefile
         """
 
-        if os.path.exists(self.zonal_statistics) is False:
+        if not os.path.exists(self.zonal_statistics):
             os.makedirs(self.zonal_statistics)
 
         if len(os.listdir(self.zonal_statistics)) != 12:
