@@ -37,9 +37,6 @@ class ClimatologyProcessing(Climatology):
         
         #Update self based on URL
         self._climatology_pathways(self.climatology_url)
-
-        if not os.path.exists(self.raw_raster):
-            os.makedirs(self.raw_raster)
         
         if len(os.listdir(self.raw_raster)) != 12:
             print(f"Downloading raw rasters for {self.climatology}")
@@ -70,9 +67,6 @@ class ClimatologyProcessing(Climatology):
         Args:
             shp_path (str): Path to shapefile
         """
-
-        if not os.path.exists(self.masked_raster):
-            os.makedirs(self.masked_raster)
 
         if len(os.listdir(self.masked_raster)) != 12:
             print(f"Masking rasters for {self.climatology}")
@@ -110,9 +104,6 @@ class ClimatologyProcessing(Climatology):
         Args:
             shp_path (str): Path to shapefile
         """
-
-        if not os.path.exists(self.zonal_statistics):
-            os.makedirs(self.zonal_statistics)
 
         if len(os.listdir(self.zonal_statistics)) != 12:
             print(f"Calculating zonal statistics for {self.climatology}")
