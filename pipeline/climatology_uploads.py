@@ -69,6 +69,18 @@ class ClimatologyUploads(Climatology):
         except(OperationalError):
             print("Could not connect to postgres")
             pass
+    
+    def db_validator(
+            self,
+    ) -> None:
+        
+        self.schema = "climatology"
+        engine = self._get_engine(docker_run=False)
+        inspector = inspect(engine)
+
+        if self.schema not in inspector.get_schema_names():
+            CreateSchema(self.schema)
+        
 
 
 def local_to_postgres_flow(
