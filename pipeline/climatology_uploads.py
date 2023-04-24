@@ -7,8 +7,10 @@ import pandas as pd
 from climatology import Climatology
 from climatology_urls import climatology_base_urls
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 from sqlalchemy.exc import OperationalError
+from sqlalchemy.orm import Session
+from sqlalchemy.schema import CreateSchema
 
 load_dotenv("docker/.env")
 
@@ -40,13 +42,6 @@ class ClimatologyUploads(Climatology):
                 
         else:
             print(f"Yearly time appended dataset exists for {self.climatology}")
-
-
-    def local_to_postgres(
-        self,
-        in_path: str,
-        docker_run: bool,
-        ) -> None:
 
     @staticmethod
     def _get_engine(docker_run: bool):
@@ -86,6 +81,20 @@ class ClimatologyUploads(Climatology):
         #     self.upload_to_db(engine=engine)
 
 
+    def upload_to_db(
+        self,
+        engine
+        ) -> None:
+
+        table = self.climatology.lower()
+        primary_key = "objectid_1"
+
+        with Session(engine):
+            df = pd.read_csv(f"{self.time_series}/{self.climatology}_yearly.csv", encoding= 'unicode_escape')
+            df.columns= df.columns.str.lower()
+
+            df.head(n=0).to_sql(name=table, con=engine, schema=self.schema, if_exists='replace', index=False)
+            df.to_sql(name=table, con=engine, if_exists='replace', index=False)
 
 
 def local_to_postgres_flow(
