@@ -7,7 +7,6 @@ import pandas as pd
 from climatology import Climatology
 from climatology_urls import climatology_base_urls
 from dotenv import load_dotenv
-from prefect import flow, task
 from sqlalchemy import create_engine
 from sqlalchemy.exc import OperationalError
 
@@ -42,7 +41,6 @@ class ClimatologyUploads(Climatology):
             num_missing = 12 - len(zs_files)
             print(f"Missing {num_missing} files")
 
-@task(log_prints=True)
 def local_to_postgres(
     in_path: str,
     docker_run: bool,
@@ -74,16 +72,21 @@ def local_to_postgres(
     except(OperationalError):
         print("Could not connect to postgres")
         pass
+def local_to_postgres_flow(
+        climatologies: list
+    ) -> None:
 
+    for url in climatologies:
+        cmip_temp = ClimatologyUploads(climatology_url=url)
+        cmip_temp.climatology_yearly_table_generator()
 
-@flow()
-def local_to_postgres_flow() -> None:
-    for file in os.listdir("data/zonal_statistics/"):
-       if file.endswith(".csv"):
-        print(f"Uploading: {file}")
-        local_to_postgres(
-            in_path=f"data/zonal_statistics/{file}",
-            docker_run=False)
+    # for file in os.listdir("data/zonal_statistics/"):
+    #    if file.endswith(".csv"):
+    #     print(f"Uploading: {file}")
+    #     local_to_postgres(
+    #         in_path=f"data/zonal_statistics/{file}",
+    #         docker_run=False)
 
 if __name__ == "__main__":
-    local_to_postgres_flow()
+    local_to_postgres_flow(climatologies=climatology_base_urls)
+    # upload = ClimatologyUploads(climatology_url=climatology_base_urls[0])
