@@ -96,6 +96,8 @@ class ClimatologyUploads(Climatology):
             df.head(n=0).to_sql(name=table, con=engine, schema=self.schema, if_exists='replace', index=False)
             df.to_sql(name=table, con=engine, if_exists='replace', index=False)
 
+            engine.execute(f'ALTER TABLE {self.schema}."{table}" ADD PRIMARY KEY ({primary_key})')
+            print(f"Uploaded '{self.climatology}' to the DB")
 
 def local_to_postgres_flow(
         climatologies: list
