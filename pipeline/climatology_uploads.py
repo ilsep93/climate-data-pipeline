@@ -48,26 +48,23 @@ class ClimatologyUploads(Climatology):
         docker_run: bool,
         ) -> None:
 
+    @staticmethod
+    def _get_engine(docker_run: bool):
+        
         username=os.getenv("POSTGRES_USER")
         password=os.getenv("POSTGRES_PASSWORD")
         host=os.getenv("POSTGRES_HOST")
         db=os.getenv("POSTGRES_DB")
         port=os.getenv("LOCAL_PORT")
-        table = self.climatology
-
-        if docker_run:
-            engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
-        else:
-            engine = create_engine(f'postgresql://{username}:{password}@localhost:4000/{db}')
 
         try:
-            print(engine)
-            engine.connect()
-            print("Connection established!")
 
-            df = pd.read_csv(f"{in_path}", encoding= 'unicode_escape')
-            df.head(n=0).to_sql(name=table, con=engine, if_exists='replace')
-            df.to_sql(name=table, con=engine, if_exists='replace')
+            if docker_run:
+                engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
+            else:
+                engine = create_engine(f'postgresql://{username}:{password}@localhost:4000/{db}')
+
+            return engine
 
         except(OperationalError):
             print("Could not connect to postgres")
