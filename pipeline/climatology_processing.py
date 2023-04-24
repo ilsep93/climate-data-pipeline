@@ -28,10 +28,7 @@ class ClimatologyProcessing(Climatology):
 
     
     def _write_local_raster(self) -> None:
-        """Download CHELSA raster and print descriptive statistics
-
-        Args:
-            url (str): URL for raster of interest
+        """Download CHELSA raster and save locally
         """
         
         #Update self based on URL
@@ -64,7 +61,7 @@ class ClimatologyProcessing(Climatology):
         Note mask raster works best with features from fiona
 
         Args:
-            shp_path (str): Path to shapefile
+            shp_path (str): Path to shapefile. Default is West Africa shapefile
         """
 
         if len(os.listdir(self.masked_raster)) != 12:
