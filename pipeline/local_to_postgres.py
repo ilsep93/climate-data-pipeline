@@ -1,7 +1,11 @@
+import glob
 import os
 import re
+from dataclasses import dataclass
 
 import pandas as pd
+from climatology import Climatology
+from climatology_urls import climatology_base_urls
 from dotenv import load_dotenv
 from prefect import flow, task
 from sqlalchemy import create_engine
@@ -9,9 +13,9 @@ from sqlalchemy.exc import OperationalError
 
 load_dotenv("docker/.env")
 
-def climatology_yearly_table_generator(
-    climatology: str,
-):
+@dataclass
+class ClimatologyUploads(Climatology):
+    climatology_url: str
     
     dir = os.path.join(f"data/zonal_statistics/{climatology}")
     num_files = glob.glob(os.path.join(dir, '*.csv'))
