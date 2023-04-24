@@ -4,5 +4,6 @@ climatology_base_urls = [
     f"{cmip5_temp}/CHELSA_tas_mon_ACCESS1-0_rcp45_r1i1p1_g025.nc",
     f"{cmip5_temp}/CHELSA_tas_mon_ACCESS1-0_rcp85_r1i1p1_g025.nc",
     f"{cmip5_temp}/CHELSA_tas_mon_BNU-ESM_rcp26_r1i1p1_g025.nc",
-    f"{cmip5_temp}/CHELSA_tas_mon_CCSM4_rcp60_r1i1p1_g025.nc"
+    f"{cmip5_temp}/CHELSA_tas_mon_CCSM4_rcp60_r1i1p1_g025.nc",
+    f"{cmip5_temp}/CHELSA_tas_mon_BNU-ESM_rcp45_r1i1p1_g025.nc",
     ]
