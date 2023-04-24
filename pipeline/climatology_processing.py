@@ -38,17 +38,15 @@ class ClimatologyProcessing(Climatology):
             print(f"Downloading raw rasters for {self.climatology}")
             for month in range(1,13):
                 rast_url = f"{self.climatology_url}_{month}_2061-2080_V1.2.tif"
-                raster_name = rast_url.split("/")[-1].replace(".tif", "")
-                
-                if not os.path.exists(f"{self.raw_raster}/{raster_name}.tif"):
-                    with rasterio.open(rast_url, "r") as rast:
-                        profile = rast.profile
-                        self.raster_description(rast)
-                        raster = rast.read()
 
-                    with rasterio.open(f"{self.raw_raster}/{self.climatology}_{month}.tif", "w", **profile) as dest:
-                        dest.write(raster)
-                        print(f"Raster masked for {self.climatology}_{month}")
+                with rasterio.open(rast_url, "r") as rast:
+                    profile = rast.profile
+                    self.raster_description(rast)
+                    raster = rast.read()
+
+                with rasterio.open(f"{self.raw_raster}/{self.climatology}_{month}.tif", "w", **profile) as dest:
+                    dest.write(raster)
+                    print(f"Raster masked for {self.climatology}_{month}")
         else:
             print(f"All raw rasters are available for {self.climatology}")
 
