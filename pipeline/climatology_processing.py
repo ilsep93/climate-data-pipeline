@@ -15,7 +15,8 @@ from rasterstats import zonal_stats
 class ClimatologyProcessing(Climatology):
     climatology_url: str
 
-    def raster_description(self, rast):
+    @staticmethod
+    def raster_description(rast):
         """Print description of raster
 
         Args:
@@ -78,8 +79,8 @@ class ClimatologyProcessing(Climatology):
         else:
             print(f"All masked rasters are available for {self.climatology}")
 
+    @staticmethod
     def kelvin_to_celcius(
-            self,
             col: int
     ) -> float:
         """Converts Kelvin into Celcius
