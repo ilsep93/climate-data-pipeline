@@ -106,16 +106,9 @@ def local_to_postgres_flow(
     for url in climatologies:
         cmip_temp = ClimatologyUploads(climatology_url=url)
         cmip_temp.climatology_yearly_table_generator()
-
-    # for file in os.listdir("data/zonal_statistics/"):
-    #    if file.endswith(".csv"):
-    #     print(f"Uploading: {file}")
-    #     local_to_postgres(
-    #         in_path=f"data/zonal_statistics/{file}",
-    #         docker_run=False)
+        cmip_temp.db_validator()
+        engine = cmip_temp._get_engine(docker_run=False)
+        cmip_temp.upload_to_db(engine=engine)
 
 if __name__ == "__main__":
     local_to_postgres_flow(climatologies=climatology_base_urls)
-    # upload = ClimatologyUploads(climatology_url=climatology_base_urls[0])
-    # upload.climatology_yearly_table_generator()
-    #local_to_postgres_flow()
