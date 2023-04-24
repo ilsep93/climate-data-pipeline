@@ -41,37 +41,41 @@ class ClimatologyUploads(Climatology):
         else:
             print(f"Yearly time appended dataset exists for {self.climatology}")
 
-def local_to_postgres(
-    in_path: str,
-    docker_run: bool,
-    ) -> None:
 
-    table_name = re.search('_\d_2061-2080_V1',in_path).group(0)
+    def local_to_postgres(
+        self,
+        in_path: str,
+        docker_run: bool,
+        ) -> None:
 
-    username=os.getenv("POSTGRES_USER")
-    password=os.getenv("POSTGRES_PASSWORD")
-    host=os.getenv("POSTGRES_HOST")
-    db=os.getenv("POSTGRES_DB")
-    port=os.getenv("LOCAL_PORT")
-    table=table_name
+        table_name = re.search('_\d_2061-2080_V1',in_path).group(0)
 
-    if docker_run:
-        engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
-    else:
-        engine = create_engine(f'postgresql://{username}:{password}@localhost:4000/{db}')
+        username=os.getenv("POSTGRES_USER")
+        password=os.getenv("POSTGRES_PASSWORD")
+        host=os.getenv("POSTGRES_HOST")
+        db=os.getenv("POSTGRES_DB")
+        port=os.getenv("LOCAL_PORT")
+        table=table_name
 
-    try:
-        print(engine)
-        engine.connect()
-        print("Connection established!")
+        if docker_run:
+            engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
+        else:
+            engine = create_engine(f'postgresql://{username}:{password}@localhost:4000/{db}')
 
-        df = pd.read_csv(f"{in_path}", encoding= 'unicode_escape')
-        df.head(n=0).to_sql(name=table, con=engine, if_exists='replace')
-        df.to_sql(name=table, con=engine, if_exists='replace')
+        try:
+            print(engine)
+            engine.connect()
+            print("Connection established!")
 
-    except(OperationalError):
-        print("Could not connect to postgres")
-        pass
+            df = pd.read_csv(f"{in_path}", encoding= 'unicode_escape')
+            df.head(n=0).to_sql(name=table, con=engine, if_exists='replace')
+            df.to_sql(name=table, con=engine, if_exists='replace')
+
+        except(OperationalError):
+            print("Could not connect to postgres")
+            pass
+
+
 def local_to_postgres_flow(
         climatologies: list
     ) -> None:
@@ -90,3 +94,5 @@ def local_to_postgres_flow(
 if __name__ == "__main__":
     local_to_postgres_flow(climatologies=climatology_base_urls)
     # upload = ClimatologyUploads(climatology_url=climatology_base_urls[0])
+    # upload.climatology_yearly_table_generator()
+    #local_to_postgres_flow()
