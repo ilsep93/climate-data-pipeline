@@ -48,14 +48,12 @@ class ClimatologyUploads(Climatology):
         docker_run: bool,
         ) -> None:
 
-        table_name = re.search('_\d_2061-2080_V1',in_path).group(0)
-
         username=os.getenv("POSTGRES_USER")
         password=os.getenv("POSTGRES_PASSWORD")
         host=os.getenv("POSTGRES_HOST")
         db=os.getenv("POSTGRES_DB")
         port=os.getenv("LOCAL_PORT")
-        table=table_name
+        table = self.climatology
 
         if docker_run:
             engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
