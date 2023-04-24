@@ -81,6 +81,11 @@ class ClimatologyUploads(Climatology):
         if self.schema not in inspector.get_schema_names():
             CreateSchema(self.schema)
         
+        #TODO: inspector for specific schema (default is public)
+        # if self.climatology not in inspector.get_table_names():
+        #     self.upload_to_db(engine=engine)
+
+
 
 
 def local_to_postgres_flow(
