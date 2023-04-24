@@ -20,10 +20,11 @@ class ClimatologyUploads(Climatology):
         self,
     ):
         self._climatology_pathways(self.climatology_url)
-        zs_files = glob.glob(os.path.join(self.zonal_statistics, '*.csv'))
-        
-        li = []
-        if len(zs_files) == 12:
+
+        if not os.path.exists(f"{self.time_series}/{self.climatology}_yearly.csv"):
+            zs_files = glob.glob(os.path.join(self.zonal_statistics, '*.csv'))
+            
+            li = []
             print(f"Creating a yearly dataset for {self.climatology}")
             for file in zs_files:
                 with open(f"{file}", 'r') as f:
@@ -33,13 +34,12 @@ class ClimatologyUploads(Climatology):
                     df['month'] = int(month)
                     li.append(df)
 
-            data = pd.concat(li, axis=0, ignore_index=True)
-            data.sort_values(by=["OBJECTID_1", "month"], inplace=True)
-            data.to_csv(f"{self.time_series}/{self.climatology}_yearly.csv", index=False)
-            
+                data = pd.concat(li, axis=0, ignore_index=True)
+                data.sort_values(by=["OBJECTID_1", "month"], inplace=True)
+                data.to_csv(f"{self.time_series}/{self.climatology}_yearly.csv", index=False)
+                
         else:
-            num_missing = 12 - len(zs_files)
-            print(f"Missing {num_missing} files")
+            print(f"Yearly time appended dataset exists for {self.climatology}")
 
 def local_to_postgres(
     in_path: str,
