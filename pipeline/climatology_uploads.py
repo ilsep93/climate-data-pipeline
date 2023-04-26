@@ -1,4 +1,5 @@
 import glob
+import logging
 import os
 import re
 from dataclasses import dataclass
@@ -14,6 +15,9 @@ from sqlalchemy.schema import CreateSchema
 
 load_dotenv("docker/.env")
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='uploads_logger.log', encoding='utf-8', level=logging.DEBUG)
+
 @dataclass
 class ClimatologyUploads(Climatology):
     climatology_url: str
@@ -27,7 +31,8 @@ class ClimatologyUploads(Climatology):
             zs_files = glob.glob(os.path.join(self.zonal_statistics, '*.csv'))
             
             li = []
-            print(f"Creating a yearly dataset for {self.climatology}")
+            logger.info(f"Creating a yearly dataset for {self.climatology}")
+
             for file in zs_files:
                 with open(f"{file}", 'r') as f:
                     month = re.search('_\d{1,2}', file).group(0)
@@ -41,7 +46,7 @@ class ClimatologyUploads(Climatology):
                 data.to_csv(f"{self.time_series}/{self.climatology}_yearly.csv", index=False)
                 
         else:
-            print(f"Yearly time appended dataset exists for {self.climatology}")
+            logger.info(f"Yearly time appended dataset exists for {self.climatology}")
 
     @staticmethod
     def _get_engine(docker_run: bool):
@@ -62,7 +67,7 @@ class ClimatologyUploads(Climatology):
             return engine
 
         except(OperationalError):
-            print("Could not connect to postgres")
+            logger.error("Could not connect to postgres")
             pass
     
     def db_validator(
@@ -97,7 +102,7 @@ class ClimatologyUploads(Climatology):
             df.to_sql(name=table, con=engine, if_exists='replace', index=False)
 
             engine.execute(f'ALTER TABLE {self.schema}."{table}" ADD PRIMARY KEY ({primary_key})')
-            print(f"Uploaded '{self.climatology}' to the DB")
+            logger.info(f"Uploaded '{self.climatology}' to the DB")
 
 def local_to_postgres_flow(
         climatologies: list
