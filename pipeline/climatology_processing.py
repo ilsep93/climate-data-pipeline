@@ -1,3 +1,4 @@
+import logging
 import os
 from dataclasses import dataclass
 
@@ -10,6 +11,8 @@ from climatology_urls import climatology_base_urls
 from rasterio import mask
 from rasterstats import zonal_stats
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='logger.log', encoding='utf-8', level=logging.DEBUG)
 
 @dataclass()
 class ClimatologyProcessing(Climatology):
@@ -36,7 +39,8 @@ class ClimatologyProcessing(Climatology):
         self._climatology_pathways(self.climatology_url)
         
         if len(os.listdir(self.raw_raster)) != 12:
-            print(f"Downloading raw rasters for {self.climatology}")
+            logger.info(f"Downloading raw rasters for {self.climatology}")
+            
             for month in range(1,13):
                 rast_url = f"{self.climatology_url}_{month}_2061-2080_V1.2.tif"
 
@@ -47,9 +51,9 @@ class ClimatologyProcessing(Climatology):
 
                 with rasterio.open(f"{self.raw_raster}/{self.climatology}_{month}.tif", "w", **profile) as dest:
                     dest.write(raster)
-                    print(f"Raster masked for {self.climatology}_{month}")
+                    logger.info(f"Raster masked for {self.climatology}_{month}")
         else:
-            print(f"All raw rasters are available for {self.climatology}")
+            logger.info(f"All raw rasters are available for {self.climatology}")
 
 
     def _mask_raster(
@@ -64,7 +68,8 @@ class ClimatologyProcessing(Climatology):
         """
 
         if len(os.listdir(self.masked_raster)) != 12:
-            print(f"Masking rasters for {self.climatology}")
+            logger.info(f"Masking rasters for {self.climatology}")
+            
             with fiona.open(f"{shp_path}") as shapefile:
                 shapes = [feature["geometry"] for feature in shapefile]
             
@@ -77,7 +82,7 @@ class ClimatologyProcessing(Climatology):
                     with rasterio.open(f"{self.masked_raster}/msk_{file}", "w", **profile) as dest:
                         dest.write(out_image)
         else:
-            print(f"All masked rasters are available for {self.climatology}")
+            logger.info(f"All masked rasters are available for {self.climatology}")
 
     @staticmethod
     def kelvin_to_celcius(
@@ -101,7 +106,7 @@ class ClimatologyProcessing(Climatology):
         """
 
         if len(os.listdir(self.zonal_statistics)) != 12:
-            print(f"Calculating zonal statistics for {self.climatology}")
+            logger.info(f"Calculating zonal statistics for {self.climatology}")
 
             shapefile = gpd.read_file(f"{shp_path}")
             for file in os.listdir(self.masked_raster):
@@ -132,12 +137,11 @@ class ClimatologyProcessing(Climatology):
                         file = file.replace("msk_", "zs_")
                         full_df.to_csv(f"{self.zonal_statistics}/{file}", index=False)
         else:
-            print(f"All zonal statistics are available for {self.climatology}")
+            logger.info(f"All zonal statistics are available for {self.climatology}")
 
 def raster_processing_flow(
     climatologies: list
     ) -> None:
-
     for url in climatologies:
         cmip_temp = ClimatologyProcessing(climatology_url=url)
         cmip_temp._write_local_raster()
