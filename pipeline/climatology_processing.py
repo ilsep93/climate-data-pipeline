@@ -11,6 +11,8 @@ from climatology_urls import climatology_base_urls
 from rasterio import mask
 from rasterstats import zonal_stats
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='logger.log', encoding='utf-8', level=logging.DEBUG)
 
 @dataclass()
 class ClimatologyProcessing(Climatology):
