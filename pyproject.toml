@@ -20,6 +20,7 @@ numpy = "^1.24.2"
 python-dotenv = "^1.0.0"
 dash = "^2.9.3"
 psycopg2-binary = "^2.9.6"
+logging = "^0.4.9.6"
 
 
 [build-system]
