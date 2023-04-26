@@ -31,3 +31,6 @@
 
 #No commit
 *_no_commit*
+
+#Ignore logger
+*.log
