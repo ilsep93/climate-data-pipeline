@@ -174,6 +174,7 @@ def update_charts(adm0, adm1, adm2):
                 "x": filtered_data["month"],
                 "y": filtered_data["max"],
                 "type": "lines",
+                "hovertemplate": "%{y:.2f}°C<extra></extra>",
             },
         ],
         "layout": {
