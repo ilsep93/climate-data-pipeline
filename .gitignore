@@ -34,3 +34,6 @@
 
 #Ignore logger
 *.log
+
+#Ignore images
+*.png
