@@ -6,23 +6,22 @@ from sqlalchemy.orm import DeclarativeBase
 
 from dash import Dash, dcc, html
 
-zs_path = "data/zonal_statistics/"
 
-li = []
+# Read tables from Postgres
+class Base(DeclarativeBase):
+    pass
 
-#TODO pull data from postgres instead of locally
-for root, dirs, files in os.walk(zs_path):
-    for file in files:
-        if file.endswith(".csv"):
-            with open(f"{zs_path}/{file}", 'r') as f:
-                month = re.search('_\d_2061-2080', file).group(0)
-                month = month.replace("_2061-2080", "")
-                month = month.replace("_", "")
-                data = pd.read_csv(f, index_col=None, header=0)
-                data['month'] = int(month)
-                li.append(data)
+# Read vector locally
 
-data = pd.concat(li, axis=0, ignore_index=True)
+
+# Attribute join
+
+# Create map, where user can select an ADM2 and see different climatologies for that area
+
+
+zs_path = "data/ACCESS1-0_rcp45/time_series/ACCESS1-0_rcp45_yearly.csv"
+
+data = pd.read_csv(zs_path)
 
 data = data.query("admin2Name == 'Sakania'") #TODO: allow users to filter
 
