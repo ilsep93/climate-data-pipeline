@@ -1,17 +1,13 @@
-/* assets/style.css */
-
 body {
     font-family: "Lato", sans-serif;
     margin: 0;
-    background-color: #F7F7F7;
+    background-color: #222222;
 }
 
 .header {
     background-color: #222222;
     height: 256px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    padding: 16px 0 0 0;
 }
 
 .header-emoji {
@@ -47,4 +43,35 @@ body {
 .card {
     margin-bottom: 24px;
     box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.18);
+}
+
+.menu {
+    height: 112px;
+    width: 912px;
+    display: flex;
+    justify-content: space-evenly;
+    padding-top: 24px;
+    margin: -80px auto 0 auto;
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.18);
+}
+
+.Select-control {
+    width: 256px;
+    height: 48px;
+}
+
+.Select--single>.Select-control .Select-value,
+.Select-placeholder {
+    line-height: 48px;
+}
+
+.Select--multi .Select-value-label {
+    line-height: 32px;
+}
+
+.menu-title {
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #079A82;
 }
