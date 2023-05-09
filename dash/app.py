@@ -2,6 +2,7 @@ import os
 import re
 
 import pandas as pd
+from sqlalchemy.orm import DeclarativeBase
 
 from dash import Dash, dcc, html
 
