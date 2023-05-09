@@ -64,7 +64,7 @@ app.layout = html.Div(
                                     "y": data["max"],
                                     "type": "lines",
                                     "hovertemplate": (
-                                        "°C%{y:.2f}<extra></extra>"
+                                        "{y:.2f}%°C<extra></extra>"
                                     ),
                                 },
                             ],
@@ -76,7 +76,7 @@ app.layout = html.Div(
                                 },
                                 "xaxis": {"fixedrange": True},
                                 "yaxis": {
-                                    "tickprefix": "°C",
+                                    "ticksuffix": "°C",
                                     "fixedrange": True,
                                 },
                                 "colorway": ["#17b897"],
@@ -104,7 +104,10 @@ app.layout = html.Div(
                                     "xanchor": "left",
                                 },
                                 "xaxis": {"fixedrange": True},
-                                "yaxis": {"fixedrange": True},
+                                "yaxis": {
+                                    "ticksuffix": "°C",
+                                    "fixedrange": True,
+                                },
                                 "colorway": ["#E12D39"],
                             },
                         },
