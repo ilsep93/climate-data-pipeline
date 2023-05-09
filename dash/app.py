@@ -64,13 +64,13 @@ app.layout = html.Div(
                                     "y": data["max"],
                                     "type": "lines",
                                     "hovertemplate": (
-                                        "{y:.2f}%°C<extra></extra>"
+                                        "%{y:.2f}°C<extra></extra>"
                                     ),
                                 },
                             ],
                             "layout": {
                                 "title": {
-                                    "text": "Maxium Projected Temperature °C",
+                                    "text": "Maximum Projected Temperature °C",
                                     "x": 0.05,
                                     "xanchor": "left",
                                 },
@@ -95,6 +95,9 @@ app.layout = html.Div(
                                     "x": data["month"],
                                     "y": data["mean"],
                                     "type": "lines",
+                                    "hovertemplate": (
+                                        "%{y:.2f}°C<extra></extra>"
+                                    ),
                                 },
                             ],
                             "layout": {
