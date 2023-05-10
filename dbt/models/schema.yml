@@ -1,82 +1,87 @@
 version: 2
 
 models:
-  - name: customers
-    description: This table has basic information about a customer, as well as some derived facts based on a customer's orders
+
+  - name: access1-0_rcp45
+    description: Zonal statistics for access1-0_rcp45 climatology
+
+  - name: access1-0_rcp85
+    description: Zonal statistics for access1-0_rcp85 climatology
+
+  - name: bnu-esm_rcp26
+    description: Zonal statistics for bnu-esm_rcp26 climatology
+
+  - name: bnu-esm_rcp45
+    description: Zonal statistics for bnu-esm_rcp45 climatology
+
+  - name: ccsm4_rcp60
+    description: Zonal statistics for ccsm4_rcp60 climatology
+
+  - name: union_table
+    description: Combination of all available climatologies
 
     columns:
-      - name: customer_id
-        description: This is a unique identifier for a customer
+      - name: objectid_1
+        description: Unique identifier for an adm2
         tests:
-          - unique
-          - not_null
+            - not_null
 
-      - name: first_name
-        description: Customer's first name. PII.
-
-      - name: last_name
-        description: Customer's last name. PII.
-
-      - name: first_order
-        description: Date (UTC) of a customer's first order
-
-      - name: most_recent_order
-        description: Date (UTC) of a customer's most recent order
-
-      - name: number_of_orders
-        description: Count of the number of orders a customer has placed
-
-      - name: total_order_amount
-        description: Total value (AUD) of a customer's orders
-
-  - name: orders
-    description: This table has basic information about orders, as well as some derived facts based on payments
-
-    columns:
-      - name: order_id
+      - name: admin0Name
+        description: Country name
         tests:
-          - unique
-          - not_null
-        description: This is a unique identifier for an order
+            - not_null
 
-      - name: customer_id
-        description: Foreign key to the customers table
+      - name: admin0Pcod
+            - not_null
+
+      - name: admin1Name
+        description: First administrative division name
         tests:
-          - not_null
-          - relationships:
-              to: ref('customers')
-              field: customer_id
+            - not_null
 
-      - name: order_date
-        description: Date (UTC) that the order was placed
-
-      - name: status
-        description: '{{ doc("orders_status") }}'
+      - name: admin2Name
+        description: Second administrative division name
         tests:
-          - accepted_values:
-              values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
+            - not_null
 
-      - name: amount
-        description: Total amount (AUD) of the order
-        tests:
-          - not_null
+      - name: admin1Pcod
+        description: Unique identifier for adm1
 
-      - name: credit_card_amount
-        description: Amount of the order (AUD) paid for by credit card
-        tests:
-          - not_null
+      - name: admin2Pcod
+        description: Unique identifier for adm2
 
-      - name: coupon_amount
-        description: Amount of the order (AUD) paid for by coupon
-        tests:
-          - not_null
+      - name: source
+        description: Source of administrative division
 
-      - name: bank_transfer_amount
-        description: Amount of the order (AUD) paid for by bank transfer
-        tests:
-          - not_null
+      - name: last_modif
+        description: Date that administrative division was last modified
 
-      - name: gift_card_amount
-        description: Amount of the order (AUD) paid for by gift card
+      - name: date
+        description: Date that administrative division was last modified
         tests:
-          - not_null
+            - not_null
+
+      - name: min
+        description: Minimum temperature in degrees Celsius
+        tests:
+            - not_null
+        
+      - name: max
+        description: Maximum temperature in degrees Celsius
+        tests:
+            - not_null
+
+      - name: mean
+        description: Average temperature in degrees Celsius
+        tests:
+            - not_null
+
+      - name: median
+        description: Median temperature in degrees Celsius
+        tests:
+            - not_null
+
+      - name: month
+        description: Month of the year, in integer format (1-12)
+        tests:
+            - not_null
