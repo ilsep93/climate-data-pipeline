@@ -92,16 +92,14 @@ class ClimatologyUploads(Climatology):
         ) -> None:
 
         table = self.climatology.lower()
-        primary_key = "objectid_1"
 
         with Session(engine):
             df = pd.read_csv(f"{self.time_series}/{self.climatology}_yearly.csv", encoding= 'unicode_escape')
             df.columns= df.columns.str.lower()
 
             df.head(n=0).to_sql(name=table, con=engine, schema=self.schema, if_exists='replace', index=False)
-            df.to_sql(name=table, con=engine, if_exists='replace', index=False)
+            df.to_sql(name=table, schema=self.schema, con=engine, if_exists='replace', index=False)
 
-            engine.execute(f'ALTER TABLE {self.schema}."{table}" ADD PRIMARY KEY ({primary_key})')
             logger.info(f"Uploaded '{self.climatology}' to the DB")
 
 def local_to_postgres_flow(
