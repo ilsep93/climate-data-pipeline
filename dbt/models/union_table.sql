@@ -2,8 +2,8 @@
 
 {% call statement('tables_for_union', fetch_result=True) %}
     SELECT table_name 
-    FROM `dbt.dbt.climatology.TABLES`
-    WHERE table_name LIKE 'BNU_%'
+    FROM    information_schema.tables
+    WHERE table_schema='climatology'
 {% endcall %}
 
 {% set tables = load_result('tables_for_union')['data'] %}
