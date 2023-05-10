@@ -29,5 +29,11 @@
 #Ignore .env files
 *.env
 
-#Ignore dbt cookies
-*.user.yml
+#No commit
+*_no_commit*
+
+#Ignore logger
+*.log
+
+#Ignore images
+*.png
