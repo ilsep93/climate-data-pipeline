@@ -3,6 +3,7 @@ import logging
 import os
 import re
 from dataclasses import dataclass
+from datetime import datetime
 
 import pandas as pd
 from climatology import Climatology
@@ -12,6 +13,7 @@ from sqlalchemy import create_engine, inspect
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 from sqlalchemy.schema import CreateSchema
+from sqlalchemy.types import DateTime, Float, Integer, String
 
 load_dotenv("docker/.env")
 
@@ -58,7 +60,6 @@ class ClimatologyUploads(Climatology):
         port=os.getenv("LOCAL_PORT")
 
         try:
-
             if docker_run:
                 engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
             else:
@@ -80,11 +81,6 @@ class ClimatologyUploads(Climatology):
 
         if self.schema not in inspector.get_schema_names():
             CreateSchema(self.schema)
-        
-        #TODO: inspector for specific schema (default is public)
-        # if self.climatology not in inspector.get_table_names():
-        #     self.upload_to_db(engine=engine)
-
 
     def upload_to_db(
         self,
@@ -95,10 +91,28 @@ class ClimatologyUploads(Climatology):
 
         with Session(engine):
             df = pd.read_csv(f"{self.time_series}/{self.climatology}_yearly.csv", encoding= 'unicode_escape')
-            df.columns= df.columns.str.lower()
 
-            df.head(n=0).to_sql(name=table, con=engine, schema=self.schema, if_exists='replace', index=False)
-            df.to_sql(name=table, schema=self.schema, con=engine, if_exists='replace', index=False)
+            df.columns= df.columns.str.lower() # lowercase columns
+            keep_cols = ['admin0name', 'admin1name', 'admin2name', 'min', 'max', 'mean', 'median', 'month']
+            df = df[keep_cols] #subset to set of cols
+            df["month"] = df["month"].apply(lambda x: datetime.strptime(str(x), "%m")) #transform from int to date
+            df.head()
+
+            df.to_sql(name=table,
+                      schema=self.schema,
+                      con=engine,
+                      if_exists='replace',
+                      index=False,
+                      dtype={
+                        "admin0name": String,
+                        "admin1name": String,
+                        "admin2name": String,
+                        "min": Float,
+                        "max": Float,
+                        "mean": Float,
+                        "median": Float,
+                        "month": DateTime
+                        })
 
             logger.info(f"Uploaded '{self.climatology}' to the DB")
 
