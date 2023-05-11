@@ -73,10 +73,7 @@ class ClimatologyUploads(Climatology):
         port=os.getenv("LOCAL_PORT")
 
         try:
-            if docker_run:
-                engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
-            else:
-                engine = create_engine(f'postgresql://{username}:{password}@localhost:4000/{db}')
+            engine = create_engine(f'postgresql://{username}:{password}@localhost:{port}/{db}')
 
             return engine
 
@@ -89,7 +86,7 @@ class ClimatologyUploads(Climatology):
     ) -> None:
         
         self.schema = "climatology"
-        engine = self._get_engine(docker_run=False)
+        engine = self._get_engine()
         inspector = inspect(engine)
 
         if self.schema not in inspector.get_schema_names():
@@ -97,7 +94,7 @@ class ClimatologyUploads(Climatology):
 
     def upload_to_db(
         self,
-        engine
+        engine: Engine
         ) -> None:
         """Uploads yearly aggregated table to postgres db
         Processing steps:
@@ -146,7 +143,7 @@ def local_to_postgres_flow(
         cmip_temp = ClimatologyUploads(climatology_url=url)
         cmip_temp.climatology_yearly_table_generator()
         cmip_temp.db_validator()
-        engine = cmip_temp._get_engine(docker_run=False)
+        engine = cmip_temp._get_engine()
         cmip_temp.upload_to_db(engine=engine)
 
 if __name__ == "__main__":
