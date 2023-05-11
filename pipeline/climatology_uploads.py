@@ -9,7 +9,7 @@ import pandas as pd
 from climatology import Climatology
 from climatology_urls import climatology_base_urls
 from dotenv import load_dotenv
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import Engine, create_engine, inspect
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 from sqlalchemy.schema import CreateSchema
@@ -28,6 +28,11 @@ class ClimatologyUploads(Climatology):
         self,
     ):
         self._climatology_pathways(self.climatology_url)
+        """Aggregates monthly climatology predictions into a yearly table.
+        Processing steps: 
+        * Add month int month column (1-12)
+        * Sort values by administrative identifier and month
+        """
 
         if not os.path.exists(f"{self.time_series}/{self.climatology}_yearly.csv"):
             zs_files = glob.glob(os.path.join(self.zonal_statistics, '*.csv'))
@@ -51,7 +56,15 @@ class ClimatologyUploads(Climatology):
             logger.info(f"Yearly time appended dataset exists for {self.climatology}")
 
     @staticmethod
-    def _get_engine(docker_run: bool):
+    def _get_engine():
+        """_summary_
+
+        Args:
+            docker_run (bool): _description_
+
+        Returns:
+            _type_: _description_
+        """
         
         username=os.getenv("POSTGRES_USER")
         password=os.getenv("POSTGRES_PASSWORD")
@@ -86,6 +99,15 @@ class ClimatologyUploads(Climatology):
         self,
         engine
         ) -> None:
+        """Uploads yearly aggregated table to postgres db
+        Processing steps:
+        * Reduce number of columns to adm names and projected values
+        * Convert int to datetime
+        * Add climatology column based on climatology name
+
+        Args:
+            engine (Engine): Engine connection to postgres db
+        """
 
         table = self.climatology.lower()
 
