@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: climatology
+    database: chelsa_rasters
+    schema: climatology
+    tables:
+      - name: access1-0_rcp45
+      - name: access1-0_rcp85
+      - name: bnu-esm_rcp26
+      - name: bnu-esm_rcp45
+      - name: ccsm4_rcp60
