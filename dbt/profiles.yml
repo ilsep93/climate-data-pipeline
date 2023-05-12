@@ -1,0 +1,15 @@
+climate_pipeline:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      user: "{{ env_var('DBT_USER') }}"
+      password: "{{ env_var('DBT_PASSWORD') }}"
+      port: 4000
+      schema: climatology
+      dbname: "{{ env_var('DBT_DB') }}"
+      threads: 1
+      keepalives_idle: 0
+      connect_timeout: 10
+      retries: 1
