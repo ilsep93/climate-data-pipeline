@@ -62,14 +62,16 @@ Zonal statistics can then be ingested to Postgres, either locally or through a D
 
 # TODO
 
-- [X] Brainstorm appropriate database design from raw to processed data. This will be based on dash requirements for time series data, and what is easiest to ingest
-  - [X] Refactor raster ingestion to create a single table for all months of a given product, and allow for multiple modeling scenearios. There will be one table per scenario.
+## Database
+
+- [X] Brainstorm appropriate database design from raw to processed data. This will be based on Dash requirements for time series data, and what is easiest to ingest
+  - [X] Refactor raster ingestion to create a single table for all months of a given product, and allow for multiple climatologies. There will be one table per climatology.
+  - [X] Use dbt to create union table of all climatologies (mostly for practice, since dbt is not strictly necessary)
+
+## Dashboard
+
 - [X] Create a skeleton Dash dashboard to visualize climate projections
   - [X] User selects ADM based on dropdown menu
-  - [] Nested ADM selection (ie. user can only select adm2s that are in a given adm1)
+  - [ ] Nested ADM selection (ie. user can only select adm2s that are in a given adm1)
   - [ ] Line graph shows how mean and max climate for the ADM is projected to change in 2060-2081, by month. Different line for each climatology. Each line will be labeled and have a different color. User can compare projections across climatologies
   - [ ] Create a map for all of West Africa ADM2s, with a darker color showing a greater temperature January and December
-
-# Future Implementations
-- [ ] Use dbt to create country and ADM1 aggregates. There will be one table per country, where each row is a different simulated scenario.
-- [ ] Write unit tests for data ingestion
