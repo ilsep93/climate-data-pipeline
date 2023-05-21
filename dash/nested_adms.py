@@ -11,12 +11,13 @@ df = pd.read_csv("data/ACCESS1-0_rcp45/time_series/ACCESS1-0_rcp45_yearly.csv")
 data = df[['admin0Name', 'admin1Name', 'admin2Name']]
 adm1_list = data.admin1Name.unique()
 
-adm1_options_dict = dict()
-for adm1 in adm1_list:
-    adm1_options_dict[adm1] = list(data[['admin2Name']][data.admin1Name == adm1]
                               .squeeze()
                               .unique())
-print(adm1_options_dict)
 
+adm2_options_dict = dict()
+for adm1 in adm1_list:
+    adm2_options_dict[adm1] = list(data[['admin2Name']][data.admin1Name == adm1]
+                              .squeeze()
+                              .unique())
 
 # TODO: Connect to db and pull names in case there are updates
