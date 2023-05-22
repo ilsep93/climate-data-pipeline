@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from typing import Optional
 
 from dotenv import load_dotenv
-from sqlalchemy import URL, create_engine
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 load_dotenv("docker/.env")

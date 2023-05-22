@@ -2,6 +2,7 @@ import glob
 import logging
 import os
 import re
+import sys
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -9,12 +10,14 @@ import pandas as pd
 from climatology import Climatology
 from climatology_urls import climatology_base_urls
 from dotenv import load_dotenv
-from session import get_session
 from sqlalchemy import Engine, create_engine, inspect
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.schema import CreateSchema
 from sqlalchemy.types import DateTime, Float, Integer, String
+
+sys.path.append("../utils/")
+from session import get_session
 
 load_dotenv("docker/.env")
 
