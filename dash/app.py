@@ -73,10 +73,9 @@ app.layout = html.Div(
                             id="adm1-dropdown",
                             options=[
                                 {
-                                    "label": adm1.title(),
-                                    "value": adm1,
+                                    "label": "",
+                                    "value": "",
                                 }
-                                for adm1 in adm2_options_dict.keys()
                             ],
                             value="Haut-Katanga",
                             clearable=False,
