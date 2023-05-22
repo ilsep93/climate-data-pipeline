@@ -7,7 +7,7 @@ import pandas as pd
 # }
 
 # For now, using local dataset to create options list
-df = pd.read_csv("data/ACCESS1-0_rcp45/time_series/ACCESS1-0_rcp45_yearly.csv")
+df = pd.read_csv("data/ACCESS1-0_rcp45/time_series/ACCESS1-0_rcp45_yearly.csv", encoding='utf-8-sig')
 data = df[['admin0Name', 'admin1Name', 'admin2Name']]
 
 adm0_list = data.admin0Name.unique()
