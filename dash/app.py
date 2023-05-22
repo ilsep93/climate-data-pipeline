@@ -3,14 +3,17 @@ import re
 import sys
 
 import pandas as pd
-from nested_adms import adm1_options_dict, adm2_options_dict
 
 from dash import Dash, Input, Output, dcc, html
 
 sys.path.append("utils")
 from read_db_table import get_climatology_table
 
+with open("dash/adm1_options_dict.json") as adm1_options_dict:
+    adm1_options_dict = json.load(adm1_options_dict)
 
+with open("dash/adm2_options_dict.json") as adm2_options_dict:
+    adm2_options_dict = json.load(adm2_options_dict)
 
 data = get_climatology_table()
 
