@@ -39,21 +39,15 @@ class ClimatologyUploads(Climatology):
             engine (Engine): Engine connection to postgres db
         """
         self._climatology_pathways(self.climatology_url)
+        df = pd.read_csv(f"{self.time_series}/{self.climatology}_yearly.csv", encoding= 'unicode_escape')
 
-        table = self.climatology.lower()
+        df.columns= df.columns.str.lower() # lowercase columns
+        keep_cols = ['admin0name', 'admin1name', 'admin2name', 'min', 'max', 'mean', 'median', 'month']
+        df = df[keep_cols] #subset to set of cols
 
-            df = pd.read_csv(f"{self.time_series}/{self.climatology}_yearly.csv", encoding= 'unicode_escape')
+        df["month"] = df["month"].apply(lambda x: datetime.strptime(str(x), "%m")) #transform from int to date
+        df["climatology"] = self.climatology
 
-            df.columns= df.columns.str.lower() # lowercase columns
-            keep_cols = ['admin0name', 'admin1name', 'admin2name', 'min', 'max', 'mean', 'median', 'month']
-            df = df[keep_cols] #subset to set of cols
-
-            df["month"] = df["month"].apply(lambda x: datetime.strptime(str(x), "%m")) #transform from int to date
-
-            df["climatology"] = self.climatology
-
-
-            df.to_sql(name=table,
         with get_session() as Session:
             with Session() as session:
                 df.to_sql(name=self.climatology.lower(),
