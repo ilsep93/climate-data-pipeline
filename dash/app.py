@@ -2,6 +2,7 @@ import os
 import re
 
 import pandas as pd
+from nested_adms import adm1_options_dict, adm2_options_dict
 from sqlalchemy.orm import DeclarativeBase
 
 from dash import Dash, Input, Output, dcc, html
@@ -10,8 +11,7 @@ zs_path = "data/ACCESS1-0_rcp45/time_series/ACCESS1-0_rcp45_yearly.csv"
 
 data = pd.read_csv(zs_path)
 
-
-adm0_options = data["admin0Name"].sort_values().unique()
+# adm0_options = data["admin0Name"].sort_values().unique()
 adm1_options = data["admin1Name"].sort_values().unique()
 adm2_options = data["admin2Name"].sort_values().unique()
 
@@ -52,10 +52,10 @@ app.layout = html.Div(
                     children=[
                         html.Div(children="adm0", className="menu-title"),
                         dcc.Dropdown(
-                            id="adm0-filter",
+                            id="adm0-dropdown",
                             options=[
                                 {"label": adm0, "value": adm0}
-                                for adm0 in adm0_options
+                                for adm0 in adm1_options_dict.keys()
                             ],
                             value="Democratic Republic of Congo",
                             clearable=False,
@@ -67,7 +67,7 @@ app.layout = html.Div(
                     children=[
                         html.Div(children="adm1", className="menu-title"),
                         dcc.Dropdown(
-                            id="adm1-filter",
+                            id="adm1-dropdown",
                             options=[
                                 {
                                     "label": adm1.title(),
@@ -86,7 +86,7 @@ app.layout = html.Div(
                     children=[
                         html.Div(children="adm2", className="menu-title"),
                         dcc.Dropdown(
-                            id="adm2-filter",
+                            id="adm2-dropdown",
                             options=[
                                 {"label": adm2, "value": adm2}
                                 for adm2 in adm2_options
@@ -122,12 +122,26 @@ app.layout = html.Div(
     ]
 )
 
+# Set adm1 dropdown options based on selected adm0
+@app.callback(
+    Output('adm1-dropdown', 'options'),
+    Input('adm0-dropdown', 'value'))
+def set_adm1_options(selected_country):
+    return [{'label': i, 'value': i} for i in adm1_options_dict[selected_country]]
+
+# Set default adm1 to first option in adm1 dropdown list
+@app.callback(
+    Output('adm1-dropdown', 'value'),
+    Input('adm1-dropdown', 'options'))
+def set_adm1_value(available_options):
+    return available_options[0]['value']
+
 @app.callback(
     Output("average-temp", "figure"),
     Output("max-temp", "figure"),
-    Input("adm0-filter", "value"),
-    Input("adm1-filter", "value"),
-    Input("adm2-filter", "value")
+    Input("adm0-dropdown", "value"),
+    Input("adm1-dropdown", "value"),
+    Input("adm2-dropdown", "value")
 )
 def update_charts(adm0, adm1, adm2):
     filtered_data = data.query(
