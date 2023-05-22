@@ -9,9 +9,10 @@ import pandas as pd
 from climatology import Climatology
 from climatology_urls import climatology_base_urls
 from dotenv import load_dotenv
+from session import get_session
 from sqlalchemy import Engine, create_engine, inspect
 from sqlalchemy.exc import OperationalError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.schema import CreateSchema
 from sqlalchemy.types import DateTime, Float, Integer, String
 
@@ -54,33 +55,6 @@ class ClimatologyUploads(Climatology):
                 
         else:
             logger.info(f"Yearly time appended dataset exists for {self.climatology}")
-
-    @staticmethod
-    def _get_engine():
-        """_summary_
-
-        Args:
-            docker_run (bool): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        
-        username=os.getenv("POSTGRES_USER")
-        password=os.getenv("POSTGRES_PASSWORD")
-        host=os.getenv("POSTGRES_HOST")
-        db=os.getenv("POSTGRES_DB")
-        port=os.getenv("LOCAL_PORT")
-
-        try:
-            engine = create_engine(f'postgresql://{username}:{password}@localhost:{port}/{db}')
-
-            return engine
-
-        except(OperationalError):
-            logger.error("Could not connect to postgres")
-            pass
-    
     def db_validator(
             self,
     ) -> None:
@@ -108,7 +82,6 @@ class ClimatologyUploads(Climatology):
 
         table = self.climatology.lower()
 
-        with Session(engine):
             df = pd.read_csv(f"{self.time_series}/{self.climatology}_yearly.csv", encoding= 'unicode_escape')
 
             df.columns= df.columns.str.lower() # lowercase columns
@@ -121,8 +94,11 @@ class ClimatologyUploads(Climatology):
 
 
             df.to_sql(name=table,
+        with get_session() as Session:
+            with Session() as session:
+                df.to_sql(name=self.climatology.lower(),
                       schema=self.schema,
-                      con=engine,
+                      con=session.get_bind(),
                       if_exists='replace',
                       index=False,
                       dtype={
@@ -146,7 +122,6 @@ def local_to_postgres_flow(
         cmip_temp = ClimatologyUploads(climatology_url=url)
         cmip_temp.climatology_yearly_table_generator()
         cmip_temp.db_validator()
-        engine = cmip_temp._get_engine()
         cmip_temp.upload_to_db(engine=engine)
 
 if __name__ == "__main__":
