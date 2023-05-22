@@ -72,6 +72,6 @@ Zonal statistics can then be ingested to Postgres, either locally or through a D
 
 - [X] Create a skeleton Dash dashboard to visualize climate projections
   - [X] User selects ADM based on dropdown menu
-  - [ ] Nested ADM selection (ie. user can only select adm2s that are in a given adm1)
+  - [X] Nested ADM selection (ie. user can only select adm2s that are in a given adm1)
   - [ ] Line graph shows how mean and max climate for the ADM is projected to change in 2060-2081, by month. Different line for each climatology. Each line will be labeled and have a different color. User can compare projections across climatologies
   - [ ] Create a map for all of West Africa ADM2s, with a darker color showing a greater temperature January and December
