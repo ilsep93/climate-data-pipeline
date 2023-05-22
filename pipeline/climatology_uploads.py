@@ -27,8 +27,7 @@ class ClimatologyUploads(Climatology):
     schema: str = "climatology"
     
     def upload_to_db(
-        self,
-        engine: Engine
+        self
         ) -> None:
         """Uploads yearly aggregated table to postgres db
         Processing steps:
@@ -81,7 +80,7 @@ def local_to_postgres_flow(
 
     for url in climatologies:
         cmip_temp = ClimatologyUploads(climatology_url=url)
-        cmip_temp.upload_to_db(engine=engine)
+        cmip_temp.upload_to_db()
 
 if __name__ == "__main__":
     local_to_postgres_flow(climatologies=climatology_base_urls)
