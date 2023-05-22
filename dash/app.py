@@ -6,24 +6,10 @@ from sqlalchemy.orm import DeclarativeBase
 
 from dash import Dash, Input, Output, dcc, html
 
-
-# Read tables from Postgres
-class Base(DeclarativeBase):
-    pass
-
-# Read vector locally
-
-
-# Attribute join
-
-# Create map, where user can select an ADM2 and see different climatologies for that area
-
-
 zs_path = "data/ACCESS1-0_rcp45/time_series/ACCESS1-0_rcp45_yearly.csv"
 
 data = pd.read_csv(zs_path)
 
-#data = data.query("admin2Name == 'Sakania'")
 
 adm0_options = data["admin0Name"].sort_values().unique()
 adm1_options = data["admin1Name"].sort_values().unique()
