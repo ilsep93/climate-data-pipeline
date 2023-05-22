@@ -122,17 +122,29 @@ app.layout = html.Div(
     ]
 )
 
-# Set adm1 dropdown options based on selected adm0
+# Set dropdown options based on selected adm0
 @app.callback(
     Output('adm1-dropdown', 'options'),
     Input('adm0-dropdown', 'value'))
 def set_adm1_options(selected_country):
     return [{'label': i, 'value': i} for i in adm1_options_dict[selected_country]]
 
-# Set default adm1 to first option in adm1 dropdown list
+@app.callback(
+    Output('adm2-dropdown', 'options'),
+    Input('adm1-dropdown', 'value'))
+def set_adm2_options(selected_adm1):
+    return [{'label': i, 'value': i} for i in adm2_options_dict[selected_adm1]]
+
+# Set default to first option in dropdown list
 @app.callback(
     Output('adm1-dropdown', 'value'),
     Input('adm1-dropdown', 'options'))
+def set_adm1_value(available_options):
+    return available_options[0]['value']
+
+@app.callback(
+    Output('adm2-dropdown', 'value'),
+    Input('adm2-dropdown', 'options'))
 def set_adm1_value(available_options):
     return available_options[0]['value']
 
