@@ -1,5 +1,7 @@
+import glob
 import logging
 import os
+import re
 from dataclasses import dataclass
 
 import fiona
@@ -139,14 +141,45 @@ class ClimatologyProcessing(Climatology):
         else:
             logger.info(f"All zonal statistics are available for {self.climatology}")
 
+    def climatology_yearly_table_generator(
+        self,
+    ):
+        """Aggregates monthly climatology predictions into a yearly table.
+        Processing steps: 
+        * Add month int month column (1-12)
+        * Sort values by administrative identifier and month
+        """
+        if not os.path.exists(f"{self.time_series}/{self.climatology}_yearly.csv"):
+            zs_files = glob.glob(os.path.join(self.zonal_statistics, '*.csv'))
+            
+            li = []
+            logger.info(f"Creating a yearly dataset for {self.climatology}")
+
+            for file in zs_files:
+                with open(f"{file}", 'r') as f:
+                    month = re.search('_\d{1,2}', file).group(0)
+                    month = month.replace("_", "")
+                    df = pd.read_csv(f, index_col=None, header=0)
+                    df['month'] = int(month)
+                    li.append(df)
+
+                data = pd.concat(li, axis=0, ignore_index=True)
+                data.sort_values(by=["OBJECTID_1", "month"], inplace=True)
+                data.to_csv(f"{self.time_series}/{self.climatology}_yearly.csv", index=False)
+                
+        else:
+            logger.info(f"Yearly time appended dataset exists for {self.climatology}")
+
 def raster_processing_flow(
     climatologies: list
     ) -> None:
     for url in climatologies:
         cmip_temp = ClimatologyProcessing(climatology_url=url)
+        cmip_temp._climatology_pathways(climatology_url=url)
         cmip_temp._write_local_raster()
         cmip_temp._mask_raster()
         cmip_temp._write_zonal_statistics()
+        cmip_temp.climatology_yearly_table_generator()
 
 
 if __name__=="__main__":
