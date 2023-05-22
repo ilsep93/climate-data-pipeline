@@ -1,16 +1,21 @@
+import json
+import os
+import sys
+
 import pandas as pd
 
+print(os.getcwd())
+sys.path.append("utils")
+from read_db_table import get_climatology_table
 
-# For now, using local dataset to create options list
-df = pd.read_csv("data/ACCESS1-0_rcp45/time_series/ACCESS1-0_rcp45_yearly.csv", encoding='utf-8-sig')
-data = df[['admin0Name', 'admin1Name', 'admin2Name']]
+data = get_climatology_table()
 
-adm0_list = data.admin0Name.unique()
-adm1_list = data.admin1Name.unique()
+adm0_list = data.admin0name.unique()
+adm1_list = data.admin1name.unique()
 
 adm1_options_dict = dict()
 for adm0 in adm0_list:
-    adm1_options_dict[adm0] = list(data[['admin1Name']][data.admin0Name == adm0]
+    adm1_options_dict[adm0] = list(data[['admin1name']][data.admin0name == adm0]
                               .squeeze()
                               .unique())
     
@@ -19,9 +24,10 @@ with open("../dash/adm1_options_dict.json", "w") as f:
 
 adm2_options_dict = dict()
 for adm1 in adm1_list:
-    adm2_options_dict[adm1] = list(data[['admin2Name']][data.admin1Name == adm1]
+    adm2_options_dict[adm1] = list(data[['admin2name']][data.admin1name == adm1]
                               .squeeze()
                               .unique())
 
-# TODO: Connect to db and pull names in case there are updateswith open("../dash/adm2_options_dict.json", "w") as f:
+
+with open("../dash/adm2_options_dict.json", "w") as f:
     json.dump(adm2_options_dict, f)
