@@ -13,6 +13,9 @@ for adm0 in adm0_list:
     adm1_options_dict[adm0] = list(data[['admin1Name']][data.admin0Name == adm0]
                               .squeeze()
                               .unique())
+    
+with open("../dash/adm1_options_dict.json", "w") as f:
+    json.dump(adm1_options_dict, f)
 
 adm2_options_dict = dict()
 for adm1 in adm1_list:
@@ -20,4 +23,5 @@ for adm1 in adm1_list:
                               .squeeze()
                               .unique())
 
-# TODO: Connect to db and pull names in case there are updates
+# TODO: Connect to db and pull names in case there are updateswith open("../dash/adm2_options_dict.json", "w") as f:
+    json.dump(adm2_options_dict, f)
