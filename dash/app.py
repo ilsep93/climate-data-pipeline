@@ -60,6 +60,7 @@ app.layout = html.Div(
                                 for adm0 in adm1_options_dict.keys()
                             ],
                             value="Democratic Republic of Congo",
+                            searchable=True,
                             clearable=False,
                             className="dropdown",
                         ),
@@ -79,7 +80,7 @@ app.layout = html.Div(
                             ],
                             value="Haut-Katanga",
                             clearable=False,
-                            searchable=False,
+                            searchable=True,
                             className="dropdown",
                         ),
                     ],
@@ -93,7 +94,8 @@ app.layout = html.Div(
                                 {"label": "", "value": ""}
                             ],
                             value="",
-                            clearable=True,
+                            clearable=False,
+                            searchable=True,
                             className="dropdown",
                         ),
                     ]
