@@ -50,7 +50,7 @@ app.layout = html.Div(
             children=[
                 html.Div(
                     children=[
-                        html.Div(children="adm0", className="menu-title"),
+                        html.Div(children="Country", className="menu-title"),
                         dcc.Dropdown(
                             id="adm0-dropdown",
                             options=[
@@ -65,7 +65,7 @@ app.layout = html.Div(
                 ),
                 html.Div(
                     children=[
-                        html.Div(children="adm1", className="menu-title"),
+                        html.Div(children="ADM1", className="menu-title"),
                         dcc.Dropdown(
                             id="adm1-dropdown",
                             options=[
@@ -84,7 +84,7 @@ app.layout = html.Div(
                 ),
                 html.Div(
                     children=[
-                        html.Div(children="adm2", className="menu-title"),
+                        html.Div(children="ADM2", className="menu-title"),
                         dcc.Dropdown(
                             id="adm2-dropdown",
                             options=[
