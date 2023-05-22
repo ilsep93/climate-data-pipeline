@@ -1,3 +1,4 @@
+import json
 import os
 import re
 import sys
@@ -74,7 +75,7 @@ app.layout = html.Div(
                                     "label": adm1.title(),
                                     "value": adm1,
                                 }
-                                for adm1 in adm1_options
+                                for adm1 in adm2_options_dict.keys()
                             ],
                             value="Haut-Katanga",
                             clearable=False,
@@ -89,11 +90,10 @@ app.layout = html.Div(
                         dcc.Dropdown(
                             id="adm2-dropdown",
                             options=[
-                                {"label": adm2, "value": adm2}
-                                for adm2 in adm2_options
+                                {"label": "", "value": ""}
                             ],
-                            value="Sakania",
-                            clearable=False,
+                            value="",
+                            clearable=True,
                             className="dropdown",
                         ),
                     ]
@@ -146,7 +146,7 @@ def set_adm1_value(available_options):
 @app.callback(
     Output('adm2-dropdown', 'value'),
     Input('adm2-dropdown', 'options'))
-def set_adm1_value(available_options):
+def set_adm2_value(available_options):
     return available_options[0]['value']
 
 @app.callback(
@@ -158,7 +158,7 @@ def set_adm1_value(available_options):
 )
 def update_charts(adm0, adm1, adm2):
     filtered_data = data.query(
-        " admin0Name== @adm0 and admin1Name == @adm1 and admin2Name == @adm2"
+        " admin0name== @adm0 and admin1name == @adm1 and admin2name == @adm2"
     )
     average_temp_figure = {
         "data": [
