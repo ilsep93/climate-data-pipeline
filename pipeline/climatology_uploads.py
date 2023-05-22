@@ -55,17 +55,6 @@ class ClimatologyUploads(Climatology):
                 
         else:
             logger.info(f"Yearly time appended dataset exists for {self.climatology}")
-    def db_validator(
-            self,
-    ) -> None:
-        
-        self.schema = "climatology"
-        engine = self._get_engine()
-        inspector = inspect(engine)
-
-        if self.schema not in inspector.get_schema_names():
-            CreateSchema(self.schema)
-
     def upload_to_db(
         self,
         engine: Engine
@@ -121,7 +110,6 @@ def local_to_postgres_flow(
     for url in climatologies:
         cmip_temp = ClimatologyUploads(climatology_url=url)
         cmip_temp.climatology_yearly_table_generator()
-        cmip_temp.db_validator()
         cmip_temp.upload_to_db(engine=engine)
 
 if __name__ == "__main__":
