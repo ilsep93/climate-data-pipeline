@@ -1,20 +1,18 @@
 import os
 import re
+import sys
 
 import pandas as pd
 from nested_adms import adm1_options_dict, adm2_options_dict
-from sqlalchemy.orm import DeclarativeBase
 
 from dash import Dash, Input, Output, dcc, html
 
-zs_path = "data/ACCESS1-0_rcp45/time_series/ACCESS1-0_rcp45_yearly.csv"
+sys.path.append("utils")
+from read_db_table import get_climatology_table
 
-data = pd.read_csv(zs_path)
 
-# adm0_options = data["admin0Name"].sort_values().unique()
-adm1_options = data["admin1Name"].sort_values().unique()
-adm2_options = data["admin2Name"].sort_values().unique()
 
+data = get_climatology_table()
 
 external_stylesheets = [
     {
