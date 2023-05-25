@@ -64,9 +64,9 @@ Zonal statistics can then be ingested to Postgres, either locally or through a D
 
 ## Database
 
-- [X] Brainstorm appropriate database design from raw to processed data. This will be based on Dash requirements for time series data, and what is easiest to ingest
-  - [X] Refactor raster ingestion to create a single table for all months of a given product, and allow for multiple climatologies. There will be one table per climatology.
-  - [X] Use dbt to create union table of all climatologies (mostly for practice, since dbt is not strictly necessary)
+- [X] Brainstorm appropriate database design from raw to processed data. This will be based on Dash requirements for time series data
+- [X] Refactor raster ingestion to create a single table for all months of a given product, and allow for multiple climatologies. There will be one table per climatology.
+ - [X] Use dbt to create union table of all climatologies (mostly for practice, since dbt is not strictly necessary)
 
 ## Dashboard
 
