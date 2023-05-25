@@ -1,6 +1,18 @@
-# Data Pipeline for High Resolution Raster Data
+# Subnational Climate Change in West Africa
 
-This project is my capstone for the [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp) 2023 cohort.
+I am interested in geospatial data, climate change, and inventive data visualizations that can gather the results of different experiments and climatology projections.
+
+For this purpose, this project creates a dashboard showing climate change projections in West Africa at the subnational level (second administrative division). I originally created this project as my capstone for part of the Data.Talks Data Engineering Zoomcamp, but have continued beyond the course for continued technical development.
+
+# Demo
+
+
+
+# Overview
+
+As part of this project, I processed raster data using Python libraries like `rasterio`, `fiona`, and `geopandas` and uploaded data to a PostgreSQL database (currently hosted as a Docker container). I then used `dbt` to create an aggregate SQL table that could be used for analysis.
+
+For visualization, I used Dash by Plotly based on a Flask framework to allow users to interact with different climatology projections.
 
 # Data
 
@@ -16,7 +28,7 @@ Full citation:
 
  ## Vector
 
-Shapefiles for [West and Central Africa](https://data.humdata.org/dataset/west-and-central-africa-administrative-boundaries-levels) were sourced from the Humanitarian Data Exchange (HDX).
+My source for shapefiles for [West and Central Africa](https://data.humdata.org/dataset/west-and-central-africa-administrative-boundaries-levels) was the Humanitarian Data Exchange (HDX).
 
 I used administrative levels 1 and 2 for my analysis.
 
@@ -24,41 +36,7 @@ I used administrative levels 1 and 2 for my analysis.
 
 I use Terraform to manage the Google Cloud resources used in this project, including Google Cloud Storage (GCS) and Big Query (BQ).
 
-Terraform is used to create, update, and destroy resources used in this project.
-
-# Spatial Analysis
-
-This pipeline provides subnational estimates of climate projections. 
-
-To achieve this goal, I calculate zonal statistics at the second administrative level using high resolution geospatial climatologies for West African countries:
-* Benin
-* Burkina Faso
-* Cote d'Ivoire
-* Cabo Verde
-* Camerooon
-* Central African Republic
-* Chad
-* Democratic Republic of the Congo
-* Equatorial Guinea
-* Gabon
-* Gambia
-* Ghana
-* Guinea
-* Guinea Bissau
-* Liberia
-* Mali
-* Mauritania
-* Niger
-* Nigeria
-* Republic of Congo
-* Sao Tome and Principe
-* Senegal
-* Sierra Leone
-* Togo
-
-# PostgreSQL
-
-Zonal statistics can then be ingested to Postgres, either locally or through a Docker container (see docker folder).
+I used some introductory Terraform to create, update, and destroy resources used in this project.
 
 # TODO
 
@@ -73,5 +51,6 @@ Zonal statistics can then be ingested to Postgres, either locally or through a D
 - [X] Create a skeleton Dash dashboard to visualize climate projections
   - [X] User selects ADM based on dropdown menu
   - [X] Nested ADM selection (ie. user can only select adm2s that are in a given adm1)
-  - [ ] Line graph shows how mean and max climate for the ADM is projected to change in 2060-2081, by month. Different line for each climatology. Each line will be labeled and have a different color. User can compare projections across climatologies
+  - [X] Line graph shows how mean and max climate for the ADM is projected to change in 2060-2081, by month. Different line for each climatology. Each line will be labeled and have a different color. User can compare projections across climatologies
   - [ ] Create a map for all of West Africa ADM2s, with a darker color showing a greater temperature January and December
+  - [ ] Add details about the different climatologies and their assumptions for context
