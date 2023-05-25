@@ -165,12 +165,18 @@ def update_charts(adm0, adm1, adm2):
     filtered_data = data.query(
         "admin0name== @adm0 and admin1name == @adm1 and admin2name == @adm2"
     )
-    filtered_data['Climatology'] = filtered_data['climatology']
+
     average_temp_fig = px.line(
         filtered_data,
         x="month",
         y="mean",
-        color="Climatology",
+        color="climatology",
+        labels={
+            "month": "Month",
+            "mean": "Average °C",
+            "climatology": "Climatology"
+        },
+        title=f"Projected average temperature (°C) in {adm2} for 2061-2080, by climatology",
         template=THEME,
         )
     
@@ -178,7 +184,13 @@ def update_charts(adm0, adm1, adm2):
         filtered_data, 
         x="month",
         y="max",
-        color='Climatology',
+        color='climatology',
+        labels={
+            "month": "Month",
+            "max": "Maximum °C",
+            "climatology": "Climatology"
+        },
+        title=f"Projected maximum temperature (°C) in {adm2} for 2061-2080, by climatology",
         template=THEME,
         )
     
