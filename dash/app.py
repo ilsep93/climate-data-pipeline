@@ -4,6 +4,7 @@ import re
 import sys
 
 import pandas as pd
+import plotly.express as px
 
 from dash import Dash, Input, Output, dcc, html
 
@@ -159,47 +160,28 @@ def set_adm2_value(available_options):
     Input("adm2-dropdown", "value")
 )
 def update_charts(adm0, adm1, adm2):
-    filtered_data = data.query(
-        " admin0name== @adm0 and admin1name == @adm1 and admin2name == @adm2"
-    )
-    average_temp_figure = {
-        "data": [
-            {
-                "x": filtered_data["month"],
-                "y": filtered_data["mean"],
-                "type": "lines",
-                "hovertemplate": "%{y:.2f}°C<extra></extra>",
-            },
-        ],
-        "layout": {
-            "title": {
-                "text": "Average Temperature °C",
-                "x": 0.05,
-                "xanchor": "left",
-            },
-            "xaxis": {"fixedrange": True},
-            "yaxis": {"ticksuffix": "°C", "fixedrange": True},
-            "colorway": ["#17B897"],
-        },
-    }
+    THEME = "simple_white"
 
-    max_temperature_figure = {
-        "data": [
-            {
-                "x": filtered_data["month"],
-                "y": filtered_data["max"],
-                "type": "lines",
-                "hovertemplate": "%{y:.2f}°C<extra></extra>",
-            },
-        ],
-        "layout": {
-            "title": {"text": "Maximum Temperature °C", "x": 0.05, "xanchor": "left"},
-            "xaxis": {"fixedrange": True},
-            "yaxis": {"fixedrange": True},
-            "colorway": ["#E12D39"],
-        },
-    }
-    return average_temp_figure, max_temperature_figure
+    filtered_data = data.query(
+        "admin0name== @adm0 and admin1name == @adm1 and admin2name == @adm2"
+    )
+    average_temp_fig = px.line(
+        filtered_data,
+        x="month",
+        y="mean",
+        color="climatology",
+        template=THEME,
+        )
+    
+    max_temp_fig = px.line(
+        filtered_data, 
+        x="month",
+        y="max",
+        color='climatology',
+        template=THEME,
+        )
+    
+    return average_temp_fig, max_temp_fig
 
 if __name__ == "__main__":
     app.run_server(debug=True)
