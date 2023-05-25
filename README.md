@@ -6,7 +6,7 @@ For this purpose, this project creates a dashboard showing climate change projec
 
 # Demo
 
-
+https://github.com/ilsep93/climate-data-pipeline/assets/54957973/572591c2-e0ea-4a9e-87e8-639ec7f453cd
 
 # Overview
 
