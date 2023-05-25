@@ -1,20 +1,24 @@
+import json
 import os
 import re
+import sys
 
 import pandas as pd
-from nested_adms import adm1_options_dict, adm2_options_dict
-from sqlalchemy.orm import DeclarativeBase
+import plotly.express as px
 
 from dash import Dash, Input, Output, dcc, html
 
-zs_path = "data/ACCESS1-0_rcp45/time_series/ACCESS1-0_rcp45_yearly.csv"
+sys.path.append("utils")
+from read_db_table import get_climatology_table
 
-data = pd.read_csv(zs_path)
+with open("dash/adm1_options_dict.json") as adm1_options_dict:
+    adm1_options_dict = json.load(adm1_options_dict)
 
-# adm0_options = data["admin0Name"].sort_values().unique()
-adm1_options = data["admin1Name"].sort_values().unique()
-adm2_options = data["admin2Name"].sort_values().unique()
+with open("dash/adm2_options_dict.json") as adm2_options_dict:
+    adm2_options_dict = json.load(adm2_options_dict)
 
+data = get_climatology_table()
+data['month'] = pd.to_datetime(data['month'], format='%m').dt.month_name()
 
 external_stylesheets = [
     {
@@ -58,6 +62,7 @@ app.layout = html.Div(
                                 for adm0 in adm1_options_dict.keys()
                             ],
                             value="Democratic Republic of Congo",
+                            searchable=True,
                             clearable=False,
                             className="dropdown",
                         ),
@@ -70,14 +75,13 @@ app.layout = html.Div(
                             id="adm1-dropdown",
                             options=[
                                 {
-                                    "label": adm1.title(),
-                                    "value": adm1,
+                                    "label": "",
+                                    "value": "",
                                 }
-                                for adm1 in adm1_options
                             ],
                             value="Haut-Katanga",
                             clearable=False,
-                            searchable=False,
+                            searchable=True,
                             className="dropdown",
                         ),
                     ],
@@ -88,11 +92,11 @@ app.layout = html.Div(
                         dcc.Dropdown(
                             id="adm2-dropdown",
                             options=[
-                                {"label": adm2, "value": adm2}
-                                for adm2 in adm2_options
+                                {"label": "", "value": ""}
                             ],
-                            value="Sakania",
+                            value="",
                             clearable=False,
+                            searchable=True,
                             className="dropdown",
                         ),
                     ]
@@ -145,7 +149,7 @@ def set_adm1_value(available_options):
 @app.callback(
     Output('adm2-dropdown', 'value'),
     Input('adm2-dropdown', 'options'))
-def set_adm1_value(available_options):
+def set_adm2_value(available_options):
     return available_options[0]['value']
 
 @app.callback(
@@ -156,47 +160,41 @@ def set_adm1_value(available_options):
     Input("adm2-dropdown", "value")
 )
 def update_charts(adm0, adm1, adm2):
-    filtered_data = data.query(
-        " admin0Name== @adm0 and admin1Name == @adm1 and admin2Name == @adm2"
-    )
-    average_temp_figure = {
-        "data": [
-            {
-                "x": filtered_data["month"],
-                "y": filtered_data["mean"],
-                "type": "lines",
-                "hovertemplate": "%{y:.2f}°C<extra></extra>",
-            },
-        ],
-        "layout": {
-            "title": {
-                "text": "Average Temperature °C",
-                "x": 0.05,
-                "xanchor": "left",
-            },
-            "xaxis": {"fixedrange": True},
-            "yaxis": {"ticksuffix": "°C", "fixedrange": True},
-            "colorway": ["#17B897"],
-        },
-    }
+    THEME = "simple_white"
 
-    max_temperature_figure = {
-        "data": [
-            {
-                "x": filtered_data["month"],
-                "y": filtered_data["max"],
-                "type": "lines",
-                "hovertemplate": "%{y:.2f}°C<extra></extra>",
-            },
-        ],
-        "layout": {
-            "title": {"text": "Maximum Temperature °C", "x": 0.05, "xanchor": "left"},
-            "xaxis": {"fixedrange": True},
-            "yaxis": {"fixedrange": True},
-            "colorway": ["#E12D39"],
+    filtered_data = data.query(
+        "admin0name== @adm0 and admin1name == @adm1 and admin2name == @adm2"
+    )
+
+    average_temp_fig = px.line(
+        filtered_data,
+        x="month",
+        y="mean",
+        color="climatology",
+        labels={
+            "month": "Month",
+            "mean": "Average °C",
+            "climatology": "Climatology"
         },
-    }
-    return average_temp_figure, max_temperature_figure
+        title=f"Projected average temperature (°C) in {adm2} for 2061-2080, by climatology",
+        template=THEME,
+        )
+    
+    max_temp_fig = px.line(
+        filtered_data, 
+        x="month",
+        y="max",
+        color='climatology',
+        labels={
+            "month": "Month",
+            "max": "Maximum °C",
+            "climatology": "Climatology"
+        },
+        title=f"Projected maximum temperature (°C) in {adm2} for 2061-2080, by climatology",
+        template=THEME,
+        )
+    
+    return average_temp_fig, max_temp_fig
 
 if __name__ == "__main__":
     app.run_server(debug=True)
