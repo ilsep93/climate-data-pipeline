@@ -1,8 +1,6 @@
 version: "3.9"
-
+name: west-africa-climatology
 services:
-  
-  
   pgdatabase:
     container_name: climate_postgres
     image: postgres:13
