@@ -17,6 +17,7 @@ with open("dash/adm2_options_dict.json") as adm2_options_dict:
     adm2_options_dict = json.load(adm2_options_dict)
 
 data = get_climatology_table()
+data['month'] = pd.to_datetime(data['month'], format='%m').dt.month_name()
 
 external_stylesheets = [
     {
