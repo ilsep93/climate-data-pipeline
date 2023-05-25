@@ -165,11 +165,12 @@ def update_charts(adm0, adm1, adm2):
     filtered_data = data.query(
         "admin0name== @adm0 and admin1name == @adm1 and admin2name == @adm2"
     )
+    filtered_data['Climatology'] = filtered_data['climatology']
     average_temp_fig = px.line(
         filtered_data,
         x="month",
         y="mean",
-        color="climatology",
+        color="Climatology",
         template=THEME,
         )
     
@@ -177,7 +178,7 @@ def update_charts(adm0, adm1, adm2):
         filtered_data, 
         x="month",
         y="max",
-        color='climatology',
+        color='Climatology',
         template=THEME,
         )
     
