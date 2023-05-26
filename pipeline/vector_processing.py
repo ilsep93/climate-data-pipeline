@@ -9,7 +9,7 @@ import geopandas as gpd
 import requests
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='adm.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename='vector_downloads.log', encoding='utf-8', level=logging.DEBUG)
 
 ROOT_DIR = Path(__file__).parent.parent
 
