@@ -1,8 +1,10 @@
 import io
 import logging
 import os
+from pathlib import Path
 from zipfile import ZipFile
 
+import geopandas as gpd
 import requests
 
 logger = logging.getLogger(__name__)
@@ -38,6 +40,29 @@ def download_shapefile(
 
 
 def download_geojson(
+def shapefile_to_geojson(
+        shp_path: Path,
+        outpath: Path
+        ) -> None:
+    """Transforms shapefile to geojson
+
+    Args:
+        shp_path (str): Location of shapefile, without extension
+        outpath (str): Desired location of geojson, without extension
+    """
+    if not os.path.exists(f"{outpath}.geojson"):
+        shp_file = gpd.read_file(f"{shp_path}")
+        shp_file.to_file(Path(f"{outpath}.geojson"), driver='GeoJSON')
+    
+    else:
+        logger.info("GeoJSON already exists in provided location.")
+
+if __name__ == "__main__":
     shapefile_location = download_shapefile(
         url="https://data.humdata.org/dataset/b20cd345-93fb-43bd-9c6e-7bc7d87b63eb/resource/30b6979a-d3f3-4982-971f-dc53f076bc52/download/wca_admbnda_adm2_ocha.zip",
         out_path=Path(f"{ROOT_DIR}/data/adm2/")
+        )
+    shapefile_to_geojson(
+        shp_path=Path(f"{ROOT_DIR}/data/adm2/"),
+        outpath=Path("{ROOT_DIR}/dash/west_africa")
+        )
