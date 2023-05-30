@@ -67,7 +67,9 @@ def shapefile_to_geojson(
     """
     if not os.path.exists(f"{outpath}.geojson"):
         shp_file = gpd.read_file(f"{shp_path}")
+        shp_file.columns = [x.lower() for x in shp_file.columns]
         shp_file.to_file(Path(f"{outpath}.geojson"), driver='GeoJSON')
+        logger.info(f"Saved GeoJSON to {outpath}.")
     
     else:
         logger.info("GeoJSON already exists in provided location.")
@@ -79,7 +81,7 @@ if __name__ == "__main__":
         )
     shapefile_to_geojson(
         shp_path=Path(f"{ROOT_DIR}/data/adm2/"),
-        outpath=Path("{ROOT_DIR}/dash/west_africa")
+        outpath=Path(f"{ROOT_DIR}/dash/west_africa")
         )
     # download_geojson(
     #     url="https://data.humdata.org/dataset/b20cd345-93fb-43bd-9c6e-7bc7d87b63eb/resource/6166e76c-bc33-4c45-8031-649d76aa5644/download/wca_admbnda_adm2_ocha.json",
