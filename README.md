@@ -52,5 +52,6 @@ I used some introductory Terraform to create, update, and destroy resources used
   - [X] User selects ADM based on dropdown menu
   - [X] Nested ADM selection (ie. user can only select adm2s that are in a given adm1)
   - [X] Line graph shows how mean and max climate for the ADM is projected to change in 2060-2081, by month. Different line for each climatology. Each line will be labeled and have a different color. User can compare projections across climatologies
-  - [ ] Create a map for all of West Africa ADM2s, with a darker color showing a greater temperature January and December
+  - [X] Create a map for a country with ADM2 boundaries, with a darker color showing a higher temperature. Climatology and month are hardcoded.
   - [ ] Add details about the different climatologies and their assumptions for context
+  - [ ] Add new tab to generate map based on month and climatology that is specified by users
