@@ -38,6 +38,12 @@ I use Terraform to manage the Google Cloud resources used in this project, inclu
 
 I used some introductory Terraform to create, update, and destroy resources used in this project.
 
+# Design Patterns and Clean Architecture
+
+Lessons Learned:
+
+* Factory design pattern to create climatology products; concrete implementation is separate from client code that creates products. There is the option to add additional scenarios and products as they become available by expanding (rather than modifying) existing code.
+
 # TODO
 
 ## Database

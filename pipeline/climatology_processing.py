@@ -8,7 +8,7 @@ import fiona
 import geopandas as gpd
 import pandas as pd
 import rasterio
-from climatology import Climatology
+from climatology import get_climatology
 from rasterio import mask
 from rasterstats import zonal_stats
 

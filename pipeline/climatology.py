@@ -158,3 +158,27 @@ class MinimumTemperature(ChelsaProduct):
         download_urls = [f"{base_url}/CHELSA_tasmin_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
         return download_urls
 
+
+def get_climatology(product: str):
+    """Returns concrete implementation based on user provided product
+
+    Args:
+        product (str): Requested CHELSA product as a string
+
+    Returns:
+        _type_: Concrete implementation of CHELSA product
+    """
+    available_products = [product.value for product in Climatology]
+    if product not in available_products:
+        raise ValueError(f"This product is not available. \
+                         Options include {available_products}")
+
+    factories = {
+        "temp": Temperature(),
+        "bio": Bio(),
+        "prec": Precipitation(),
+        "tmax": MaximumTemperature(),
+        "tmin": MinimumTemperature(),
+    }
+
+    return factories[product]
