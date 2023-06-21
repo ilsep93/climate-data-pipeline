@@ -22,6 +22,10 @@ class Scenario(Enum):
     BNU_ESM_rcp45 = "BNU-ESM_rcp45"
 
 
+class Phase(Enum):
+    CMIP5 = "cmip5"
+    CMIP6 = "cmip6"
+
     
     def _climatology_pathways(self, climatology_url):   
         self._url_to_climatology(climatology_url)
