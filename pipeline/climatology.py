@@ -1,6 +1,7 @@
 import os
 import re
 from dataclasses import dataclass
+from abc import ABC, abstractmethod
 from enum import Enum
 
 
@@ -59,12 +60,35 @@ class ChelsaProduct(ABC):
         """
 
 
+class Temperature(ChelsaProduct):
+    """Concrete implementation of temperature ChelsaProduct"""
+
+    climatology = Climatology.TEMP
+    scenarios = [Scenario.ACCESS1_0_rcp45,
+                 Scenario.ACCESS1_0_rcp85,
+                 Scenario.BNU_ESM_rcp26,
+                 Scenario.BNU_ESM_rcp45,
+                 Scenario.CCSM4_rcp60,
+                 ]
+
     def url_constructor(self) -> list:
         months = range(1, 12)
         base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
         
         download_urls = [f"{base_url}/CHELSA_tas_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
         return download_urls
+
+
+class Bio(ChelsaProduct):
+    """Concrete implementation of bio ChelsaProduct"""
+
+    climatology = Climatology.BIO
+    scenarios = [Scenario.ACCESS1_0_rcp45,
+                 Scenario.ACCESS1_0_rcp85,
+                 Scenario.BNU_ESM_rcp26,
+                 Scenario.BNU_ESM_rcp45,
+                 Scenario.CCSM4_rcp60,
+                 ]
 
     def url_constructor(self) -> list:
         months = range(1, 12)
@@ -73,6 +97,18 @@ class ChelsaProduct(ABC):
         download_urls = [f"{base_url}/CHELSA_bio_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
         return download_urls
 
+
+class Precipitation(ChelsaProduct):
+    """Concrete implementation of precipitation ChelsaProduct"""
+
+    climatology = Climatology.PREC
+    scenarios = [Scenario.ACCESS1_0_rcp45,
+                 Scenario.ACCESS1_0_rcp85,
+                 Scenario.BNU_ESM_rcp26,
+                 Scenario.BNU_ESM_rcp45,
+                 Scenario.CCSM4_rcp60,
+                 ]
+
     def url_constructor(self) -> list:
         months = range(1, 12)
         base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
@@ -80,12 +116,36 @@ class ChelsaProduct(ABC):
         download_urls = [f"{base_url}/CHELSA_pr_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
         return download_urls
     
+
+class MaximumTemperature(ChelsaProduct):
+    """Concrete implementation of maxiumum temperature ChelsaProduct"""
+    
+    climatology = Climatology.TMAX
+    scenarios = [Scenario.ACCESS1_0_rcp45,
+                 Scenario.ACCESS1_0_rcp85,
+                 Scenario.BNU_ESM_rcp26,
+                 Scenario.BNU_ESM_rcp45,
+                 Scenario.CCSM4_rcp60,
+                 ]
+
     def url_constructor(self) -> list:
         months = range(1, 12)
         base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
         
         download_urls = [f"{base_url}/CHELSA_tasmax_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
         return download_urls
+
+class MinimumTemperature(ChelsaProduct):
+    """Concrete implementation of minimum temperature ChelsaProduct"""
+    
+    climatology = Climatology.TMIN
+    scenarios = [Scenario.ACCESS1_0_rcp45,
+                 Scenario.ACCESS1_0_rcp85,
+                 Scenario.BNU_ESM_rcp26,
+                 Scenario.BNU_ESM_rcp45,
+                 Scenario.CCSM4_rcp60,
+                 ]
+
     def url_constructor(self) -> list:
         months = range(1, 12)
         base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
