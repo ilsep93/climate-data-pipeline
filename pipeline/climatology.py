@@ -1,10 +1,15 @@
 import os
 import re
 from dataclasses import dataclass
+from enum import Enum
 
 
-@dataclass
-class Climatology():
+class Climatology(Enum):
+    TEMP = "temp"
+    BIO = "bio"
+    PREC = "prec"
+    TMAX = "tmax"
+    TMIN = "tmin"
 
     def _url_to_climatology(self, climatology_url):
         self.climatology = re.search(string=climatology_url, pattern="CHELSA_tas_mon_(.*_rcp\d\d)").group(1)
