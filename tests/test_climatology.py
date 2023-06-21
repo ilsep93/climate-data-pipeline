@@ -47,3 +47,9 @@ class TestClimatology:
         with rasterio.open(random_url, "r") as rast:
            raster = rast.read()
            assert isinstance(raster, np.ndarray)
+
+    def test_filepaths_created(self):
+        temp = get_climatology("temp")
+        temp.generate_pathways()
+
+        assert os.path.exists(f"data/{temp.phase.value}/{temp.climatology.value}/{temp.scenario.value}/raw/")

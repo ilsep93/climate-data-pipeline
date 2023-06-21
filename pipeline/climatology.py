@@ -1,8 +1,8 @@
 import os
 import re
-from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from enum import Enum
+from pathlib import Path
 
 
 class Climatology(Enum):
@@ -26,21 +26,6 @@ class Phase(Enum):
     CMIP6 = "cmip6"
 
     
-    def _climatology_pathways(self, climatology_url):   
-        self._url_to_climatology(climatology_url)
-
-        self.raw_raster = f"data/{self.climatology}/raw"
-        self.masked_raster = f"data/{self.climatology}/masked"
-        self.zonal_statistics = f"data/{self.climatology}/zonal_statistics"
-        self.time_series = f"data/{self.climatology}/time_series"
-
-        for path in (self.raw_raster,
-                     self.masked_raster,
-                     self.zonal_statistics,
-                     self.time_series
-                     ):
-            if not os.path.exists(path):
-                os.makedirs(path)    """Abstract class for all CHELSA climatology products"""
 class ChelsaProduct(ABC):
     """Abstract class for all CHELSA climatology products"""
 
@@ -59,6 +44,19 @@ class ChelsaProduct(ABC):
             list: List of URLs that can be used to download raster .tif file
         """
 
+
+    def generate_pathways(self) -> None:
+        """Create local directories to save downloaded and processed data"""
+
+        for scenario in self.scenarios:
+            base_export_path = Path(f"data/{self.phase.value}/{self.climatology.value}/{scenario.value}")
+            folders = ["raw", "masked", "zonal_statistics", "time_series"]
+
+            for folder in folders:
+                path = os.path.join(base_export_path, folder)
+                if not os.path.exists(path):
+                    os.makedirs(path)
+    
 
 class Temperature(ChelsaProduct):
     """Concrete implementation of temperature ChelsaProduct"""
