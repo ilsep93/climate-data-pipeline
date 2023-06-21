@@ -45,6 +45,13 @@ class ChelsaProduct(ABC):
         """
 
 
+    def extract_experiment_from_url(self, url: str) -> None:
+        """Extracts the experiment name from a provided URL. Expect the same pattern for each product
+
+        Args:
+            url (str): URL used to download climatology from https://chelsa-climate.org/future/
+        """
+
     def generate_pathways(self) -> None:
         """Create local directories to save downloaded and processed data"""
 
