@@ -41,4 +41,14 @@ class Phase(Enum):
                      self.time_series
                      ):
             if not os.path.exists(path):
-                os.makedirs(path)
+                os.makedirs(path)    """Abstract class for all CHELSA climatology products"""
+class ChelsaProduct(ABC):
+    """Abstract class for all CHELSA climatology products"""
+
+    phase: Phase = Phase.CMIP5
+    time_period: str = "2061-2080"
+    base_url: str
+    climatology: Climatology
+    scenarios: list[Scenario]
+
+    @abstractmethod
