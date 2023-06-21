@@ -38,22 +38,37 @@ I use Terraform to manage the Google Cloud resources used in this project, inclu
 
 I used some introductory Terraform to create, update, and destroy resources used in this project.
 
+# Design Patterns and Clean Architecture
+
+Lessons Learned:
+
+* Factory design pattern to create climatology products; concrete implementation is separate from client code that creates products. There is the option to add additional scenarios and products as they become available by expanding (rather than modifying) existing code.
+
 # TODO
 
 ## Database
 
-- [X] Brainstorm appropriate database design from raw to processed data. This will be based on Dash requirements for time series data
-- [X] Refactor raster ingestion to create a single table for all months of a given product, and allow for multiple climatologies. There will be one table per climatology.
+- Database Design
+  - [X] Brainstorm appropriate database design from raw to processed data. This will be based on Dash requirements for time series data
+  - [X] Refactor raster ingestion to create a single table for all months of a given product, and allow for multiple climatologies. There will be one table per climatology.
  - [X] Use dbt to create union table of all climatologies (mostly for practice, since dbt is not strictly necessary)
- - [ ] Allow pipeline to download additional types of climate data. Pipeline currently supports temperature only.
- - [ ] Add mock database connection for unit testing
+ - Extending Functionality
+   - [ ] Allow pipeline to download additional types of climate data. Pipeline currently supports temperature only.
+
+
+## Unit Testing
+   - [X] CHELSA product classes
+   - [ ] Processing tasks
+   - [ ] Data upload tasks
 
 ## Dashboard
 
-- [X] Create a skeleton Dash dashboard to visualize climate projections
+- V1 "skeleton" dashboard
   - [X] User selects ADM based on dropdown menu
   - [X] Nested ADM selection (ie. user can only select adm2s that are in a given adm1)
   - [X] Line graph shows how mean and max climate for the ADM is projected to change in 2060-2081, by month. Different line for each climatology. Each line will be labeled and have a different color. User can compare projections across climatologies
   - [X] Create a map for a country with ADM2 boundaries, with a darker color showing a higher temperature. Climatology and month are hardcoded.
+
+- V2 dashboard
   - [ ] Add details about the different climatologies and their assumptions for context
   - [ ] Add new tab to generate map based on month and climatology that is specified by users
