@@ -11,8 +11,6 @@ class Climatology(Enum):
     TMAX = "tmax"
     TMIN = "tmin"
 
-    def _url_to_climatology(self, climatology_url):
-        self.climatology = re.search(string=climatology_url, pattern="CHELSA_tas_mon_(.*_rcp\d\d)").group(1)
 
 class Scenario(Enum):
     ACCESS1_0_rcp45 = "ACCESS1-0_rcp45"
@@ -52,3 +50,46 @@ class ChelsaProduct(ABC):
     scenarios: list[Scenario]
 
     @abstractmethod
+    def url_constructor(self) -> list:
+        """Constructs a list of urls based on a base url and available scenarios.
+        Expect 12 URLs (one per month) for each available scenario.
+
+        Returns:
+            list: List of URLs that can be used to download raster .tif file
+        """
+
+
+    def url_constructor(self) -> list:
+        months = range(1, 12)
+        base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
+        
+        download_urls = [f"{base_url}/CHELSA_tas_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
+        return download_urls
+
+    def url_constructor(self) -> list:
+        months = range(1, 12)
+        base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
+        
+        download_urls = [f"{base_url}/CHELSA_bio_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
+        return download_urls
+
+    def url_constructor(self) -> list:
+        months = range(1, 12)
+        base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
+        
+        download_urls = [f"{base_url}/CHELSA_pr_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
+        return download_urls
+    
+    def url_constructor(self) -> list:
+        months = range(1, 12)
+        base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
+        
+        download_urls = [f"{base_url}/CHELSA_tasmax_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
+        return download_urls
+    def url_constructor(self) -> list:
+        months = range(1, 12)
+        base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
+        
+        download_urls = [f"{base_url}/CHELSA_tasmin_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
+        return download_urls
+
