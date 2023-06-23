@@ -1,8 +1,9 @@
 import os
-import re
 from abc import ABC, abstractmethod
 from enum import Enum
 from pathlib import Path
+
+import numpy as np
 
 
 class Climatology(Enum):
@@ -25,7 +26,6 @@ class Phase(Enum):
     CMIP5 = "cmip5"
     CMIP6 = "cmip6"
 
-    
 class ChelsaProduct(ABC):
     """Abstract class for all CHELSA climatology products"""
 
