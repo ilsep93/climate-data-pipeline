@@ -69,11 +69,18 @@ class ChelsaProduct(ABC):
         return download_url
 
 
-        Args:
-            url (str): URL used to download climatology from https://chelsa-climate.org/future/
-        """
-
     def get_pathways(self, scenario: Scenario) -> list:
+        """Generates pathways for different processing steps and creates directories
+
+        Args:
+            scenario (Scenario): _description_
+
+        Raises:
+            ValueError: _description_
+
+        Returns:
+            list: _description_
+        """
         if scenario not in self.scenarios:
             raise ValueError(f"Scenario not available. \
                              Options include {self.scenarios}")
