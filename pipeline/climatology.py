@@ -176,14 +176,14 @@ class MinimumTemperature(ChelsaProduct):
     base_url = "tasmin"
 
 
-def get_climatology(product: str):
+def get_climatology(product: str) -> ChelsaProduct:
     """Returns concrete implementation based on user provided product
 
     Args:
         product (str): Requested CHELSA product as a string
 
     Returns:
-        _type_: Concrete implementation of CHELSA product
+        ChelsaProduct: Concrete implementation of CHELSA product
     """
     available_products = [product.value for product in Climatology]
     if product not in available_products:
