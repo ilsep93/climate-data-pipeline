@@ -41,7 +41,7 @@ class TestClimatology:
 
         url = temp.get_url(scenario=random_scenario, month=random_month)
 
-        assert len(urls) == 12
+        assert type(url) == str
     
     def test_valid_scenarios_for_url(self):
         temp = get_climatology("temp")
