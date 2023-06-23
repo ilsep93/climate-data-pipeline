@@ -35,13 +35,13 @@ class TestClimatology:
 
         temp = get_climatology("temp")
         available_products = len(temp.scenarios)
-        urls = temp.url_constructor()
+        urls = temp.get_urls(scenario=Scenario.ACCESS1_0_rcp45)
 
         assert len(urls) == available_products * 12
     
     def test_valid_urls_constructed(self):
         temp = get_climatology("temp")
-        urls = temp.url_constructor()
+        urls = temp.get_urls(scenario=Scenario.ACCESS1_0_rcp45)
         random_url = random.choice(urls)
 
         with rasterio.open(random_url, "r") as rast:

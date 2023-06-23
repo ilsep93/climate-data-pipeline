@@ -36,7 +36,7 @@ class ChelsaProduct(ABC):
     scenarios: list[Scenario]
 
     @abstractmethod
-    def url_constructor(self) -> list:
+    def get_urls(self) -> list:
         """Constructs a list of urls based on a base url and available scenarios.
         Expect 12 URLs (one per month) for each available scenario.
 
@@ -52,8 +52,7 @@ class ChelsaProduct(ABC):
             url (str): URL used to download climatology from https://chelsa-climate.org/future/
         """
 
-    def generate_pathways(self) -> None:
-        """Create local directories to save downloaded and processed data"""
+    def get_pathways(self, scenario: Scenario) -> list:
 
         for scenario in self.scenarios:
             base_export_path = Path(f"data/{self.phase.value}/{self.climatology.value}/{scenario.value}")
@@ -76,11 +75,10 @@ class Temperature(ChelsaProduct):
                  Scenario.CCSM4_rcp60,
                  ]
 
-    def url_constructor(self) -> list:
-        months = range(1, 12)
+    def get_urls(self, scenario: Scenario) -> list:
         base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
         
-        download_urls = [f"{base_url}/CHELSA_tas_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
+        download_urls = [f"{base_url}/CHELSA_tas_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for month in months]
         return download_urls
 
 
@@ -95,8 +93,7 @@ class Bio(ChelsaProduct):
                  Scenario.CCSM4_rcp60,
                  ]
 
-    def url_constructor(self) -> list:
-        months = range(1, 12)
+    def get_urls(self, scenario: Scenario) -> list:
         base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
         
         download_urls = [f"{base_url}/CHELSA_bio_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
@@ -114,8 +111,7 @@ class Precipitation(ChelsaProduct):
                  Scenario.CCSM4_rcp60,
                  ]
 
-    def url_constructor(self) -> list:
-        months = range(1, 12)
+    def get_urls(self, scenario: Scenario) -> list:
         base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
         
         download_urls = [f"{base_url}/CHELSA_pr_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
@@ -133,8 +129,7 @@ class MaximumTemperature(ChelsaProduct):
                  Scenario.CCSM4_rcp60,
                  ]
 
-    def url_constructor(self) -> list:
-        months = range(1, 12)
+    def get_urls(self, scenario: Scenario) -> list:
         base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
         
         download_urls = [f"{base_url}/CHELSA_tasmax_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
@@ -151,8 +146,7 @@ class MinimumTemperature(ChelsaProduct):
                  Scenario.CCSM4_rcp60,
                  ]
 
-    def url_constructor(self) -> list:
-        months = range(1, 12)
+    def get_urls(self, scenario: Scenario) -> list:
         base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
         
         download_urls = [f"{base_url}/CHELSA_tasmin_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
