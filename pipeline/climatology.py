@@ -68,8 +68,6 @@ class ChelsaProduct(ABC):
         download_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}/CHELSA_{self.base_url}_mon_{scenario.value}_r1i1p1_g025.nc_{month.value}_{self.time_period}_V1.2.tif"
         return download_url
 
-    def extract_experiment_from_url(self, url: str) -> None:
-        """Extracts the experiment name from a provided URL. Expect the same pattern for each product
 
         Args:
             url (str): URL used to download climatology from https://chelsa-climate.org/future/
