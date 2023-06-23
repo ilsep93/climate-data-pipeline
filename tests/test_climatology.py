@@ -38,6 +38,10 @@ class TestClimatology:
         urls = temp.get_urls(scenario=Scenario.ACCESS1_0_rcp45)
 
         assert len(urls) == available_products * 12
+    def test_valid_scenarios_for_url(self):
+        temp = get_climatology("temp")
+        with pytest.raises(ValueError): 
+            temp.get_urls(scenario="DOES NOT EXIST")
     
     def test_valid_urls_constructed(self):
         temp = get_climatology("temp")
