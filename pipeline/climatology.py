@@ -51,15 +51,22 @@ class ChelsaProduct(ABC):
     scenarios: list[Scenario]
     months: list[Month]
 
-    @abstractmethod
-    def get_urls(self) -> list:
-        """Constructs a list of urls based on a base url and available scenarios.
-        Expect 12 URLs (one per month) for each available scenario.
+    def get_url(self, scenario: Scenario, month: Month) -> str:
+        """Constructs a URL based on a given scenario and month for a given product.
 
         Returns:
-            list: List of URLs that can be used to download raster .tif file
+            download_url: URL that can be used to download raster .tif file
         """
+        if scenario not in self.scenarios:
+            raise ValueError(f"This product is not available. \
+                         Options include {self.scenarios}")
+        
+        if month not in self.months:
+            raise ValueError(f"This month is not available. \
+                         Options include {self.months}")
 
+        download_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}/CHELSA_{self.base_url}_mon_{scenario.value}_r1i1p1_g025.nc_{month.value}_{self.time_period}_V1.2.tif"
+        return download_url
 
     def extract_experiment_from_url(self, url: str) -> None:
         """Extracts the experiment name from a provided URL. Expect the same pattern for each product
@@ -102,18 +109,8 @@ class Temperature(ChelsaProduct):
                  Scenario.BNU_ESM_rcp45,
                  Scenario.CCSM4_rcp60,
                  ]
-
-    def get_urls(self, scenario: Scenario) -> list:
-        if scenario not in self.scenarios:
-            raise ValueError(f"This product is not available. \
-                         Options include {self.scenarios}")
-        
-        months = range(1, 13)
-        base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
-        
-        download_urls = [f"{base_url}/CHELSA_tas_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for month in months]
-        return download_urls
     months = [month for month in Month]
+    base_url = "tas"
 
 
 class Bio(ChelsaProduct):
@@ -126,17 +123,8 @@ class Bio(ChelsaProduct):
                  Scenario.BNU_ESM_rcp45,
                  Scenario.CCSM4_rcp60,
                  ]
-
-    def get_urls(self, scenario: Scenario) -> list:
-        if scenario not in self.scenarios:
-            raise ValueError(f"This product is not available. \
-                         Options include {self.scenarios}")
-        months = range(1, 13)
-        base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
-        
-        download_urls = [f"{base_url}/CHELSA_bio_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
-        return download_urls
     months = [month for month in Month]
+    base_url = "bio"
 
 
 class Precipitation(ChelsaProduct):
@@ -150,17 +138,9 @@ class Precipitation(ChelsaProduct):
                  Scenario.CCSM4_rcp60,
                  ]
     months = [month for month in Month]
+    base_url = "pr"
 
-    def get_urls(self, scenario: Scenario) -> list:
         if scenario not in self.scenarios:
-            raise ValueError(f"This product is not available. \
-                         Options include {self.scenarios}")
-        months = range(1, 13)
-        base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
-        
-        download_urls = [f"{base_url}/CHELSA_pr_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
-        return download_urls
-    
 
 class MaximumTemperature(ChelsaProduct):
     """Concrete implementation of maxiumum temperature ChelsaProduct"""
@@ -173,16 +153,8 @@ class MaximumTemperature(ChelsaProduct):
                  Scenario.CCSM4_rcp60,
                  ]
     months = [month for month in Month]
+    base_url = "tasmax"
 
-    def get_urls(self, scenario: Scenario) -> list:
-        if scenario not in self.scenarios:
-            raise ValueError(f"This product is not available. \
-                         Options include {self.scenarios}")
-        months = range(1, 13)
-        base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
-        
-        download_urls = [f"{base_url}/CHELSA_tasmax_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
-        return download_urls
 
 class MinimumTemperature(ChelsaProduct):
     """Concrete implementation of minimum temperature ChelsaProduct"""
@@ -194,17 +166,8 @@ class MinimumTemperature(ChelsaProduct):
                  Scenario.BNU_ESM_rcp45,
                  Scenario.CCSM4_rcp60,
                  ]
-
-    def get_urls(self, scenario: Scenario) -> list:
-        if scenario not in self.scenarios:
-            raise ValueError(f"This product is not available. \
-                         Options include {self.scenarios}")
-        months = range(1, 13)
-        base_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}"
-        
-        download_urls = [f"{base_url}/CHELSA_tasmin_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
-        return download_urls
     months = [month for month in Month]
+    base_url = "tasmin"
 
 
 def get_climatology(product: str):
