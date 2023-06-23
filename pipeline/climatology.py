@@ -3,8 +3,6 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from pathlib import Path
 
-import numpy as np
-
 
 class Climatology(Enum):
     TEMP = "temp"
@@ -149,7 +147,6 @@ class Precipitation(ChelsaProduct):
     months = [month for month in Month]
     base_url = "pr"
 
-        if scenario not in self.scenarios:
 
 class MaximumTemperature(ChelsaProduct):
     """Concrete implementation of maxiumum temperature ChelsaProduct"""
