@@ -69,7 +69,6 @@ class TestClimatology:
 
     def test_filepaths_created(self):
         temp = get_climatology("temp")
-        temp.create_directories(scenario = Scenario.ACCESS1_0_rcp45)
         random_scenario = random.choice(list(Scenario))
 
         pathways = temp.get_pathways(scenario = random_scenario)
