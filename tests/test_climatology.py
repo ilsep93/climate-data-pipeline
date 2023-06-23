@@ -36,18 +36,32 @@ class TestClimatology:
 
         temp = get_climatology("temp")
         urls = temp.get_urls(scenario=Scenario.ACCESS1_0_rcp45)
+        random_scenario = random.choice(list(Scenario))
+        random_month = random.choice(list(Month))
+
+        url = temp.get_url(scenario=random_scenario, month=random_month)
 
         assert len(urls) == 12
     
     def test_valid_scenarios_for_url(self):
         temp = get_climatology("temp")
+        random_month = random.choice(list(Month))
+
         with pytest.raises(ValueError): 
-            temp.get_urls(scenario="DOES NOT EXIST")
+            temp.get_url(scenario="DOES NOT EXIST", month=random_month)
+
+    def test_valid_month_for_url(self):
+        temp = get_climatology("temp")
+        random_scenario = random.choice(list(Scenario))
+
+        with pytest.raises(ValueError): 
+            temp.get_url(scenario=random_scenario, month="DOES NOT EXIST")
     
     def test_valid_urls_constructed(self):
         temp = get_climatology("temp")
-        urls = temp.get_urls(scenario=Scenario.ACCESS1_0_rcp45)
-        random_url = random.choice(urls)
+        random_scenario = random.choice(list(Scenario))
+        random_month = random.choice(list(Month))
+        
 
         with rasterio.open(random_url, "r") as rast:
            raster = rast.read()
@@ -55,8 +69,9 @@ class TestClimatology:
 
     def test_filepaths_created(self):
         temp = get_climatology("temp")
-        pathways = temp.get_pathways(scenario = Scenario.ACCESS1_0_rcp45)
         temp.create_directories(scenario = Scenario.ACCESS1_0_rcp45)
+        random_scenario = random.choice(list(Scenario))
 
+        pathways = temp.get_pathways(scenario = random_scenario)
         for path in pathways:
             assert os.path.exists(path)
