@@ -26,6 +26,21 @@ class Phase(Enum):
     CMIP5 = "cmip5"
     CMIP6 = "cmip6"
 
+
+class Month(Enum):
+    JANUARY = 1
+    FEBRUARY = 2
+    MARCH = 3
+    APRIL = 4
+    MAY = 5
+    JUNE = 6
+    JULY = 7
+    AUGUST = 8
+    SEPTEMBER = 9
+    OCTOBER = 10
+    NOVEMBER = 11
+    DECEMBER = 12
+
 class ChelsaProduct(ABC):
     """Abstract class for all CHELSA climatology products"""
 
@@ -34,6 +49,7 @@ class ChelsaProduct(ABC):
     base_url: str
     climatology: Climatology
     scenarios: list[Scenario]
+    months: list[Month]
 
     @abstractmethod
     def get_urls(self) -> list:
@@ -97,6 +113,7 @@ class Temperature(ChelsaProduct):
         
         download_urls = [f"{base_url}/CHELSA_tas_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for month in months]
         return download_urls
+    months = [month for month in Month]
 
 
 class Bio(ChelsaProduct):
@@ -119,6 +136,7 @@ class Bio(ChelsaProduct):
         
         download_urls = [f"{base_url}/CHELSA_bio_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
         return download_urls
+    months = [month for month in Month]
 
 
 class Precipitation(ChelsaProduct):
@@ -131,6 +149,7 @@ class Precipitation(ChelsaProduct):
                  Scenario.BNU_ESM_rcp45,
                  Scenario.CCSM4_rcp60,
                  ]
+    months = [month for month in Month]
 
     def get_urls(self, scenario: Scenario) -> list:
         if scenario not in self.scenarios:
@@ -153,6 +172,7 @@ class MaximumTemperature(ChelsaProduct):
                  Scenario.BNU_ESM_rcp45,
                  Scenario.CCSM4_rcp60,
                  ]
+    months = [month for month in Month]
 
     def get_urls(self, scenario: Scenario) -> list:
         if scenario not in self.scenarios:
@@ -184,6 +204,7 @@ class MinimumTemperature(ChelsaProduct):
         
         download_urls = [f"{base_url}/CHELSA_tasmin_mon_{scenario.value}_r1i1p1_g025.nc_{month}_{self.time_period}_V1.2.tif" for scenario, month in zip(self.scenarios, months)]
         return download_urls
+    months = [month for month in Month]
 
 
 def get_climatology(product: str):
