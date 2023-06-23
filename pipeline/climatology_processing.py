@@ -3,9 +3,11 @@ import logging
 import os
 import re
 from pathlib import Path
+from typing import Tuple
 
 import fiona
 import geopandas as gpd
+import numpy as np
 import pandas as pd
 import rasterio
 from rasterio import mask
@@ -27,7 +29,7 @@ def raster_description(profile: Profile):
     logger.info(f"Affine: {profile['transform']}")
 
 
-def read_raster_from_url(url: str):
+def read_raster_from_url(url: str) -> Tuple[np.ndarray, Profile]:
     """Read a raster from a URL provided as a string
 
     Args:
