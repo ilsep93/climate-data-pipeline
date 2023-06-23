@@ -9,7 +9,8 @@ import rasterio
 
 sys.path.insert(0, "pipeline")
 from pipeline.climatology import (Bio, MaximumTemperature, MinimumTemperature,
-                                  Precipitation, Temperature, get_climatology)
+                                  Precipitation, Scenario, Temperature,
+                                  get_climatology)
 
 
 class TestClimatology:
@@ -31,13 +32,13 @@ class TestClimatology:
             get_climatology("DOES NOT EXIST")
     
     def test_number_urls_constructed(self):
-        """Expect 12 urls per available product"""
+        """Expect 12 urls per scenario"""
 
         temp = get_climatology("temp")
-        available_products = len(temp.scenarios)
         urls = temp.get_urls(scenario=Scenario.ACCESS1_0_rcp45)
 
-        assert len(urls) == available_products * 12
+        assert len(urls) == 12
+    
     def test_valid_scenarios_for_url(self):
         temp = get_climatology("temp")
         with pytest.raises(ValueError): 
@@ -54,6 +55,8 @@ class TestClimatology:
 
     def test_filepaths_created(self):
         temp = get_climatology("temp")
-        temp.generate_pathways()
+        pathways = temp.get_pathways(scenario = Scenario.ACCESS1_0_rcp45)
+        temp.create_directories(scenario = Scenario.ACCESS1_0_rcp45)
 
-        assert os.path.exists(f"data/{temp.phase.value}/{temp.climatology.value}/{temp.scenario.value}/raw/")
+        for path in pathways:
+            assert os.path.exists(path)

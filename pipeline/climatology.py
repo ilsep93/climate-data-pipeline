@@ -56,17 +56,26 @@ class ChelsaProduct(ABC):
         if scenario not in self.scenarios:
             raise ValueError(f"Scenario not available. \
                              Options include {self.scenarios}")
+        pathways = []
+        base_export_path = Path(f"data/{self.phase.value}/{self.climatology.value}/{scenario.value}")
+        folders = ["raw", "masked", "zonal_statistics", "time_series"]
 
-        for scenario in self.scenarios:
-            base_export_path = Path(f"data/{self.phase.value}/{self.climatology.value}/{scenario.value}")
-            folders = ["raw", "masked", "zonal_statistics", "time_series"]
+        for folder in folders:
+            path = os.path.join(base_export_path, folder)
+            pathways.append(path)
 
-            for folder in folders:
-                path = os.path.join(base_export_path, folder)
-                if not os.path.exists(path):
-                    os.makedirs(path)
+        return pathways
     
 
+    def create_directories(self, scenario: Scenario) -> None:
+        """Create local directories to save downloaded and processed data"""
+        
+        pathways = self.get_pathways(scenario)
+        for path in pathways:
+            if not os.path.exists(path):
+                os.makedirs(path)
+
+    
 class Temperature(ChelsaProduct):
     """Concrete implementation of temperature ChelsaProduct"""
 
