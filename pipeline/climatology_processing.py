@@ -52,10 +52,7 @@ def write_local_raster(raster, profile, out_path: Path) -> None:
         dest.write(raster)
 
 
-def mask_raster(
-        self,
-        shp_path: str = "data/adm2/wca_admbnda_adm2_ocha.shp",
-    ) -> None:
+def mask_raster(raster: np.ndarray, shp_path: str = "data/adm2/wca_admbnda_adm2_ocha.shp") -> None:
     """Mask raster with shapefile
     Note mask raster works best with features from fiona
 
