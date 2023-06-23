@@ -15,20 +15,20 @@ from rasterstats import zonal_stats
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename='processing_logger.log', encoding='utf-8', level=logging.DEBUG)
 
-def raster_description(rast):
-        """Print description of raster
 
-        Args:
-            rast (rasterio): Raster connection via rasterio
-        """
-        print(f"Number of bands: {rast.count}")
-        print(f"Raster profile: {rast.profile}")
-        print(f"Bounds: {rast.bounds}")
-        print(f"Dimensions: {rast.shape}")
-    
 def write_local_raster(self) -> None:
     """Download CHELSA raster and save locally
+def raster_description(profile: Profile):
+    """Print description of raster
+
+    Args:
+        rast (rasterio): Raster profile
     """
+    logger.info(f"CRS: {profile['crs']}")
+    logger.info(f"Band Count: {profile['count']}")
+    logger.info(f"Affine: {profile['transform']}")
+
+
     
     #Update self based on URL
     self._climatology_pathways(self.climatology_url)
