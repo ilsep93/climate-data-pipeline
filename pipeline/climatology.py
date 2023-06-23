@@ -70,14 +70,10 @@ class ChelsaProduct(ABC):
     def get_pathways(self, scenario: Scenario) -> list:
         """Generates pathways for different processing steps and creates directories
 
-        Args:
-            scenario (Scenario): _description_
-
-        Raises:
-            ValueError: _description_
-
         Returns:
-            list: _description_
+            list: List of pathways for each processing step
+
+        # TODO: Add folders based on RasterProcessing class
         """
         if scenario not in self.scenarios:
             raise ValueError(f"Scenario not available. \
