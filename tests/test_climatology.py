@@ -32,10 +32,7 @@ class TestClimatology:
             get_climatology("DOES NOT EXIST")
     
     def test_number_urls_constructed(self):
-        """Expect 12 urls per scenario"""
-
         temp = get_climatology("temp")
-        urls = temp.get_urls(scenario=Scenario.ACCESS1_0_rcp45)
         random_scenario = random.choice(list(Scenario))
         random_month = random.choice(list(Month))
 
@@ -62,8 +59,9 @@ class TestClimatology:
         random_scenario = random.choice(list(Scenario))
         random_month = random.choice(list(Month))
         
+        url = temp.get_url(scenario=random_scenario, month=random_month)
 
-        with rasterio.open(random_url, "r") as rast:
+        with rasterio.open(url, "r") as rast:
            raster = rast.read()
            assert isinstance(raster, np.ndarray)
 
