@@ -160,20 +160,3 @@ def climatology_yearly_table_generator(
             
     else:
         logger.info(f"Yearly time appended dataset exists for {self.climatology}")
-
-def raster_processing_flow(
-    climatologies: list
-    ) -> None:
-    for url in climatologies:
-        cmip_temp = ClimatologyProcessing(climatology_url=url)
-        cmip_temp._climatology_pathways(climatology_url=url)
-        cmip_temp._write_local_raster()
-        cmip_temp._mask_raster()
-        cmip_temp._write_zonal_statistics()
-        cmip_temp.climatology_yearly_table_generator()
-
-
-if __name__=="__main__":
-    raster_processing_flow(climatology_base_urls)
-
-
