@@ -6,10 +6,8 @@ from pathlib import Path
 
 import fiona
 import geopandas as gpd
-import numpy as np
 import pandas as pd
 import rasterio
-from climatology import ChelsaProduct, Month, Scenario, get_climatology
 from rasterio import mask
 from rasterio.profiles import Profile
 from rasterstats import zonal_stats
@@ -73,6 +71,7 @@ def mask_raster(
             
             with rasterio.open(f"{self.masked_raster}/msk_{file}", "w", **profile) as dest:
                 dest.write(out_image)
+
 
 def kelvin_to_celcius(
         col: int
