@@ -29,20 +29,22 @@ def raster_description(profile: Profile):
     logger.info(f"Affine: {profile['transform']}")
 
 
-    
-    #Update self based on URL
-    self._climatology_pathways(self.climatology_url)
-    
-    if len(os.listdir(self.raw_raster)) != 12:
-        logger.info(f"Downloading raw rasters for {self.climatology}")
-        
-        for month in range(1,13):
-            rast_url = f"{self.climatology_url}_{month}_2061-2080_V1.2.tif"
+def read_raster_from_url(url: str):
+    """Read a raster from a URL provided as a string
 
-            with rasterio.open(rast_url, "r") as rast:
-                profile = rast.profile
-                self.raster_description(rast)
-                raster = rast.read()
+    Args:
+        url (str): Link used to download .tif file
+
+    Returns:
+        raster: np.ndarray with raster values
+        profile: rasterio raster profile
+    """
+    with rasterio.open(url, "r") as rast:
+            raster = rast.read()
+            profile = rast.profile
+    return raster, profile
+    
+
 
             with rasterio.open(f"{self.raw_raster}/{self.climatology}_{month}.tif", "w", **profile) as dest:
                 dest.write(raster)
