@@ -91,14 +91,13 @@ class ChelsaProduct(ABC):
         for folder in folders:
             path = os.path.join(base_export_path, folder)
             pathways.append(path)
+        
+        self._create_directories(pathways=pathways)
 
         return pathways
     
-
-    def create_directories(self, scenario: Scenario) -> None:
         """Create local directories to save downloaded and processed data"""
-        
-        pathways = self.get_pathways(scenario)
+    
         for path in pathways:
             if not os.path.exists(path):
                 os.makedirs(path, exist_ok=True)
