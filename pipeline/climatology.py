@@ -96,6 +96,11 @@ class ChelsaProduct(ABC):
 
         return pathways
     
+    def set_pathways_as_attributes(self):
+        # TODO: Find a way to set pathways as an attribute so path changes only need to be made in one place
+        ...
+    
+    def _create_directories(self, pathways: list) -> None:
         """Create local directories to save downloaded and processed data"""
     
         for path in pathways:
