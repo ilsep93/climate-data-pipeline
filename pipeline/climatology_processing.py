@@ -2,14 +2,16 @@ import glob
 import logging
 import os
 import re
-from dataclasses import dataclass
+from pathlib import Path
 
 import fiona
 import geopandas as gpd
+import numpy as np
 import pandas as pd
 import rasterio
-from climatology import get_climatology
+from climatology import ChelsaProduct, Month, Scenario, get_climatology
 from rasterio import mask
+from rasterio.profiles import Profile
 from rasterstats import zonal_stats
 
 logger = logging.getLogger(__name__)

@@ -9,9 +9,10 @@ import rasterio
 
 sys.path.insert(0, "pipeline")
 from pipeline.climatology import (Bio, MaximumTemperature, MinimumTemperature,
-                                  Precipitation, Scenario, Temperature,
+                                  Month, Precipitation, Scenario, Temperature,
                                   get_climatology)
 
+# TODO: Initialize TestClimatology that can be used for all tests
 
 class TestClimatology:
     def test_product_instance(self):
