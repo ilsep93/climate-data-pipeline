@@ -16,8 +16,6 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(filename='processing_logger.log', encoding='utf-8', level=logging.DEBUG)
 
 
-def write_local_raster(self) -> None:
-    """Download CHELSA raster and save locally
 def raster_description(profile: Profile):
     """Print description of raster
 
@@ -45,12 +43,11 @@ def read_raster_from_url(url: str):
     return raster, profile
     
 
+def write_local_raster(raster, profile, out_path: Path) -> None:
+    """Download CHELSA raster and save locally"""
 
-            with rasterio.open(f"{self.raw_raster}/{self.climatology}_{month}.tif", "w", **profile) as dest:
-                dest.write(raster)
-                logger.info(f"Raster masked for {self.climatology}_{month}")
-    else:
-        logger.info(f"All raw rasters are available for {self.climatology}")
+    with rasterio.open(f"{out_path}.tif", "w", **profile) as dest:
+        dest.write(raster)
 
 
 def mask_raster(
