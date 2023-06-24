@@ -52,6 +52,13 @@ def write_local_raster(raster, profile, out_path: Path) -> None:
         dest.write(raster)
 
 
+def get_shapefile(shp_path: Path= Path("data/adm2/wca_admbnda_adm2_ocha.shp")) -> gpd.GeoDataFrame:
+     shapefile = gpd.read_file(shp_path)
+     clean_shapefile = _drop_shapefile_cols(shapefile=shapefile)
+
+     return clean_shapefile
+     
+
 def _drop_shapefile_cols(shapefile: gpd.GeoDataFrame,
                          cols_to_drop: list[str] = ['geometry', 'Shape_Leng', "Shape_Area", 'validOn', 'validTo']) -> gpd.GeoDataFrame:
      
