@@ -13,6 +13,7 @@ class RasterProcessingStep(Enum):
     YEARLY_TABLE = auto()
 
 
+# TODO: create dictionary of processing steps, with product, scenario, and month as keys
 
 
 def get_processing_steps(product: ChelsaProduct, scenario: Scenario, month: Month) -> list[RasterProcessingStep]:
