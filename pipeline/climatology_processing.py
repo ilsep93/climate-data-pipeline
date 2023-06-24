@@ -52,25 +52,20 @@ def write_local_raster(raster, profile, out_path: Path) -> None:
         dest.write(raster)
 
 
-def mask_raster(raster: np.ndarray, shp_path: str = "data/adm2/wca_admbnda_adm2_ocha.shp") -> None:
+def mask_raster_with_shp(raster: np.ndarray, shapefile) -> np.ndarray:
     """Mask raster with shapefile
     Note mask raster works best with features from fiona
 
     Args:
         shp_path (str): Path to shapefile. Default is West Africa shapefile
     """
-    with fiona.open(f"{shp_path}") as shapefile:
-            shapes = [feature["geometry"] for feature in shapefile]
+    # with fiona.open(f"{shp_path}") as shapefile:
+    #         shapes = [feature["geometry"] for feature in shapefile]
         
-    for file in os.listdir(self.raw_raster):
-        if file.endswith(".tif"):
-            with rasterio.open(f"{self.raw_raster}/{file}", "r") as raster:
-                profile = raster.profile
-                out_image, out_transform = mask.mask(raster, shapes, crop=True)
-            
-            with rasterio.open(f"{self.masked_raster}/msk_{file}", "w", **profile) as dest:
-                dest.write(out_image)
-
+    masked_raster, _ = mask.mask(raster, shapefile, crop=True)
+    
+    return masked_raster
+    
 
 def kelvin_to_celcius(
         col: int
