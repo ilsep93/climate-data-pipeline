@@ -13,8 +13,6 @@ class RasterProcessingStep(Enum):
     YEARLY_TABLE = auto()
 
 
-def timestamp():
-    return datetime.now()
 
 
 def get_processing_steps(product: ChelsaProduct, scenario: Scenario, month: Month) -> list[RasterProcessingStep]:

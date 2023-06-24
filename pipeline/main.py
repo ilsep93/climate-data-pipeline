@@ -7,6 +7,9 @@ from climatology_processing import (raster_description, read_raster_from_url,
                                     write_local_raster)
 from processing_steps import RasterProcessingStep, get_processing_steps
 
+sys.path.append("../utils/")
+from timestamp import timestamp
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename='processing_logger.log', encoding='utf-8', level=logging.DEBUG)
 
