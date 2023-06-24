@@ -52,6 +52,13 @@ def write_local_raster(raster, profile, out_path: Path) -> None:
         dest.write(raster)
 
 
+def _drop_shapefile_cols(shapefile: gpd.GeoDataFrame,
+                         cols_to_drop: list[str] = ['geometry', 'Shape_Leng', "Shape_Area", 'validOn', 'validTo']) -> gpd.GeoDataFrame:
+     
+     clean_shapefile = shapefile.drop(columns=cols_to_drop, axis=1, errors='ignore')
+     return clean_shapefile
+
+
 def mask_raster_with_shp(raster: np.ndarray, shapefile) -> np.ndarray:
     """Mask raster with shapefile
     Note mask raster works best with features from fiona
