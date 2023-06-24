@@ -29,8 +29,8 @@ def raster_description(profile: Profile):
     logger.info(f"Affine: {profile['transform']}")
 
 
-def read_raster_from_url(url: str) -> Tuple[np.ndarray, Profile]:
-    """Read a raster from a URL provided as a string
+def read_raster(location: str) -> Tuple[np.ndarray, Profile]:
+    """Read a raster from a URL or path provided as a string
 
     Args:
         url (str): Link used to download .tif file
@@ -39,7 +39,7 @@ def read_raster_from_url(url: str) -> Tuple[np.ndarray, Profile]:
         raster: np.ndarray with raster values
         profile: rasterio raster profile
     """
-    with rasterio.open(url, "r") as rast:
+    with rasterio.open(location, "r") as rast:
             raster = rast.read()
             profile = rast.profile
     return raster, profile

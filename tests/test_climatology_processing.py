@@ -10,9 +10,12 @@ from pipeline.climatology_processing import (read_raster_from_url,
 
 
 class TestClimatologyProcessing:
-    def test_read_raster_from_url(self):
-        random_product = random.choice(list(Climatology))
-        random_climatology = get_climatology(random_product.value)
+    def test_read_raster(self, climatology_url):
+        raster, profile = read_raster(location=climatology_url)
+
+        assert isinstance(raster, np.ndarray)
+        assert isinstance(profile, Profile)
+    
     
     def test_write_local_raster(self):
         ...
