@@ -73,10 +73,11 @@ def get_shapefile(shp_path: Path= Path("data/adm2/wca_admbnda_adm2_ocha.shp")) -
      
 
 def _drop_shapefile_cols(shapefile: gpd.GeoDataFrame,
-                         cols_to_drop: list[str] = ['geometry', 'Shape_Leng', "Shape_Area", 'validOn', 'validTo']) -> gpd.GeoDataFrame:
-     
-     clean_shapefile = shapefile.drop(columns=cols_to_drop, axis=1, errors='ignore')
-     return clean_shapefile
+                         cols_to_drop: List[str] = ['OBJECTID_1', 'Shape_Leng', 'Shape_Area', 'validOn', 'validTo', 'last_modif', 'source', 'date']
+                         ) -> gpd.GeoDataFrame:
+    
+    clean_shapefile = shapefile.drop(columns=cols_to_drop)
+    return clean_shapefile
 
 
 def mask_raster_with_shp(raster: np.ndarray, shapefile) -> np.ndarray:
