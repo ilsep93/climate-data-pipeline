@@ -65,12 +65,13 @@ def write_local_raster(raster, profile, out_path: Path) -> None:
         dest.write(raster)
 
 
-def get_shapefile(shp_path: Path= Path("data/adm2/wca_admbnda_adm2_ocha.shp")) -> gpd.GeoDataFrame:
-     shapefile = gpd.read_file(shp_path)
-     clean_shapefile = _drop_shapefile_cols(shapefile=shapefile)
+def get_shapefile(shp_path: Path) -> gpd.GeoDataFrame:
+    shapefile = gpd.read_file(shp_path)
+    clean_shapefile = _drop_shapefile_cols(shapefile=shapefile)
+    clean_shapefile = _lower_case_cols(clean_shapefile)
 
-     return clean_shapefile
-     
+    return clean_shapefile
+
 
 def _drop_shapefile_cols(shapefile: gpd.GeoDataFrame,
                          cols_to_drop: List[str] = ['OBJECTID_1', 'Shape_Leng', 'Shape_Area', 'validOn', 'validTo', 'last_modif', 'source', 'date']
@@ -83,6 +84,10 @@ def _drop_shapefile_cols(shapefile: gpd.GeoDataFrame,
 def mask_raster_with_shp(raster: np.ndarray, shapefile) -> np.ndarray:
     """Mask raster with shapefile
     Note mask raster works best with features from fiona
+def _lower_case_cols(df):
+    df.columns= df.columns.str.lower()
+    return df
+    
 
     Args:
         shp_path (str): Path to shapefile. Default is West Africa shapefile
