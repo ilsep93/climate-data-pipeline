@@ -26,9 +26,7 @@ def process_raw_raster(
     url = product.get_url(scenario=scenario, month=month)
     raster, profile = read_raster(location=url)
     raster_description(profile=profile)
-
     write_local_raster(raster=raster, profile=profile, out_path=raw_out_path)
-    logger.info(f"Raster downloaded for {product.climatology} - {scenario}")
 
 
         shp_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
@@ -45,7 +43,8 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
     
     # Raster downloading step
     if RasterProcessingStep.DOWNLOAD in processing_steps:
-        logger.info(f"{timestamp()} : RasterProcessingStep.DOWNLOAD for {concrete_product}_{scenario}_{month}") 
+        logger.info(f"{timestamp()} : RasterProcessingStep.DOWNLOAD for {concrete_product}_{scenario}_{month}")
+
         raster_raw_location = Path(os.path.join(ROOT_DIR, pathways[0], f"{scenario.value}_{month.value}"))
                     
         process_raw_raster(product=concrete_product,
