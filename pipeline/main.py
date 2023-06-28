@@ -9,7 +9,7 @@ from climatology_processing import (get_shapefile, mask_raster_with_shp,
                                     write_local_raster)
 from processing_steps import RasterProcessingStep, get_processing_steps
 
-sys.path.append("../utils/")
+sys.path.insert(0, "utils")
 from timestamp import timestamp
 
 logger = logging.getLogger(__name__)
