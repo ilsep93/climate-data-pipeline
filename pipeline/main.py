@@ -15,6 +15,8 @@ from timestamp import timestamp
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename='processing_logger.log', encoding='utf-8', level=logging.DEBUG)
 
+ROOT_DIR = Path(__file__).parent.parent
+
 def process_raw_raster(
         product: ChelsaProduct,
         scenario: Scenario,
@@ -29,6 +31,7 @@ def process_raw_raster(
     logger.info(f"Raster downloaded for {product.climatology} - {scenario}")
 
 
+        shp_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
 def raster_processing_flow(product: str, scenario: Scenario, month: Month):
     
     # Return concrete implementation of climatology object
@@ -43,6 +46,7 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
     # Raster downloading step
     if RasterProcessingStep.DOWNLOAD in processing_steps:
         logger.info(f"{timestamp()} : RasterProcessingStep.DOWNLOAD for {concrete_product}_{scenario}_{month}") 
+        raster_raw_location = Path(os.path.join(ROOT_DIR, pathways[0], f"{scenario.value}_{month.value}"))
                     
         process_raw_raster(product=concrete_product,
                            scenario=scenario,
@@ -50,6 +54,8 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
                            raw_out_path=Path(os.path.join(pathways[0], f"{scenario.value}_{month.value}")))
     
     
+        raw_raster_location = Path(os.path.join(ROOT_DIR, pathways[0], f"{scenario.value}_{month.value}"))
+        masked_out_path = Path(os.path.join(ROOT_DIR, pathways[1], f"{scenario.value}_{month.value}"))
 
 
 if __name__=="__main__":
