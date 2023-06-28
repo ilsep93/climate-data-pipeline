@@ -39,16 +39,29 @@ def read_raster(location: str) -> Tuple[np.ndarray, Profile]:
         raster: np.ndarray with raster values
         profile: rasterio raster profile
     """
+
+    location = _check_tif_extension(location)
     with rasterio.open(location, "r") as rast:
             raster = rast.read()
             profile = rast.profile
     return raster, profile
+
+
+def _check_tif_extension(location: Union[str, Path]) -> Union[str, Path]:
+    if isinstance(location, Path) and not location.suffix == ".tif":
+        location = location.with_suffix(".tif")
+    
+    if isinstance(location, str) and not location.endswith(".tif"):
+        location = os.path.join(location + ".tif")
+    
+    return location
     
 
 def write_local_raster(raster, profile, out_path: Path) -> None:
     """Download CHELSA raster and save locally"""
 
     with rasterio.open(f"{out_path}.tif", "w", **profile) as dest:
+    out_path = _check_tif_extension(location=out_path)
         dest.write(raster)
 
 
