@@ -50,7 +50,7 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
         process_raw_raster(product=concrete_product,
                            scenario=scenario,
                            month=month,
-                           raw_out_path=Path(os.path.join(pathways[0], f"{scenario.value}_{month.value}")))
+                           raw_out_path=raster_raw_location)
     
     
         raw_raster_location = Path(os.path.join(ROOT_DIR, pathways[0], f"{scenario.value}_{month.value}"))
