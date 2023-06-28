@@ -29,7 +29,7 @@ def raster_description(profile: Profile):
     logger.info(f"Affine: {profile['transform']}")
 
 
-def read_raster(location: str) -> Tuple[np.ndarray, Profile]:
+def read_raster(location: Union[str, Path]) -> Tuple[np.ndarray, Profile]:
     """Read a raster from a URL or path provided as a string
 
     Args:
