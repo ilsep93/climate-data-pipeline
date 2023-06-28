@@ -3,6 +3,7 @@ from abc import ABC
 from enum import Enum
 from pathlib import Path
 
+ROOT_DIR = Path(__file__).parent.parent
 
 class Climatology(Enum):
     TEMP = "temp"
@@ -79,7 +80,7 @@ class ChelsaProduct(ABC):
             raise ValueError(f"Scenario not available. \
                              Options include {self.scenarios}")
         pathways = []
-        base_export_path = Path(f"{Path.home()}/data/{self.phase.value}/{self.climatology.value}/{scenario.value}")
+        base_export_path = Path(f"{ROOT_DIR}/data/{self.phase.value}/{self.climatology.value}/{scenario.value}")
         folders = ["raw", "masked", "zonal_statistics", "time_series"]
 
         for folder in folders:
