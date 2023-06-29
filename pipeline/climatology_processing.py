@@ -88,8 +88,11 @@ def get_shapefile(shp_path: Path, cols_to_drop: list[str], lower_case: bool = Tr
         gpd.GeoDataFrame: _description_
     """
     shapefile = gpd.read_file(shp_path)
-    clean_shapefile = _drop_shapefile_cols(shapefile=shapefile)
-    clean_shapefile = _lower_case_cols(clean_shapefile)
+    clean_shapefile = _drop_shapefile_cols(shapefile=shapefile, cols_to_drop=cols_to_drop)
+    if lower_case:
+        clean_shapefile = _lower_case_cols(clean_shapefile)
+    else:
+        clean_shapefile = shapefile
 
     return clean_shapefile
 
