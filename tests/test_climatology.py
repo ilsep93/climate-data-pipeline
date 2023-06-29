@@ -8,9 +8,27 @@ import pytest
 import rasterio
 
 sys.path.insert(0, "pipeline")
-from pipeline.climatology import (Bio, MaximumTemperature, MinimumTemperature,
-                                  Precipitation, Temperature, get_climatology)
+from pipeline.climatology import (Bio, Climatology, MaximumTemperature,
+                                  MinimumTemperature, Month, Precipitation,
+                                  Scenario, Temperature, get_climatology)
 
+
+@pytest.fixture(scope="session")
+def random_climatology():
+    random_product = random.choice(list(Climatology))
+    random_climatology = get_climatology(random_product.value)
+
+    return random_climatology
+
+@pytest.fixture(scope="session")
+def random_month():
+    random_month = random.choice(list(Month))
+    return random_month
+
+@pytest.fixture(scope="session")
+def random_scenario():
+    random_scenario = random.choice(list(Scenario))
+    return random_scenario
 
 class TestClimatology:
     def test_product_instance(self):
@@ -30,26 +48,28 @@ class TestClimatology:
         with pytest.raises(ValueError):
             get_climatology("DOES NOT EXIST")
     
-    def test_number_urls_constructed(self):
-        """Expect 12 urls per available product"""
+    def test_number_urls_constructed(self, random_month, random_scenario, random_climatology):
+        url = random_climatology.get_url(month=random_month, scenario=random_scenario)
 
-        temp = get_climatology("temp")
-        available_products = len(temp.scenarios)
-        urls = temp.url_constructor()
-
-        assert len(urls) == available_products * 12
+        assert type(url) == str
     
-    def test_valid_urls_constructed(self):
-        temp = get_climatology("temp")
-        urls = temp.url_constructor()
-        random_url = random.choice(urls)
+    def test_valid_scenarios_for_url(self, random_month, random_climatology):
 
-        with rasterio.open(random_url, "r") as rast:
+        with pytest.raises(ValueError): 
+            random_climatology.get_url(scenario="DOES NOT EXIST", month=random_month)
+
+    def test_valid_month_for_url(self, random_scenario, random_climatology):
+        with pytest.raises(ValueError): 
+            random_climatology.get_url(scenario=random_scenario, month="DOES NOT EXIST")
+    
+    def test_valid_urls_constructed(self, random_month, random_scenario, random_climatology):
+        url = random_climatology.get_url(scenario=random_scenario, month=random_month)
+
+        with rasterio.open(url, "r") as rast:
            raster = rast.read()
            assert isinstance(raster, np.ndarray)
 
-    def test_filepaths_created(self):
-        temp = get_climatology("temp")
-        temp.generate_pathways()
-
-        assert os.path.exists(f"data/{temp.phase.value}/{temp.climatology.value}/{temp.scenario.value}/raw/")
+    def test_filepaths_created(self, random_scenario, random_climatology):
+        pathways = random_climatology.get_pathways(scenario = random_scenario)
+        for path in pathways:
+            assert os.path.exists(path)
