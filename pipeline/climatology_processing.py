@@ -5,7 +5,6 @@ import re
 from pathlib import Path
 from typing import Tuple, Union
 
-import fiona
 import geopandas as gpd
 import numpy as np
 import pandas as pd
@@ -129,12 +128,14 @@ def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame, nodata: i
     Returns:
         Tuple[np.ndarray, Profile]: Masked raster and masked raster profile
     """
-    # with fiona.open(f"{shp_path}") as shapefile:
-    #         shapes = [feature["geometry"] for feature in shapefile]
-        
-    masked_raster, _ = mask.mask(raster, shapefile, crop=True)
+
+    raster_location = _check_tif_extension(location=raster_location)
+
+    with rasterio.open(raster_location, "r") as src:
+        profile = src.profile
+        masked_raster, _ = mask.mask(dataset=src, shapes=gdf.geometry, crop=True)
     
-    return masked_raster
+    return masked_raster, profile
     
 
 def kelvin_to_celcius(
