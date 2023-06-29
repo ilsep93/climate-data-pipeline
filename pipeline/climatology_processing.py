@@ -133,6 +133,11 @@ def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame, nodata: i
 
     with rasterio.open(raster_location, "r") as src:
         profile = src.profile
+
+        # Check if CRSs match between vector and raster
+        if src.crs != gdf.crs:
+            gdf = gdf.to_crs(src.crs)
+
         masked_raster, _ = mask.mask(dataset=src, shapes=gdf.geometry, crop=True)
     
     return masked_raster, profile
