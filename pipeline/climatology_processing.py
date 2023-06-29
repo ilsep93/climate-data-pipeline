@@ -59,9 +59,8 @@ def _check_tif_extension(location: Union[str, Path]) -> Union[str, Path]:
 
 def write_local_raster(raster: np.ndarray, profile: Profile, out_path: Path) -> None:
     """Download CHELSA raster and save locally"""
-
-    with rasterio.open(f"{out_path}.tif", "w", **profile) as dest:
     out_path = _check_tif_extension(location=out_path)
+    with rasterio.open(out_path, "w", **profile) as dest:
         dest.write(raster)
 
 
