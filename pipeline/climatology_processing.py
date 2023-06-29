@@ -3,7 +3,7 @@ import logging
 import os
 import re
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Union
 
 import fiona
 import geopandas as gpd
@@ -48,6 +48,14 @@ def read_raster(location: Union[str, Path]) -> Tuple[np.ndarray, Profile]:
 
 
 def _check_tif_extension(location: Union[str, Path]) -> Union[str, Path]:
+    """Adds .tif to raster location if it is not available
+
+    Args:
+        location (Union[str, Path]): The location of the raster
+
+    Returns:
+        Union[str, Path]: The modified location of the raster (if applicable)
+    """
     if isinstance(location, Path) and not location.suffix == ".tif":
         location = location.with_suffix(".tif")
     
@@ -58,13 +66,27 @@ def _check_tif_extension(location: Union[str, Path]) -> Union[str, Path]:
     
 
 def write_local_raster(raster: np.ndarray, profile: Profile, out_path: Path) -> None:
-    """Download CHELSA raster and save locally"""
+    """Write .tif file to specified location
+
+    Args:
+        raster (np.ndarray): Raster object, given as a numpy ndarray
+        profile (Profile): The raster's profile
+        out_path (Path): The location where the raster will be saved
+    """
     out_path = _check_tif_extension(location=out_path)
     with rasterio.open(out_path, "w", **profile) as dest:
         dest.write(raster)
 
 
-def get_shapefile(shp_path: Path) -> gpd.GeoDataFrame:
+def get_shapefile(shp_path: Path, cols_to_drop: list[str], lower_case: bool = True) -> gpd.GeoDataFrame:
+    """Get a clean version of the shapefile for 
+
+    Args:
+        shp_path (Path): _description_
+
+    Returns:
+        gpd.GeoDataFrame: _description_
+    """
     shapefile = gpd.read_file(shp_path)
     clean_shapefile = _drop_shapefile_cols(shapefile=shapefile)
     clean_shapefile = _lower_case_cols(clean_shapefile)
@@ -80,16 +102,29 @@ def _drop_shapefile_cols(shapefile: gpd.GeoDataFrame,
     return clean_shapefile
 
 
-def mask_raster_with_shp(raster: np.ndarray, shapefile) -> np.ndarray:
-    """Mask raster with shapefile
-    Note mask raster works best with features from fiona
-def _lower_case_cols(df):
+def _lower_case_cols(df: Union[pd.DataFrame, gpd.GeoDataFrame]) -> Union[pd.DataFrame, gpd.GeoDataFrame]:
+    """Returns version of dataframe with lower case columns
+
+    Args:
+        df (Union[pd.DataFrame, gpd.GeoDataFrame]): Dataframe to be modified
+
+    Returns:
+        Union[pd.DataFrame, gpd.GeoDataFrame]: Modified dataframe
+    """
     df.columns= df.columns.str.lower()
     return df
     
 
+def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame, nodata: int = 0) -> Tuple[np.ndarray, Profile]:
+    """Masks raster with geodataframe
+
     Args:
-        shp_path (str): Path to shapefile. Default is West Africa shapefile
+        raster_location (Path): Location of raster file. Note that rasterio mask function expects a dataset connection
+        gdf (gpd.GeoDataFrame): Geodataframe that will be used to mask raster
+        nodata (int, optional): Raster value that symbolizes no data. Defaults to 0.
+
+    Returns:
+        Tuple[np.ndarray, Profile]: Masked raster and masked raster profile
     """
     # with fiona.open(f"{shp_path}") as shapefile:
     #         shapes = [feature["geometry"] for feature in shapefile]
