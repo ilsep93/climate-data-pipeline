@@ -29,7 +29,20 @@ def process_raw_raster(
     write_local_raster(raster=raster, profile=profile, out_path=raw_out_path)
 
 
+def process_masked_raster(
+        raw_raster_location: Path,
+        masked_out_path: Path,
         shp_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
+        ) -> None:
+
+    shapefile = get_shapefile(shp_path=shp_path, 
+                              cols_to_drop= ['OBJECTID_1', 'Shape_Leng', 'Shape_Area', 'validOn', 'validTo', 'last_modif', 'source', 'date'])
+    masked_raster, masked_profile = mask_raster_with_shp(raster_location=raw_raster_location,
+                                         gdf=shapefile,
+                                         )
+    write_local_raster(raster=masked_raster, profile=masked_profile, out_path=masked_out_path)
+    
+
 def raster_processing_flow(product: str, scenario: Scenario, month: Month):
     
     # Return concrete implementation of climatology object
@@ -53,8 +66,13 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
                            raw_out_path=raster_raw_location)
     
     
+    if RasterProcessingStep.MASK in processing_steps:
         raw_raster_location = Path(os.path.join(ROOT_DIR, pathways[0], f"{scenario.value}_{month.value}"))
         masked_out_path = Path(os.path.join(ROOT_DIR, pathways[1], f"{scenario.value}_{month.value}"))
+        
+        process_masked_raster(raw_raster_location=raw_raster_location,
+                              masked_out_path=masked_out_path)
+
 
 
 if __name__=="__main__":
