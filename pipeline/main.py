@@ -43,6 +43,8 @@ def process_masked_raster(
     write_local_raster(raster=masked_raster, profile=profile, out_path=masked_out_path)
     
 
+# TODO: add overwrite that will replace the existing file if needed
+
 def raster_processing_flow(product: str, scenario: Scenario, month: Month):
     
     # Return concrete implementation of climatology object
