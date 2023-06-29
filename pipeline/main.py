@@ -37,10 +37,10 @@ def process_masked_raster(
 
     shapefile = get_shapefile(shp_path=shp_path, 
                               cols_to_drop= ['OBJECTID_1', 'Shape_Leng', 'Shape_Area', 'validOn', 'validTo', 'last_modif', 'source', 'date'])
-    masked_raster, masked_profile = mask_raster_with_shp(raster_location=raw_raster_location,
+    masked_raster, profile = mask_raster_with_shp(raster_location=raw_raster_location,
                                          gdf=shapefile,
                                          )
-    write_local_raster(raster=masked_raster, profile=masked_profile, out_path=masked_out_path)
+    write_local_raster(raster=masked_raster, profile=profile, out_path=masked_out_path)
     
 
 def raster_processing_flow(product: str, scenario: Scenario, month: Month):
