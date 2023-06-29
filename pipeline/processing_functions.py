@@ -144,53 +144,50 @@ def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame, nodata: i
     
 
 def kelvin_to_celcius(
-        col: int
-) -> float:
+        df: pd.DataFrame
+) -> pd.DataFrame:
     """Converts Kelvin into Celcius
 
     Args:
         col (int): Numeric value to convert to Celcius
     """
+    #Convert from Kelvin to Celcius
+    stats= ["min", "mean", "max", "median"]
+    df[stats] = df[stats].apply(kelvin_to_celcius)
+    
     return col - 273.15
 
-def write_zonal_statistics(
-    self,
-    shp_path: str = "data/adm2/wca_admbnda_adm2_ocha.shp",
-    ) -> None:
+def attribute_join(shapefile, df: pd.DataFrame, method: str = "left") -> pd.DataFrame:
+    
+    #Attribute join between shapefile and zonal stats
+    joined_df = shapefile.join(df, how=method)
+     
+    return joined_df
+
+
+def calculate_zonal_statistics(raster: np.ndarray, shapefile) -> pd.DataFrame:
     """Write zonal statistics to local directory
 
     Args:
         shp_path (str): Path to shapefile
     """
 
-    shapefile = gpd.read_file(f"{shp_path}")
-    for file in os.listdir(self.masked_raster):
-        if file.endswith(".tif"):
-            with rasterio.open(f"{self.masked_raster}/{file}", "r") as src:
-                array = src.read(1)
-                affine = src.transform
-                nodata = src.nodata
+    with rasterio.open(raster, "r", shapefile) as src:
+        array = src.read(1)
+        affine = src.transform
+        nodata = src.nodata
 
-                zs = zonal_stats(shapefile,
-                                    array,
-                                    affine=affine,
-                                    nodata=nodata,
-                                    stats="min mean max median",
-                                    geojson_out=False)
+        results = zonal_stats(shapefile,
+                            array,
+                            affine=affine,
+                            nodata=nodata,
+                            stats="min mean max median",
+                            geojson_out=False)
 
-                #Attribute join between shapefile and zonal stats
-                df = pd.DataFrame(zs)
-                full_df = shapefile.join(df, how="left")
-                full_df.drop(['geometry', 'Shape_Leng', "Shape_Area", 'validOn', 'validTo'], axis=1, inplace=True)
-                
-                #Convert from Kelvin to Celcius
-                stats= ["min", "mean", "max", "median"]
-                full_df[stats] = full_df[stats].apply(self.kelvin_to_celcius)
-                
-                #Export as CSV
-                file = file.replace(".tif", ".csv")
-                file = file.replace("msk_", "zs_")
-                full_df.to_csv(f"{self.zonal_statistics}/{file}", index=False)
+    df = pd.DataFrame(results)
+
+    return df
+
 
 def climatology_yearly_table_generator(
     self,

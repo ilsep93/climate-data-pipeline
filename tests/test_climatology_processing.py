@@ -4,9 +4,10 @@ import sys
 import rasterio
 
 sys.path.insert(0, "pipeline")
-from pipeline.climatology import Climatology, get_climatology
-from pipeline.climatology_processing import (read_raster_from_url,
+from pipeline.climatology_processing import (mask_raster_with_shp, read_raster,
                                              write_local_raster)
+from tests.test_climatology import (random_climatology, random_month,
+                                    random_scenario)
 
 
 @pytest.fixture(scope="session")
