@@ -133,15 +133,25 @@ def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame, nodata: i
 
     with rasterio.open(raster_location, "r") as src:
         profile = src.profile
-
-        # Check if CRSs match between vector and raster
-        if src.crs != gdf.crs:
-            gdf = gdf.to_crs(src.crs)
+        gdf = _check_crs(raster=src, vector=gdf)
 
         masked_raster, _ = mask.mask(dataset=src, shapes=gdf.geometry, crop=True)
     
     return masked_raster, profile
-    
+
+def _check_crs(raster: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """Transform CRS of vector if CRS does not match raster
+
+    Args:
+        raster (rasterio.DatasetReader): Raster dataset reader
+        vector (gpd.GeoDataFrame): Geodataframe to be mofidied if needed
+
+    Returns:
+        gpd.GeoDataFrame: _description_
+    """
+    if raster.crs != vector.crs:
+        vector = vector.to_crs(raster.crs)
+    return vector
 
 def kelvin_to_celcius(
         df: pd.DataFrame
