@@ -170,10 +170,11 @@ def kelvin_to_celcius(
     
     return col - 273.15
 
-def attribute_join(shapefile, df: pd.DataFrame, method: str = "left") -> pd.DataFrame:
+def attribute_join(shapefile: gpd.GeoDataFrame,
+                   df: pd.DataFrame,
+                   ) -> pd.DataFrame:
     
-    #Attribute join between shapefile and zonal stats
-    joined_df = shapefile.join(df, how=method)
+    joined_df = df.join(shapefile)
      
     return joined_df
 
