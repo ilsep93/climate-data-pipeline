@@ -53,6 +53,7 @@ def process_zonal_statistics(
     shapefile = get_shapefile(shp_path=shp_path)
     zonal_stats = calculate_zonal_statistics(raster_location=raster_location,
                                              shapefile=shapefile)
+    zonal_stats.to_csv(out_path, encoding='utf-8', index=False)
     
 
 # TODO: add overwrite that will replace the existing file if needed
