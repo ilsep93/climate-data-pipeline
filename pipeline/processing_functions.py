@@ -191,17 +191,15 @@ def calculate_zonal_statistics(raster_location: Path,
         provided_stats (str, optional): Statistics to calculate. Defaults to "min mean max".
 
         results = zonal_stats(shapefile,
-                            array,
-                            affine=affine,
-                            nodata=nodata,
-                            stats="min mean max median",
-                            geojson_out=False)
-
-    df = pd.DataFrame(results)
     Returns:
         pd.DataFrame: Tabular results, where each row is a geometry in the shapefile
     """
     raster_location = _check_tif_extension(raster_location)
+    results = zonal_stats(vectors=shapefile.geometry,
+                            raster=raster_location,
+                            nodata=-999,
+                            stats=provided_stats)
+    
 
     return df
 
