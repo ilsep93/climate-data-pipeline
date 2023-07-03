@@ -36,8 +36,7 @@ def process_masked_raster(
         shp_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
         ) -> None:
 
-    shapefile = get_shapefile(shp_path=shp_path, 
-                              cols_to_drop= ['OBJECTID_1', 'Shape_Leng', 'Shape_Area', 'validOn', 'validTo', 'last_modif', 'source', 'date'])
+    shapefile = get_shapefile(shp_path=shp_path)
     masked_raster, profile = mask_raster_with_shp(raster_location=raw_raster_location,
                                          gdf=shapefile,
                                          )
