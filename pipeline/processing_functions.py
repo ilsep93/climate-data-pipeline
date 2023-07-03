@@ -179,17 +179,20 @@ def attribute_join(shapefile: gpd.GeoDataFrame,
     return joined_df
 
 
-def calculate_zonal_statistics(raster: np.ndarray, shapefile) -> pd.DataFrame:
-    """Write zonal statistics to local directory
+def calculate_zonal_statistics(raster_location: Path,
+                               shapefile: gpd.GeoDataFrame,
+                               provided_stats: str = "min mean max"
+                               ) -> pd.DataFrame:
+    """Calculates zonal statistics based on provided list of desired statistics
 
     Args:
-        shp_path (str): Path to shapefile
-    """
-
     with rasterio.open(raster, "r", shapefile) as src:
         array = src.read(1)
         affine = src.transform
         nodata = src.nodata
+        raster_location (Path): Path to raster. By providing path, zonal_stats function can access the profile directly
+        shapefile (gpd.GeoDataFrame): Shapefile that will be the unit of analysis for zonal stats
+        provided_stats (str, optional): Statistics to calculate. Defaults to "min mean max".
 
         results = zonal_stats(shapefile,
                             array,
@@ -199,6 +202,9 @@ def calculate_zonal_statistics(raster: np.ndarray, shapefile) -> pd.DataFrame:
                             geojson_out=False)
 
     df = pd.DataFrame(results)
+    Returns:
+        pd.DataFrame: Tabular results, where each row is a geometry in the shapefile
+    """
 
     return df
 
