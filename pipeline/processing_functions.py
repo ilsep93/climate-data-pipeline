@@ -46,7 +46,7 @@ def read_raster(location: Union[str, Path]) -> Tuple[np.ndarray, Profile]:
     return raster, profile
 
 
-def _check_tif_extension(location: Union[str, Path]) -> Union[str, Path]:
+def _check_tif_extension(location: Union[str, Path]) -> Path:
     """Adds .tif to raster location if it is not available
 
     Args:
@@ -55,12 +55,12 @@ def _check_tif_extension(location: Union[str, Path]) -> Union[str, Path]:
     Returns:
         Union[str, Path]: The modified location of the raster (if applicable)
     """
-    if isinstance(location, Path) and not location.suffix == ".tif":
+    if isinstance(location, str):
+        location = Path(location)
+    
+    if not location.suffix == ".tif":
         location = location.with_suffix(".tif")
-    
-    if isinstance(location, str) and not location.endswith(".tif"):
-        location = os.path.join(location + ".tif")
-    
+
     return location
     
 
