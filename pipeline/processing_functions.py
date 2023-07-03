@@ -120,7 +120,7 @@ def _lower_case_cols(df: Union[pd.DataFrame, gpd.GeoDataFrame]) -> Union[pd.Data
     return df
     
 
-def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame, nodata: int = 0) -> Tuple[np.ndarray, Profile]:
+def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame) -> Tuple[np.ndarray, Profile]:
     """Masks raster with geodataframe
 
     Args:
