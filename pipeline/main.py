@@ -3,10 +3,11 @@ import os
 import sys
 from pathlib import Path
 
+import pandas as pd
 from climatology import ChelsaProduct, Month, Scenario, get_climatology
-from climatology_processing import (get_shapefile, mask_raster_with_shp,
-                                    raster_description, read_raster,
-                                    write_local_raster)
+from processing_functions import (calculate_zonal_statistics, get_shapefile,
+                                  mask_raster_with_shp, raster_description,
+                                  read_raster, write_local_raster)
 from processing_steps import RasterProcessingStep, get_processing_steps
 
 sys.path.insert(0, "utils")
@@ -41,6 +42,17 @@ def process_masked_raster(
                                          gdf=shapefile,
                                          )
     write_local_raster(raster=masked_raster, profile=profile, out_path=masked_out_path)
+
+def process_zonal_statistics(
+        raster_location: Path,
+        out_path: Path,
+        shp_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
+       
+        ) -> None:
+
+    shapefile = get_shapefile(shp_path=shp_path)
+    zonal_stats = calculate_zonal_statistics(raster_location=raster_location,
+                                             shapefile=shapefile)
     
 
 # TODO: add overwrite that will replace the existing file if needed
@@ -74,6 +86,13 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
         
         process_masked_raster(raw_raster_location=raw_raster_location,
                               masked_out_path=masked_out_path)
+    
+    if RasterProcessingStep.ZONAL_STATISTICS in processing_steps:
+        masked_out_path = Path(os.path.join(ROOT_DIR, pathways[1], f"{scenario.value}_{month.value}"))
+        zonal_out_path = Path(os.path.join(ROOT_DIR, pathways[2], f"{scenario.value}_{month.value}.csv"))
+
+        process_zonal_statistics(raster_location=masked_out_path,
+                                 out_path=zonal_out_path)
 
 
 
