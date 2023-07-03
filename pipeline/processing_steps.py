@@ -43,7 +43,7 @@ def get_processing_steps(product: ChelsaProduct, scenario: Scenario, month: Mont
     if not os.path.exists(masked_file_path):
         processing_steps.append(RasterProcessingStep.MASK)
     
-    zonal_file_path = Path(os.path.join(zonal_path[0], f"{scenario.value}_{month.value}.tif"))
+    zonal_file_path = Path(os.path.join(zonal_path[0], f"{scenario.value}_{month.value}.csv"))
     if not os.path.exists(zonal_file_path):
         processing_steps.append(RasterProcessingStep.ZONAL_STATISTICS)
     

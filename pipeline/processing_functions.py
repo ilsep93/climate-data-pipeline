@@ -46,7 +46,7 @@ def read_raster(location: Union[str, Path]) -> Tuple[np.ndarray, Profile]:
     return raster, profile
 
 
-def _check_tif_extension(location: Union[str, Path]) -> Union[str, Path]:
+def _check_tif_extension(location: Union[str, Path]) -> Path:
     """Adds .tif to raster location if it is not available
 
     Args:
@@ -55,12 +55,12 @@ def _check_tif_extension(location: Union[str, Path]) -> Union[str, Path]:
     Returns:
         Union[str, Path]: The modified location of the raster (if applicable)
     """
-    if isinstance(location, Path) and not location.suffix == ".tif":
+    if isinstance(location, str):
+        location = Path(location)
+    
+    if not location.suffix == ".tif":
         location = location.with_suffix(".tif")
-    
-    if isinstance(location, str) and not location.endswith(".tif"):
-        location = os.path.join(location + ".tif")
-    
+
     return location
     
 
@@ -77,7 +77,10 @@ def write_local_raster(raster: np.ndarray, profile: Profile, out_path: Path) -> 
         dest.write(raster)
 
 
-def get_shapefile(shp_path: Path, cols_to_drop: list[str], lower_case: bool = True) -> gpd.GeoDataFrame:
+def get_shapefile(shp_path: Path,
+                  cols_to_drop: list[str] = ['OBJECTID_1', 'Shape_Leng', 'Shape_Area', 'validOn', 'validTo', 'last_modif', 'source', 'date'],
+                  lower_case: bool = True
+                  ) -> gpd.GeoDataFrame:
     """Get a clean version of the shapefile for 
 
     Args:
@@ -93,7 +96,7 @@ def get_shapefile(shp_path: Path, cols_to_drop: list[str], lower_case: bool = Tr
     else:
         clean_shapefile = shapefile
 
-    return clean_shapefile
+    return gpd.GeoDataFrame(clean_shapefile)
 
 
 def _drop_shapefile_cols(shapefile: gpd.GeoDataFrame,
@@ -101,7 +104,7 @@ def _drop_shapefile_cols(shapefile: gpd.GeoDataFrame,
                          ) -> gpd.GeoDataFrame:
     
     clean_shapefile = shapefile.drop(columns=cols_to_drop)
-    return clean_shapefile
+    return gpd.GeoDataFrame(clean_shapefile)
 
 
 def _lower_case_cols(df: Union[pd.DataFrame, gpd.GeoDataFrame]) -> Union[pd.DataFrame, gpd.GeoDataFrame]:
@@ -117,7 +120,7 @@ def _lower_case_cols(df: Union[pd.DataFrame, gpd.GeoDataFrame]) -> Union[pd.Data
     return df
     
 
-def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame, nodata: int = 0) -> Tuple[np.ndarray, Profile]:
+def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame) -> Tuple[np.ndarray, Profile]:
     """Masks raster with geodataframe
 
     Args:
@@ -133,15 +136,25 @@ def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame, nodata: i
 
     with rasterio.open(raster_location, "r") as src:
         profile = src.profile
-
-        # Check if CRSs match between vector and raster
-        if src.crs != gdf.crs:
-            gdf = gdf.to_crs(src.crs)
+        gdf = _check_crs(raster=src, vector=gdf)
 
         masked_raster, _ = mask.mask(dataset=src, shapes=gdf.geometry, crop=True)
     
     return masked_raster, profile
-    
+
+def _check_crs(raster: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """Transform CRS of vector if CRS does not match raster
+
+    Args:
+        raster (rasterio.DatasetReader): Raster dataset reader
+        vector (gpd.GeoDataFrame): Geodataframe to be mofidied if needed
+
+    Returns:
+        gpd.GeoDataFrame: _description_
+    """
+    if raster.crs != vector.crs:
+        vector = vector.to_crs(raster.crs)
+    return vector
 
 def kelvin_to_celcius(
         df: pd.DataFrame
@@ -157,36 +170,44 @@ def kelvin_to_celcius(
     
     return col - 273.15
 
-def attribute_join(shapefile, df: pd.DataFrame, method: str = "left") -> pd.DataFrame:
+def attribute_join(shapefile: gpd.GeoDataFrame,
+                   df: pd.DataFrame,
+                   ) -> pd.DataFrame:
     
-    #Attribute join between shapefile and zonal stats
-    joined_df = shapefile.join(df, how=method)
+    joined_df = df.join(shapefile)
      
     return joined_df
 
 
-def calculate_zonal_statistics(raster: np.ndarray, shapefile) -> pd.DataFrame:
-    """Write zonal statistics to local directory
+def calculate_zonal_statistics(raster_location: Path,
+                               shapefile: gpd.GeoDataFrame,
+                               provided_stats: str = "min mean max"
+                               ) -> pd.DataFrame:
+    """Calculates zonal statistics based on provided list of desired statistics
 
     Args:
-        shp_path (str): Path to shapefile
-    """
-
-    with rasterio.open(raster, "r", shapefile) as src:
-        array = src.read(1)
-        affine = src.transform
-        nodata = src.nodata
+        raster_location (Path): Path to raster. By providing path, zonal_stats function can access the profile directly
+        shapefile (gpd.GeoDataFrame): Shapefile that will be the unit of analysis for zonal stats
+        provided_stats (str, optional): Statistics to calculate. Defaults to "min mean max".
 
         results = zonal_stats(shapefile,
-                            array,
-                            affine=affine,
-                            nodata=nodata,
-                            stats="min mean max median",
-                            geojson_out=False)
+    Returns:
+        pd.DataFrame: Tabular results, where each row is a geometry in the shapefile
+    """
+    raster_location = _check_tif_extension(raster_location)
+    results = zonal_stats(vectors=shapefile.geometry,
+                            raster=raster_location,
+                            nodata=-999,
+                            stats=provided_stats)
+    
+    stats_list= provided_stats.split(" ")
+    for stat in stats_list:
+        column_name = f"{stat}_value_kelvin"
+        shapefile[column_name] = [result[stat] for result in results]
+    
+    shapefile.drop(columns=['geometry'], inplace=True)
 
-    df = pd.DataFrame(results)
-
-    return df
+    return shapefile
 
 
 def climatology_yearly_table_generator(
