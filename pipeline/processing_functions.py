@@ -77,7 +77,10 @@ def write_local_raster(raster: np.ndarray, profile: Profile, out_path: Path) -> 
         dest.write(raster)
 
 
-def get_shapefile(shp_path: Path, cols_to_drop: list[str], lower_case: bool = True) -> gpd.GeoDataFrame:
+def get_shapefile(shp_path: Path,
+                  cols_to_drop: list[str] = ['OBJECTID_1', 'Shape_Leng', 'Shape_Area', 'validOn', 'validTo', 'last_modif', 'source', 'date'],
+                  lower_case: bool = True
+                  ) -> gpd.GeoDataFrame:
     """Get a clean version of the shapefile for 
 
     Args:
@@ -93,7 +96,7 @@ def get_shapefile(shp_path: Path, cols_to_drop: list[str], lower_case: bool = Tr
     else:
         clean_shapefile = shapefile
 
-    return clean_shapefile
+    return gpd.GeoDataFrame(clean_shapefile)
 
 
 def _drop_shapefile_cols(shapefile: gpd.GeoDataFrame,
@@ -101,7 +104,7 @@ def _drop_shapefile_cols(shapefile: gpd.GeoDataFrame,
                          ) -> gpd.GeoDataFrame:
     
     clean_shapefile = shapefile.drop(columns=cols_to_drop)
-    return clean_shapefile
+    return gpd.GeoDataFrame(clean_shapefile)
 
 
 def _lower_case_cols(df: Union[pd.DataFrame, gpd.GeoDataFrame]) -> Union[pd.DataFrame, gpd.GeoDataFrame]:
