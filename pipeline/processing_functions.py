@@ -205,6 +205,7 @@ def calculate_zonal_statistics(raster_location: Path,
         column_name = f"{stat}_value_kelvin"
         shapefile[column_name] = [result[stat] for result in results]
     
+    shapefile.drop(columns=['geometry'], inplace=True)
 
     return shapefile
 
