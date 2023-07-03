@@ -200,8 +200,13 @@ def calculate_zonal_statistics(raster_location: Path,
                             nodata=-999,
                             stats=provided_stats)
     
+    stats_list= provided_stats.split(" ")
+    for stat in stats_list:
+        column_name = f"{stat}_value_kelvin"
+        shapefile[column_name] = [result[stat] for result in results]
+    
 
-    return df
+    return shapefile
 
 
 def climatology_yearly_table_generator(
