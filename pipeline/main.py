@@ -45,13 +45,16 @@ def process_masked_raster(
 def process_zonal_statistics(
         raster_location: Path,
         out_path: Path,
+        month: Month,
         shp_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
        
         ) -> None:
 
     shapefile = get_shapefile(shp_path=shp_path)
     zonal_stats = calculate_zonal_statistics(raster_location=raster_location,
-                                             shapefile=shapefile)
+                                             shapefile=shapefile,
+                                             month=month)
+    
     zonal_stats.to_csv(out_path, encoding='utf-8', index=False)
     
 
@@ -92,7 +95,9 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
         zonal_out_path = Path(os.path.join(ROOT_DIR, pathways[2], f"{scenario.value}_{month.value}.csv"))
 
         process_zonal_statistics(raster_location=masked_out_path,
-                                 out_path=zonal_out_path)
+                                 out_path=zonal_out_path,
+                                 month=month)
+    
 
 
 

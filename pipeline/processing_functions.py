@@ -9,6 +9,7 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 import rasterio
+from climatology import Month
 from rasterio import mask
 from rasterio.profiles import Profile
 from rasterstats import zonal_stats
@@ -118,7 +119,13 @@ def _lower_case_cols(df: Union[pd.DataFrame, gpd.GeoDataFrame]) -> Union[pd.Data
     """
     df.columns= df.columns.str.lower()
     return df
-    
+
+
+def _add_month_to_df(month: Month,
+                     df: Union[gpd.GeoDataFrame, pd.DataFrame]
+                     ) -> Union[gpd.GeoDataFrame, pd.DataFrame]:
+    df["month"] = month.value
+    return df
 
 def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame) -> Tuple[np.ndarray, Profile]:
     """Masks raster with geodataframe
@@ -182,15 +189,17 @@ def attribute_join(shapefile: gpd.GeoDataFrame,
 def calculate_zonal_statistics(raster_location: Path,
                                shapefile: gpd.GeoDataFrame,
                                provided_stats: str = "min mean max"
+                               month: Month,
+                               provided_stats: str = "min mean max",
                                ) -> pd.DataFrame:
     """Calculates zonal statistics based on provided list of desired statistics
 
     Args:
         raster_location (Path): Path to raster. By providing path, zonal_stats function can access the profile directly
         shapefile (gpd.GeoDataFrame): Shapefile that will be the unit of analysis for zonal stats
+        month (Month): Scenario's month
         provided_stats (str, optional): Statistics to calculate. Defaults to "min mean max".
 
-        results = zonal_stats(shapefile,
     Returns:
         pd.DataFrame: Tabular results, where each row is a geometry in the shapefile
     """
@@ -206,8 +215,9 @@ def calculate_zonal_statistics(raster_location: Path,
         shapefile[column_name] = [result[stat] for result in results]
     
     shapefile.drop(columns=['geometry'], inplace=True)
+    shapefile_with_month = _add_month_to_df(month=month, df=shapefile)
 
-    return shapefile
+    return shapefile_with_month
 
 
 def climatology_yearly_table_generator(
