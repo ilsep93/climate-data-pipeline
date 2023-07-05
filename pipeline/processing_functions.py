@@ -154,14 +154,18 @@ def _check_crs(raster: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.
 
     Args:
         raster (rasterio.DatasetReader): Raster dataset reader
-        vector (gpd.GeoDataFrame): Geodataframe to be mofidied if needed
+        vector (gpd.GeoDataFrame): Geodataframe to be modified if needed
 
     Returns:
-        gpd.GeoDataFrame: _description_
+        gpd.GeoDataFrame: Modified geodataframe
     """
+
     if raster.crs != vector.crs:
-        vector = vector.to_crs(raster.crs)
-    return vector
+        reprojected_vector = vector.to_crs(raster.crs)
+        return gpd.GeoDataFrame(reprojected_vector)
+    else:
+        return vector
+    
 
 def kelvin_to_celcius(
         df: pd.DataFrame
