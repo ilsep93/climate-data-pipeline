@@ -216,7 +216,7 @@ def calculate_zonal_statistics(raster_location: Path,
     
     stats_list= provided_stats.split(" ")
     for stat in stats_list:
-        column_name = f"{stat}_value_kelvin"
+        column_name = f"{stat}_raw_value"
         shapefile[column_name] = [result[stat] for result in results]
     
     shapefile.drop(columns=['geometry'], inplace=True)
