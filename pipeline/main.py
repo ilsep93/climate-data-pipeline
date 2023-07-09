@@ -7,7 +7,8 @@ import pandas as pd
 from climatology import ChelsaProduct, Month, Scenario, get_climatology
 from processing_functions import (calculate_zonal_statistics, get_shapefile,
                                   mask_raster_with_shp, raster_description,
-                                  read_raster, write_local_raster)
+                                  read_raster, write_local_raster,
+                                  yearly_table_generator)
 from processing_steps import RasterProcessingStep, get_processing_steps
 
 sys.path.insert(0, "utils")
@@ -56,6 +57,18 @@ def process_zonal_statistics(
                                              month=month)
     
     zonal_stats.to_csv(out_path, encoding='utf-8', index=False)
+
+
+def process_yearly_table(product: ChelsaProduct,
+                         zonal_dir: Path,
+                         out_path: Path,
+                         sort_values: list[str]):
+    
+    yearly_table = yearly_table_generator(product=product,
+                                          zonal_dir=zonal_dir,
+                                          sort_values=sort_values)
+    
+    yearly_table.to_csv(out_path, encoding='utf-8', index=False)
     
 
 # TODO: add overwrite that will replace the existing file if needed
@@ -98,6 +111,16 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
                                  out_path=zonal_out_path,
                                  month=month)
     
+    if RasterProcessingStep.YEARLY_TABLE in processing_steps:
+        logger.info(f"{timestamp()} : RasterProcessingStep.YEARLY_TABLE for {concrete_product}_{scenario}_{month}")
+        
+        yearly_table_out_path = Path(os.path.join(ROOT_DIR, pathways[-1], f"{scenario.value}_yearly.csv"))
+
+        process_yearly_table(product = concrete_product,
+                             zonal_dir=pathways[2],
+                             out_path=yearly_table_out_path,
+                             sort_values=["admin2pcod", "month"])
+
 
 
 
