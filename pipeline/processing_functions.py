@@ -257,8 +257,6 @@ def yearly_table_generator(product: ChelsaProduct, zonal_dir: Path, sort_values:
     Returns:
         pd.DataFrame: Yearly table
     """
-    if not os.path.exists(f"{self.time_series}/{self.climatology}_yearly.csv"):
-        zs_files = glob.glob(os.path.join(self.zonal_statistics, '*.csv'))
         
         li = []
         logger.info(f"Creating a yearly dataset for {self.climatology}")
