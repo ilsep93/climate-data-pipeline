@@ -1,6 +1,6 @@
 import os
 from abc import ABC
-from enum import Enum
+from enum import Enum, auto
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).parent.parent
@@ -171,6 +171,13 @@ class MinimumTemperature(ChelsaProduct):
                  ]
     months = [month for month in Month]
     base_url = "tasmin"
+
+
+class TemperatureProduct(Enum):
+    """Convenience class to identify temperature products"""
+    Temperature = auto()
+    MinimumTemperature = auto()
+    MaximumTemperature = auto()
 
 
 def get_climatology(product: str) -> ChelsaProduct:
