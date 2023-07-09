@@ -257,10 +257,17 @@ def yearly_table_generator(product: ChelsaProduct, zonal_dir: Path, sort_values:
     Returns:
         pd.DataFrame: Yearly table
     """
-        
-        li = []
-                li.append(df)
 
-            data = pd.concat(li, axis=0, ignore_index=True)
-            data.sort_values(by=["OBJECTID_1", "month"], inplace=True)
-            data.to_csv(f"{self.time_series}/{self.climatology}_yearly.csv", index=False)
+    li = []
+    yearly_table = pd.DataFrame()
+    for file in os.listdir(zonal_dir):
+        if file.endswith(".csv"):
+            with open(f"{os.path.join(zonal_dir, file)}", 'r') as f:
+                df = pd.read_csv(f, index_col=None, header=0, encoding='utf-8')
+                li.append(df)
+                yearly_table = pd.concat(li, axis=0, ignore_index=True)
+    
+    yearly_table = _check_temperature_converter(product=product, df=yearly_table)
+    yearly_table.sort_values(by=sort_values, inplace=True)
+
+    return yearly_table
