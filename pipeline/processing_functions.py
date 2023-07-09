@@ -9,7 +9,7 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 import rasterio
-from climatology import Month
+from climatology import ChelsaProduct, Month, TemperatureProduct
 from rasterio import mask
 from rasterio.profiles import Profile
 from rasterstats import zonal_stats
@@ -220,6 +220,11 @@ def _monthly_temperature_conversion(temperature: float) -> float:
     return temperature / 10
 
 
+def _check_temperature_converter(product:ChelsaProduct,
+                                 df: pd.DataFrame,
+                                 provided_stats: str = "min mean max"
+                                 ) -> pd.DataFrame:
+    """Checks if product is a temperature product. If so, new column is created with celsius values.
 
 def climatology_yearly_table_generator(
     self,
@@ -228,6 +233,25 @@ def climatology_yearly_table_generator(
     Processing steps: 
     * Add month int month column (1-12)
     * Sort values by administrative identifier and month
+    Args:
+        product (ChelsaProduct): Instance of any ChelsaProduct
+        df (pd.DataFrame): Dataframe that with values that will be checked and converted to C
+        provided_stats (str, optional): Columns with C/10 temperatures to be converted to C. Defaults to "min mean max".
+
+    Returns:
+        pd.DataFrame: _description_
+    """
+    
+    if type(product).__name__ in [tp.name for tp in TemperatureProduct]:
+        cols_to_convert_celsius = provided_stats.split(" ")
+        for stat in cols_to_convert_celsius:
+            raw_column_name = f"{stat}_raw_value"
+            celsius_column_name = f"{stat}_celsius_value"
+            df[celsius_column_name] = df[raw_column_name].apply(_monthly_temperature_conversion)
+    
+    return df
+
+
     """
     if not os.path.exists(f"{self.time_series}/{self.climatology}_yearly.csv"):
         zs_files = glob.glob(os.path.join(self.zonal_statistics, '*.csv'))
