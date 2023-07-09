@@ -259,12 +259,8 @@ def yearly_table_generator(product: ChelsaProduct, zonal_dir: Path, sort_values:
     """
         
         li = []
-        logger.info(f"Creating a yearly dataset for {self.climatology}")
                 li.append(df)
 
             data = pd.concat(li, axis=0, ignore_index=True)
             data.sort_values(by=["OBJECTID_1", "month"], inplace=True)
             data.to_csv(f"{self.time_series}/{self.climatology}_yearly.csv", index=False)
-            
-    else:
-        logger.info(f"Yearly time appended dataset exists for {self.climatology}")
