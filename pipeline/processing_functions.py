@@ -82,13 +82,13 @@ def get_shapefile(shp_path: Path,
                   cols_to_drop: list[str] = ['OBJECTID_1', 'Shape_Leng', 'Shape_Area', 'validOn', 'validTo', 'last_modif', 'source', 'date'],
                   lower_case: bool = True
                   ) -> gpd.GeoDataFrame:
-    """Get a clean version of the shapefile for 
+    """Get a clean version of the shapefile
 
     Args:
-        shp_path (Path): _description_
+        shp_path (Path): Path to .shp
 
     Returns:
-        gpd.GeoDataFrame: _description_
+        gpd.GeoDataFrame: Shapefile without columns to drop, with columns in lowercase
     """
     shapefile = gpd.read_file(shp_path)
     clean_shapefile = _drop_shapefile_cols(shapefile=shapefile, cols_to_drop=cols_to_drop)
@@ -115,7 +115,7 @@ def _lower_case_cols(df: Union[pd.DataFrame, gpd.GeoDataFrame]) -> Union[pd.Data
         df (Union[pd.DataFrame, gpd.GeoDataFrame]): Dataframe to be modified
 
     Returns:
-        Union[pd.DataFrame, gpd.GeoDataFrame]: Modified dataframe
+        Union[pd.DataFrame, gpd.GeoDataFrame]: Modified dataframe with lower case columns
     """
     df.columns= df.columns.str.lower()
     return df
@@ -126,6 +126,7 @@ def _add_month_to_df(month: Month,
                      ) -> Union[gpd.GeoDataFrame, pd.DataFrame]:
     df["month"] = month.value
     return df
+
 
 def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame) -> Tuple[np.ndarray, Profile]:
     """Masks raster with geodataframe
@@ -148,6 +149,7 @@ def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame) -> Tuple[
         masked_raster, _ = mask.mask(dataset=src, shapes=gdf.geometry, crop=True)
     
     return masked_raster, profile
+
 
 def _check_crs(raster: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """Transform CRS of vector if CRS does not match raster
@@ -192,7 +194,6 @@ def attribute_join(shapefile: gpd.GeoDataFrame,
 
 def calculate_zonal_statistics(raster_location: Path,
                                shapefile: gpd.GeoDataFrame,
-                               provided_stats: str = "min mean max"
                                month: Month,
                                provided_stats: str = "min mean max",
                                ) -> pd.DataFrame:
