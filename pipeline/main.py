@@ -94,7 +94,6 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
                            month=month,
                            raw_out_path=raster_raw_location)
     
-    
     if RasterProcessingStep.MASK in processing_steps:
         logger.info(f"{timestamp()} : RasterProcessingStep.MASK for {concrete_product}_{scenario}_{month}")
 
@@ -125,7 +124,16 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
                              sort_values=["admin2pcod", "month"])
 
 
+def raster_processing_parent_flow(product: str, scenario: Scenario):
+    # All months for a given product's scenario
+    available_months = [month for month in Month]
+    
+    for month in available_months:
+        raster_processing_flow(product=product,
+                               scenario=scenario,
+                               month=month)
 
 
 if __name__=="__main__":
-    raster_processing_flow(product="temp", scenario=Scenario.ACCESS1_0_rcp45, month=Month.OCTOBER)
+    raster_processing_parent_flow(product="temp",
+                                  scenario=Scenario.ACCESS1_0_rcp45)
