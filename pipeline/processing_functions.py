@@ -226,13 +226,6 @@ def _check_temperature_converter(product:ChelsaProduct,
                                  ) -> pd.DataFrame:
     """Checks if product is a temperature product. If so, new column is created with celsius values.
 
-def climatology_yearly_table_generator(
-    self,
-):
-    """Aggregates monthly climatology predictions into a yearly table.
-    Processing steps: 
-    * Add month int month column (1-12)
-    * Sort values by administrative identifier and month
     Args:
         product (ChelsaProduct): Instance of any ChelsaProduct
         df (pd.DataFrame): Dataframe that with values that will be checked and converted to C
@@ -252,6 +245,17 @@ def climatology_yearly_table_generator(
     return df
 
 
+def yearly_table_generator(product: ChelsaProduct, zonal_dir: Path, sort_values: list[str]) -> pd.DataFrame:
+    """Iterates through CSV files in zonal directory and appends them together to create a yearly table,
+    with one row per month.
+
+    Args:
+        product (ChelsaProduct): Type of CHELSA product. Used to determine raw value conversion
+        zonal_dir (Path): Path where list of zonal stat files can be found
+        sort_values (list[str]): Columns used to sort the yearly dataframe
+
+    Returns:
+        pd.DataFrame: Yearly table
     """
     if not os.path.exists(f"{self.time_series}/{self.climatology}_yearly.csv"):
         zs_files = glob.glob(os.path.join(self.zonal_statistics, '*.csv'))
