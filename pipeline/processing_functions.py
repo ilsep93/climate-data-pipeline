@@ -169,20 +169,6 @@ def _check_crs(raster: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.
         return vector
     
 
-def kelvin_to_celcius(
-        df: pd.DataFrame
-) -> pd.DataFrame:
-    """Converts Kelvin into Celcius
-
-    Args:
-        col (int): Numeric value to convert to Celcius
-    """
-    #Convert from Kelvin to Celcius
-    stats= ["min", "mean", "max", "median"]
-    df[stats] = df[stats].apply(kelvin_to_celcius)
-    
-    return col - 273.15
-
 def attribute_join(shapefile: gpd.GeoDataFrame,
                    df: pd.DataFrame,
                    ) -> pd.DataFrame:
@@ -223,6 +209,16 @@ def calculate_zonal_statistics(raster_location: Path,
     shapefile_with_month = _add_month_to_df(month=month, df=shapefile)
 
     return shapefile_with_month
+
+def _monthly_temperature_conversion(temperature: float) -> float:
+    """Monthly climatologies are in C/10 units
+    https://chelsa-climate.org/wp-admin/download-page/CHELSA_tech_specification.pdf (pg.36)
+
+    Args:
+        temperature (float): Numeric value to convert to Celcius
+    """
+    return temperature / 10
+
 
 
 def climatology_yearly_table_generator(
