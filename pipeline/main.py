@@ -7,7 +7,8 @@ import pandas as pd
 from climatology import ChelsaProduct, Month, Scenario, get_climatology
 from processing_functions import (calculate_zonal_statistics, get_shapefile,
                                   mask_raster_with_shp, raster_description,
-                                  read_raster, write_local_raster)
+                                  read_raster, write_local_raster,
+                                  yearly_table_generator)
 from processing_steps import RasterProcessingStep, get_processing_steps
 
 sys.path.insert(0, "utils")
@@ -45,14 +46,29 @@ def process_masked_raster(
 def process_zonal_statistics(
         raster_location: Path,
         out_path: Path,
+        month: Month,
         shp_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
        
         ) -> None:
 
     shapefile = get_shapefile(shp_path=shp_path)
     zonal_stats = calculate_zonal_statistics(raster_location=raster_location,
-                                             shapefile=shapefile)
+                                             shapefile=shapefile,
+                                             month=month)
+    
     zonal_stats.to_csv(out_path, encoding='utf-8', index=False)
+
+
+def process_yearly_table(product: ChelsaProduct,
+                         zonal_dir: Path,
+                         out_path: Path,
+                         sort_values: list[str]):
+    
+    yearly_table = yearly_table_generator(product=product,
+                                          zonal_dir=zonal_dir,
+                                          sort_values=sort_values)
+    
+    yearly_table.to_csv(out_path, encoding='utf-8', index=False)
     
 
 # TODO: add overwrite that will replace the existing file if needed
@@ -67,20 +83,20 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
     processing_steps = get_processing_steps(product=concrete_product,
                                             scenario=scenario,
                                             month=month)
-    
-    # Raster downloading step
+
     if RasterProcessingStep.DOWNLOAD in processing_steps:
         logger.info(f"{timestamp()} : RasterProcessingStep.DOWNLOAD for {concrete_product}_{scenario}_{month}")
 
-        raster_raw_location = Path(os.path.join(ROOT_DIR, pathways[0], f"{scenario.value}_{month.value}"))
-                    
+        raster_raw_location = Path(os.path.join(ROOT_DIR, pathways[0], f"{scenario.value}_{month.value}"))       
+        
         process_raw_raster(product=concrete_product,
                            scenario=scenario,
                            month=month,
                            raw_out_path=raster_raw_location)
     
-    
     if RasterProcessingStep.MASK in processing_steps:
+        logger.info(f"{timestamp()} : RasterProcessingStep.MASK for {concrete_product}_{scenario}_{month}")
+
         raw_raster_location = Path(os.path.join(ROOT_DIR, pathways[0], f"{scenario.value}_{month.value}"))
         masked_out_path = Path(os.path.join(ROOT_DIR, pathways[1], f"{scenario.value}_{month.value}"))
         
@@ -88,13 +104,36 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
                               masked_out_path=masked_out_path)
     
     if RasterProcessingStep.ZONAL_STATISTICS in processing_steps:
+        logger.info(f"{timestamp()} : RasterProcessingStep.ZONAL_STATISTICS for {concrete_product}_{scenario}_{month}")
+
         masked_out_path = Path(os.path.join(ROOT_DIR, pathways[1], f"{scenario.value}_{month.value}"))
         zonal_out_path = Path(os.path.join(ROOT_DIR, pathways[2], f"{scenario.value}_{month.value}.csv"))
 
         process_zonal_statistics(raster_location=masked_out_path,
-                                 out_path=zonal_out_path)
+                                 out_path=zonal_out_path,
+                                 month=month)
+    
+    if RasterProcessingStep.YEARLY_TABLE in processing_steps:
+        logger.info(f"{timestamp()} : RasterProcessingStep.YEARLY_TABLE for {concrete_product}_{scenario}_{month}")
+        
+        yearly_table_out_path = Path(os.path.join(ROOT_DIR, pathways[-1], f"{scenario.value}_yearly.csv"))
 
+        process_yearly_table(product = concrete_product,
+                             zonal_dir=pathways[2],
+                             out_path=yearly_table_out_path,
+                             sort_values=["admin2pcod", "month"])
+
+
+def raster_processing_parent_flow(product: str, scenario: Scenario):
+    # All months for a given product's scenario
+    available_months = [month for month in Month]
+    
+    for month in available_months:
+        raster_processing_flow(product=product,
+                               scenario=scenario,
+                               month=month)
 
 
 if __name__=="__main__":
-    raster_processing_flow(product="temp", scenario=Scenario.ACCESS1_0_rcp45, month=Month.OCTOBER)
+    raster_processing_parent_flow(product="temp",
+                                  scenario=Scenario.ACCESS1_0_rcp45)

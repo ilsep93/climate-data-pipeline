@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 from enum import Enum, auto
 from pathlib import Path
 
@@ -30,7 +29,7 @@ def get_processing_steps(product: ChelsaProduct, scenario: Scenario, month: Mont
 
     raw_path = [str(path) for path in all_pathways if "raw" in path]
     masked_path = [str(path) for path in all_pathways if "mask" in path]
-    zonal_path = [str(path) for path in all_pathways if "zonal" in path]
+    zonal_dir = [str(path) for path in all_pathways if "zonal" in path]
     time_series_path = [str(path) for path in all_pathways if "time" in path]
 
     processing_steps = []
@@ -43,11 +42,20 @@ def get_processing_steps(product: ChelsaProduct, scenario: Scenario, month: Mont
     if not os.path.exists(masked_file_path):
         processing_steps.append(RasterProcessingStep.MASK)
     
-    zonal_file_path = Path(os.path.join(zonal_path[0], f"{scenario.value}_{month.value}.csv"))
+    zonal_file_path = Path(os.path.join(zonal_dir[0], f"{scenario.value}_{month.value}.csv"))
     if not os.path.exists(zonal_file_path):
         processing_steps.append(RasterProcessingStep.ZONAL_STATISTICS)
-    
-    if not len(os.listdir(time_series_path[0])) <= 1:
+
+    time_series_path = Path(os.path.join(time_series_path[0], f"{scenario.value}_yearly.csv"))
+    all_months_available = _check_monthly_zonal_stats_complete(zonal_path=Path(zonal_dir[0]))
+    if all_months_available and not os.path.exists(time_series_path):
         processing_steps.append(RasterProcessingStep.YEARLY_TABLE)
     
     return processing_steps
+
+def _check_monthly_zonal_stats_complete(zonal_path: Path):
+    available_files = [path for path in os.listdir(zonal_path) if path.endswith(".csv")]
+    if len(available_files) == 12:
+        return True
+    else:
+        return False

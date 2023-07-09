@@ -1,7 +1,5 @@
-import glob
 import logging
 import os
-import re
 from pathlib import Path
 from typing import Tuple, Union
 
@@ -9,6 +7,7 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 import rasterio
+from climatology import ChelsaProduct, Month, TemperatureProduct
 from rasterio import mask
 from rasterio.profiles import Profile
 from rasterstats import zonal_stats
@@ -81,13 +80,13 @@ def get_shapefile(shp_path: Path,
                   cols_to_drop: list[str] = ['OBJECTID_1', 'Shape_Leng', 'Shape_Area', 'validOn', 'validTo', 'last_modif', 'source', 'date'],
                   lower_case: bool = True
                   ) -> gpd.GeoDataFrame:
-    """Get a clean version of the shapefile for 
+    """Get a clean version of the shapefile
 
     Args:
-        shp_path (Path): _description_
+        shp_path (Path): Path to .shp
 
     Returns:
-        gpd.GeoDataFrame: _description_
+        gpd.GeoDataFrame: Shapefile without columns to drop, with columns in lowercase
     """
     shapefile = gpd.read_file(shp_path)
     clean_shapefile = _drop_shapefile_cols(shapefile=shapefile, cols_to_drop=cols_to_drop)
@@ -114,11 +113,18 @@ def _lower_case_cols(df: Union[pd.DataFrame, gpd.GeoDataFrame]) -> Union[pd.Data
         df (Union[pd.DataFrame, gpd.GeoDataFrame]): Dataframe to be modified
 
     Returns:
-        Union[pd.DataFrame, gpd.GeoDataFrame]: Modified dataframe
+        Union[pd.DataFrame, gpd.GeoDataFrame]: Modified dataframe with lower case columns
     """
     df.columns= df.columns.str.lower()
     return df
-    
+
+
+def _add_month_to_df(month: Month,
+                     df: Union[gpd.GeoDataFrame, pd.DataFrame]
+                     ) -> Union[gpd.GeoDataFrame, pd.DataFrame]:
+    df["month"] = month.value
+    return df
+
 
 def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame) -> Tuple[np.ndarray, Profile]:
     """Masks raster with geodataframe
@@ -142,33 +148,24 @@ def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame) -> Tuple[
     
     return masked_raster, profile
 
+
 def _check_crs(raster: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """Transform CRS of vector if CRS does not match raster
 
     Args:
         raster (rasterio.DatasetReader): Raster dataset reader
-        vector (gpd.GeoDataFrame): Geodataframe to be mofidied if needed
+        vector (gpd.GeoDataFrame): Geodataframe to be modified if needed
 
     Returns:
-        gpd.GeoDataFrame: _description_
+        gpd.GeoDataFrame: Modified geodataframe
     """
+
     if raster.crs != vector.crs:
-        vector = vector.to_crs(raster.crs)
-    return vector
-
-def kelvin_to_celcius(
-        df: pd.DataFrame
-) -> pd.DataFrame:
-    """Converts Kelvin into Celcius
-
-    Args:
-        col (int): Numeric value to convert to Celcius
-    """
-    #Convert from Kelvin to Celcius
-    stats= ["min", "mean", "max", "median"]
-    df[stats] = df[stats].apply(kelvin_to_celcius)
+        reprojected_vector = vector.to_crs(raster.crs)
+        return gpd.GeoDataFrame(reprojected_vector)
+    else:
+        return vector
     
-    return col - 273.15
 
 def attribute_join(shapefile: gpd.GeoDataFrame,
                    df: pd.DataFrame,
@@ -181,16 +178,17 @@ def attribute_join(shapefile: gpd.GeoDataFrame,
 
 def calculate_zonal_statistics(raster_location: Path,
                                shapefile: gpd.GeoDataFrame,
-                               provided_stats: str = "min mean max"
+                               month: Month,
+                               provided_stats: str = "min mean max",
                                ) -> pd.DataFrame:
     """Calculates zonal statistics based on provided list of desired statistics
 
     Args:
         raster_location (Path): Path to raster. By providing path, zonal_stats function can access the profile directly
         shapefile (gpd.GeoDataFrame): Shapefile that will be the unit of analysis for zonal stats
+        month (Month): Scenario's month
         provided_stats (str, optional): Statistics to calculate. Defaults to "min mean max".
 
-        results = zonal_stats(shapefile,
     Returns:
         pd.DataFrame: Tabular results, where each row is a geometry in the shapefile
     """
@@ -202,39 +200,72 @@ def calculate_zonal_statistics(raster_location: Path,
     
     stats_list= provided_stats.split(" ")
     for stat in stats_list:
-        column_name = f"{stat}_value_kelvin"
+        column_name = f"{stat}_raw_value"
         shapefile[column_name] = [result[stat] for result in results]
     
     shapefile.drop(columns=['geometry'], inplace=True)
+    shapefile_with_month = _add_month_to_df(month=month, df=shapefile)
 
-    return shapefile
+    return shapefile_with_month
 
+def _monthly_temperature_conversion(temperature: float) -> float:
+    """Monthly climatologies are in C/10 units
+    https://chelsa-climate.org/wp-admin/download-page/CHELSA_tech_specification.pdf (pg.36)
 
-def climatology_yearly_table_generator(
-    self,
-):
-    """Aggregates monthly climatology predictions into a yearly table.
-    Processing steps: 
-    * Add month int month column (1-12)
-    * Sort values by administrative identifier and month
+    Args:
+        temperature (float): Numeric value to convert to Celcius
     """
-    if not os.path.exists(f"{self.time_series}/{self.climatology}_yearly.csv"):
-        zs_files = glob.glob(os.path.join(self.zonal_statistics, '*.csv'))
-        
-        li = []
-        logger.info(f"Creating a yearly dataset for {self.climatology}")
+    return temperature / 10
 
-        for file in zs_files:
-            with open(f"{file}", 'r') as f:
-                month = re.search('_\d{1,2}', file).group(0)
-                month = month.replace("_", "")
-                df = pd.read_csv(f, index_col=None, header=0)
-                df['month'] = int(month)
+
+def _check_temperature_converter(product:ChelsaProduct,
+                                 df: pd.DataFrame,
+                                 provided_stats: str = "min mean max"
+                                 ) -> pd.DataFrame:
+    """Checks if product is a temperature product. If so, new column is created with celsius values.
+
+    Args:
+        product (ChelsaProduct): Instance of any ChelsaProduct
+        df (pd.DataFrame): Dataframe that with values that will be checked and converted to C
+        provided_stats (str, optional): Columns with C/10 temperatures to be converted to C. Defaults to "min mean max".
+
+    Returns:
+        pd.DataFrame: _description_
+    """
+    
+    if type(product).__name__ in [tp.name for tp in TemperatureProduct]:
+        cols_to_convert_celsius = provided_stats.split(" ")
+        for stat in cols_to_convert_celsius:
+            raw_column_name = f"{stat}_raw_value"
+            celsius_column_name = f"{stat}_celsius_value"
+            df[celsius_column_name] = df[raw_column_name].apply(_monthly_temperature_conversion)
+    
+    return df
+
+
+def yearly_table_generator(product: ChelsaProduct, zonal_dir: Path, sort_values: list[str]) -> pd.DataFrame:
+    """Iterates through CSV files in zonal directory and appends them together to create a yearly table,
+    with one row per month.
+
+    Args:
+        product (ChelsaProduct): Type of CHELSA product. Used to determine raw value conversion
+        zonal_dir (Path): Path where list of zonal stat files can be found
+        sort_values (list[str]): Columns used to sort the yearly dataframe
+
+    Returns:
+        pd.DataFrame: Yearly table
+    """
+
+    li = []
+    yearly_table = pd.DataFrame()
+    for file in os.listdir(zonal_dir):
+        if file.endswith(".csv"):
+            with open(f"{os.path.join(zonal_dir, file)}", 'r') as f:
+                df = pd.read_csv(f, index_col=None, header=0, encoding='utf-8')
                 li.append(df)
+                yearly_table = pd.concat(li, axis=0, ignore_index=True)
+    
+    yearly_table = _check_temperature_converter(product=product, df=yearly_table)
+    yearly_table.sort_values(by=sort_values, inplace=True)
 
-            data = pd.concat(li, axis=0, ignore_index=True)
-            data.sort_values(by=["OBJECTID_1", "month"], inplace=True)
-            data.to_csv(f"{self.time_series}/{self.climatology}_yearly.csv", index=False)
-            
-    else:
-        logger.info(f"Yearly time appended dataset exists for {self.climatology}")
+    return yearly_table
