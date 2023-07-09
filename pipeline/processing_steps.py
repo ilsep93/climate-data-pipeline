@@ -17,12 +17,9 @@ class RasterProcessingStep(Enum):
 
 def get_processing_steps(product: ChelsaProduct, scenario: Scenario, month: Month) -> list[RasterProcessingStep]:
     """Determine which processing steps are needed for a given month of the product's scenario.
-    Each pipeline run is for a specific product/scenario pair.
-
-    Twelve (12) monthly rasters per product's scenario count as complete.
-    If a product's scenario is not complete, the entire 12 months are re-downloaded.
+    Each pipeline run is for a specific product, month, and scenario pair.
     
-    TODO: Load pipeline runs on postgres database.
+    TODO: Log pipeline runs on postgres database.
     """
 
     all_pathways = product.get_pathways(scenario=scenario)
