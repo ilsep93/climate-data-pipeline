@@ -135,6 +135,7 @@ def raster_processing_parent_flow(product: str, scenario: Scenario):
                                scenario=scenario,
                                month=month)
 
+    logging.shutdown()
 
 if __name__=="__main__":
     raster_processing_parent_flow(product="temp",
