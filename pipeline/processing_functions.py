@@ -91,9 +91,6 @@ def get_shapefile(shp_path: Path,
         gpd.GeoDataFrame: Shapefile without specified columns, with optional lowercase column names
     """
     shapefile = gpd.read_file(shp_path)
-    clean_shapefile = _drop_shapefile_cols(shapefile=shapefile, cols_to_drop=cols_to_drop)
-    if lower_case:
-        clean_shapefile = _lower_case_cols(clean_shapefile)
     else:
         clean_shapefile = shapefile
 
@@ -108,11 +105,8 @@ def _drop_shapefile_cols(shapefile: gpd.GeoDataFrame,
     return gpd.GeoDataFrame(clean_shapefile)
 
 
-def _lower_case_cols(df: Union[pd.DataFrame, gpd.GeoDataFrame]) -> Union[pd.DataFrame, gpd.GeoDataFrame]:
-    """Returns version of dataframe with lower case columns
-
-    Args:
-        df (Union[pd.DataFrame, gpd.GeoDataFrame]): Dataframe to be modified
+    if lower_case:
+        clean_shapefile.columns = map(str.lower, clean_shapefile.columns)
 
     Returns:
         Union[pd.DataFrame, gpd.GeoDataFrame]: Modified dataframe with lower case columns
