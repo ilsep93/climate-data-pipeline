@@ -6,9 +6,8 @@ from pathlib import Path
 import pandas as pd
 from climatology import ChelsaProduct, Month, Scenario, get_climatology
 from processing_functions import (calculate_zonal_statistics, get_shapefile,
-                                  mask_raster_with_shp, raster_description,
-                                  read_raster, write_local_raster,
-                                  yearly_table_generator)
+                                  mask_raster_with_shp, read_raster,
+                                  write_local_raster, yearly_table_generator)
 from processing_steps import RasterProcessingStep, get_processing_steps
 
 sys.path.insert(0, "utils")
@@ -27,7 +26,6 @@ def process_raw_raster(
     
     url = product.get_url(scenario=scenario, month=month)
     raster, profile = read_raster(location=url)
-    raster_description(profile=profile)
     write_local_raster(raster=raster, profile=profile, out_path=raw_out_path)
 
 

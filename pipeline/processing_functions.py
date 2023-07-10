@@ -15,18 +15,6 @@ from rasterstats import zonal_stats
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename='processing_logger.log', encoding='utf-8', level=logging.DEBUG)
 
-
-def raster_description(profile: Profile):
-    """Print description of raster
-
-    Args:
-        rast (rasterio): Raster profile
-    """
-    logger.info(f"CRS: {profile['crs']}")
-    logger.info(f"Band Count: {profile['count']}")
-    logger.info(f"Affine: {profile['transform']}")
-
-
 def read_raster(location: Union[str, Path]) -> Tuple[np.ndarray, Profile]:
     """Read a raster from a URL or path provided as a string
 
