@@ -122,6 +122,9 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
                              zonal_dir=pathways[2],
                              out_path=yearly_table_out_path,
                              sort_values=["admin2pcod", "month"])
+    
+    if len(processing_steps) == 0:
+        logger.info(f"All available steps already completed for {product}_{scenario.name}_{month.name}")
 
 
 def raster_processing_parent_flow(product: str, scenario: Scenario):
