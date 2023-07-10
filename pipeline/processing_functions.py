@@ -12,8 +12,6 @@ from rasterio import mask
 from rasterio.profiles import Profile
 from rasterstats import zonal_stats
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(filename='processing_logger.log', encoding='utf-8', level=logging.DEBUG)
 
 def read_raster(location: Union[str, Path]) -> Tuple[np.ndarray, Profile]:
     """Read a raster from a URL or path provided as a string
