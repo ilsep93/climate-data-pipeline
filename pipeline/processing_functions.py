@@ -84,9 +84,11 @@ def get_shapefile(shp_path: Path,
 
     Args:
         shp_path (Path): Path to .shp
+        cols_to_drop (List[str]): Columns to drop from the shapefile
+        lower_case (bool): Convert column names to lowercase if True
 
     Returns:
-        gpd.GeoDataFrame: Shapefile without columns to drop, with columns in lowercase
+        gpd.GeoDataFrame: Shapefile without specified columns, with optional lowercase column names
     """
     shapefile = gpd.read_file(shp_path)
     clean_shapefile = _drop_shapefile_cols(shapefile=shapefile, cols_to_drop=cols_to_drop)
