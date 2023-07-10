@@ -13,8 +13,20 @@ from processing_steps import RasterProcessingStep, get_processing_steps
 sys.path.insert(0, "utils")
 from timestamp import timestamp
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(filename='processing_logger.log', encoding='utf-8', level=logging.WARNING)
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+
+file_handler = logging.FileHandler("pipeline_dev.log", encoding="utf-8")
+file_handler.setLevel(logging.WARNING)
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
 
 ROOT_DIR = Path(__file__).parent.parent
 
