@@ -91,28 +91,11 @@ def get_shapefile(shp_path: Path,
         gpd.GeoDataFrame: Shapefile without specified columns, with optional lowercase column names
     """
     shapefile = gpd.read_file(shp_path)
-    else:
-        clean_shapefile = shapefile
-
-    return gpd.GeoDataFrame(clean_shapefile)
-
-
-def _drop_shapefile_cols(shapefile: gpd.GeoDataFrame,
-                         cols_to_drop: list[str],
-                         ) -> gpd.GeoDataFrame:
-    
     clean_shapefile = shapefile.drop(columns=cols_to_drop)
-    return gpd.GeoDataFrame(clean_shapefile)
-
-
     if lower_case:
         clean_shapefile.columns = map(str.lower, clean_shapefile.columns)
 
-    Returns:
-        Union[pd.DataFrame, gpd.GeoDataFrame]: Modified dataframe with lower case columns
-    """
-    df.columns= df.columns.str.lower()
-    return df
+    return clean_shapefile
 
 
 def _add_month_to_df(month: Month,
