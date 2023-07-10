@@ -12,20 +12,6 @@ from rasterio import mask
 from rasterio.profiles import Profile
 from rasterstats import zonal_stats
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(filename='processing_logger.log', encoding='utf-8', level=logging.DEBUG)
-
-
-def raster_description(profile: Profile):
-    """Print description of raster
-
-    Args:
-        rast (rasterio): Raster profile
-    """
-    logger.info(f"CRS: {profile['crs']}")
-    logger.info(f"Band Count: {profile['count']}")
-    logger.info(f"Affine: {profile['transform']}")
-
 
 def read_raster(location: Union[str, Path]) -> Tuple[np.ndarray, Profile]:
     """Read a raster from a URL or path provided as a string
@@ -84,39 +70,18 @@ def get_shapefile(shp_path: Path,
 
     Args:
         shp_path (Path): Path to .shp
+        cols_to_drop (List[str]): Columns to drop from the shapefile
+        lower_case (bool): Convert column names to lowercase if True
 
     Returns:
-        gpd.GeoDataFrame: Shapefile without columns to drop, with columns in lowercase
+        gpd.GeoDataFrame: Shapefile without specified columns, with optional lowercase column names
     """
     shapefile = gpd.read_file(shp_path)
-    clean_shapefile = _drop_shapefile_cols(shapefile=shapefile, cols_to_drop=cols_to_drop)
-    if lower_case:
-        clean_shapefile = _lower_case_cols(clean_shapefile)
-    else:
-        clean_shapefile = shapefile
-
-    return gpd.GeoDataFrame(clean_shapefile)
-
-
-def _drop_shapefile_cols(shapefile: gpd.GeoDataFrame,
-                         cols_to_drop: list[str],
-                         ) -> gpd.GeoDataFrame:
-    
     clean_shapefile = shapefile.drop(columns=cols_to_drop)
-    return gpd.GeoDataFrame(clean_shapefile)
+    if lower_case:
+        clean_shapefile.columns = map(str.lower, clean_shapefile.columns)
 
-
-def _lower_case_cols(df: Union[pd.DataFrame, gpd.GeoDataFrame]) -> Union[pd.DataFrame, gpd.GeoDataFrame]:
-    """Returns version of dataframe with lower case columns
-
-    Args:
-        df (Union[pd.DataFrame, gpd.GeoDataFrame]): Dataframe to be modified
-
-    Returns:
-        Union[pd.DataFrame, gpd.GeoDataFrame]: Modified dataframe with lower case columns
-    """
-    df.columns= df.columns.str.lower()
-    return df
+    return clean_shapefile
 
 
 def _add_month_to_df(month: Month,
