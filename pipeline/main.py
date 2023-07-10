@@ -15,7 +15,7 @@ sys.path.insert(0, "utils")
 from timestamp import timestamp
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='processing_logger.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename='processing_logger.log', encoding='utf-8', level=logging.WARNING)
 
 ROOT_DIR = Path(__file__).parent.parent
 
