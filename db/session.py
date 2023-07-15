@@ -1,6 +1,5 @@
 import os
 from contextlib import contextmanager
-from typing import Optional
 
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
