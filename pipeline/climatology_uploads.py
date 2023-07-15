@@ -1,23 +1,17 @@
-import glob
 import logging
-import os
-import re
 import sys
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
-from climatology import Climatology
-from climatology_urls import climatology_base_urls
+from climatology import Month, Scenario
 from dotenv import load_dotenv
-from sqlalchemy import Engine, create_engine, inspect
-from sqlalchemy.exc import OperationalError
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.schema import CreateSchema
-from sqlalchemy.types import DateTime, Float, Integer, String
+from sqlalchemy.types import DateTime, Float, String
 
-sys.path.append("../utils/")
-from session import get_session
+#sys.path.append("db/")
+from db.base_table import BaseTable
+from db.session import get_session
 
 load_dotenv("docker/.env")
 
