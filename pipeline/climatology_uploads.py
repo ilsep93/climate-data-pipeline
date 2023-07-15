@@ -28,13 +28,6 @@ def upload_to_db(df_path: Path, table_name: str, schema: str) -> None:
 
             logger.info(f"Uploaded '{self.climatology}' to the DB")
 
-def local_to_postgres_flow(
-        climatologies: list
-    ) -> None:
 
-    for url in climatologies:
-        cmip_temp = ClimatologyUploads(climatology_url=url)
-        cmip_temp.upload_to_db()
 
 if __name__ == "__main__":
-    local_to_postgres_flow(climatologies=climatology_base_urls)
