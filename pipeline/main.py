@@ -5,9 +5,10 @@ from pathlib import Path
 
 import pandas as pd
 from climatology import ChelsaProduct, Month, Scenario, get_climatology
-from processing_functions import (calculate_zonal_statistics, get_shapefile,
+from processing_functions import (calculate_zonal_statistics,
                                   mask_raster_with_shp, read_raster,
                                   write_local_raster, yearly_table_generator)
+from vector_processing import get_shapefile
 from processing_steps import RasterProcessingStep, get_processing_steps
 
 sys.path.insert(0, "utils")
