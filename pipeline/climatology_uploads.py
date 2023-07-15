@@ -27,6 +27,17 @@ def upload_to_db(df_path: Path, table_name: str, schema: str) -> None:
 
 
             logger.info(f"Uploaded '{self.climatology}' to the DB")
+    with get_session() as Session:
+        with Session() as session:
+            try:
+                for _, row in df.iterrows():
+                    record  = BaseTable(**row, uploaded_at=datetime.now())
+                    record.__tablename__ = table_name
+                    record.__table_args__= schema
+                    session.add(record)
+                session.commit()
+            except:
+                session.rollback()
 
 
 
