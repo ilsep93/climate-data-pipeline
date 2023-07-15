@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).parent.parent
 
-class Climatology(Enum):
+class Product(Enum):
     TEMP = "temp"
     BIO = "bio"
     PREC = "prec"
@@ -41,12 +41,12 @@ class Month(Enum):
     DECEMBER = 12
 
 class ChelsaProduct(ABC):
-    """Abstract class for all CHELSA climatology products"""
+    """Abstract class for all CHELSA Product products"""
 
     phase: Phase = Phase.CMIP5
     time_period: str = "2061-2080"
     base_url: str
-    climatology: Climatology
+    Product: Product
     scenarios: list[Scenario]
     months: list[Month]
 
@@ -64,7 +64,7 @@ class ChelsaProduct(ABC):
             raise ValueError(f"This month is not available. \
                          Options include {self.months}")
 
-        download_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.climatology.value}/CHELSA_{self.base_url}_mon_{scenario.value}_r1i1p1_g025.nc_{month.value}_{self.time_period}_V1.2.tif"
+        download_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.Product.value}/CHELSA_{self.base_url}_mon_{scenario.value}_r1i1p1_g025.nc_{month.value}_{self.time_period}_V1.2.tif"
         return download_url
 
 
@@ -80,7 +80,7 @@ class ChelsaProduct(ABC):
             raise ValueError(f"Scenario not available. \
                              Options include {self.scenarios}")
         pathways = []
-        base_export_path = Path(f"{ROOT_DIR}/data/{self.phase.value}/{self.climatology.value}/{scenario.value}")
+        base_export_path = Path(f"{ROOT_DIR}/data/{self.phase.value}/{self.Product.value}/{scenario.value}")
         folders = ["raw", "masked", "zonal_statistics", "time_series"]
 
         for folder in folders:
@@ -106,7 +106,7 @@ class ChelsaProduct(ABC):
 class Temperature(ChelsaProduct):
     """Concrete implementation of temperature ChelsaProduct"""
 
-    climatology = Climatology.TEMP
+    Product = Product.TEMP
     scenarios = [Scenario.ACCESS1_0_rcp45,
                  Scenario.ACCESS1_0_rcp85,
                  Scenario.BNU_ESM_rcp26,
@@ -120,7 +120,7 @@ class Temperature(ChelsaProduct):
 class Bio(ChelsaProduct):
     """Concrete implementation of bio ChelsaProduct"""
 
-    climatology = Climatology.BIO
+    Product = Product.BIO
     scenarios = [Scenario.ACCESS1_0_rcp45,
                  Scenario.ACCESS1_0_rcp85,
                  Scenario.BNU_ESM_rcp26,
@@ -134,7 +134,7 @@ class Bio(ChelsaProduct):
 class Precipitation(ChelsaProduct):
     """Concrete implementation of precipitation ChelsaProduct"""
 
-    climatology = Climatology.PREC
+    Product = Product.PREC
     scenarios = [Scenario.ACCESS1_0_rcp45,
                  Scenario.ACCESS1_0_rcp85,
                  Scenario.BNU_ESM_rcp26,
@@ -148,7 +148,7 @@ class Precipitation(ChelsaProduct):
 class MaximumTemperature(ChelsaProduct):
     """Concrete implementation of maxiumum temperature ChelsaProduct"""
     
-    climatology = Climatology.TMAX
+    Product = Product.TMAX
     scenarios = [Scenario.ACCESS1_0_rcp45,
                  Scenario.ACCESS1_0_rcp85,
                  Scenario.BNU_ESM_rcp26,
@@ -162,7 +162,7 @@ class MaximumTemperature(ChelsaProduct):
 class MinimumTemperature(ChelsaProduct):
     """Concrete implementation of minimum temperature ChelsaProduct"""
     
-    climatology = Climatology.TMIN
+    Product = Product.TMIN
     scenarios = [Scenario.ACCESS1_0_rcp45,
                  Scenario.ACCESS1_0_rcp85,
                  Scenario.BNU_ESM_rcp26,
@@ -189,7 +189,7 @@ def get_climatology(product: str) -> ChelsaProduct:
     Returns:
         ChelsaProduct: Concrete implementation of CHELSA product
     """
-    available_products = [product.value for product in Climatology]
+    available_products = [product.value for product in Product]
     if product not in available_products:
         raise ValueError(f"This product is not available. \
                          Options include {available_products}")
