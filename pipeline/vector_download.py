@@ -69,6 +69,7 @@ def shapefile_to_geojson(
     else:
         logger.info("GeoJSON already exists in provided location.")
 
+
 if __name__ == "__main__":
     shapefile_location = download_shapefile(
         url="https://data.humdata.org/dataset/b20cd345-93fb-43bd-9c6e-7bc7d87b63eb/resource/30b6979a-d3f3-4982-971f-dc53f076bc52/download/wca_admbnda_adm2_ocha.zip",

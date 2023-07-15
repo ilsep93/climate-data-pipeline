@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import geopandas as gpd
+import pandas as pd
 
 
 def get_shapefile(shp_path: Path,
