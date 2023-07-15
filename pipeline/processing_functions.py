@@ -1,4 +1,3 @@
-import logging
 import os
 from pathlib import Path
 from typing import Tuple, Union
@@ -7,7 +6,7 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 import rasterio
-from climatology import ChelsaProduct, Month, TemperatureProduct
+from climatology import ChelsaProduct, Month, Scenario, TemperatureProduct
 from rasterio import mask
 from rasterio.profiles import Profile
 from rasterstats import zonal_stats
@@ -62,32 +61,18 @@ def write_local_raster(raster: np.ndarray, profile: Profile, out_path: Path) -> 
         dest.write(raster)
 
 
-def get_shapefile(shp_path: Path,
-                  cols_to_drop: list[str] = ['OBJECTID_1', 'Shape_Leng', 'Shape_Area', 'validOn', 'validTo', 'last_modif', 'source', 'date'],
-                  lower_case: bool = True
-                  ) -> gpd.GeoDataFrame:
-    """Get a clean version of the shapefile
-
-    Args:
-        shp_path (Path): Path to .shp
-        cols_to_drop (List[str]): Columns to drop from the shapefile
-        lower_case (bool): Convert column names to lowercase if True
-
-    Returns:
-        gpd.GeoDataFrame: Shapefile without specified columns, with optional lowercase column names
-    """
-    shapefile = gpd.read_file(shp_path)
-    clean_shapefile = shapefile.drop(columns=cols_to_drop)
-    if lower_case:
-        clean_shapefile.columns = map(str.lower, clean_shapefile.columns)
-
-    return clean_shapefile
-
-
 def _add_month_to_df(month: Month,
                      df: Union[gpd.GeoDataFrame, pd.DataFrame]
                      ) -> Union[gpd.GeoDataFrame, pd.DataFrame]:
     df["month"] = month.value
+    return df
+
+
+def _add_scenario_to_df(scenario: Scenario,
+                        df: Union[gpd.GeoDataFrame, pd.DataFrame]
+                     ) -> Union[gpd.GeoDataFrame, pd.DataFrame]:
+    
+    df['scenario'] = scenario.value
     return df
 
 
@@ -131,14 +116,6 @@ def _check_crs(raster: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.
     else:
         return vector
     
-
-def attribute_join(shapefile: gpd.GeoDataFrame,
-                   df: pd.DataFrame,
-                   ) -> pd.DataFrame:
-    
-    joined_df = df.join(shapefile)
-     
-    return joined_df
 
 
 def calculate_zonal_statistics(raster_location: Path,
