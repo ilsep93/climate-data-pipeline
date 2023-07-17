@@ -61,18 +61,17 @@ def write_local_raster(raster: np.ndarray, profile: Profile, out_path: Path) -> 
         dest.write(raster)
 
 
-def _add_month_to_df(month: Month,
-                     df: Union[gpd.GeoDataFrame, pd.DataFrame]
-                     ) -> Union[gpd.GeoDataFrame, pd.DataFrame]:
-    df["month"] = month.value
-    return df
-
-
-def _add_scenario_to_df(scenario: Scenario,
-                        df: Union[gpd.GeoDataFrame, pd.DataFrame]
+def _add_product_identifiers(product: ChelsaProduct,
+                            scenario: Scenario,
+                            month: Month,
+                            df: Union[gpd.GeoDataFrame, pd.DataFrame]
                      ) -> Union[gpd.GeoDataFrame, pd.DataFrame]:
     
-    df['scenario'] = scenario.value
+    df["product"] = product.Product
+    df["month"] = month.value
+    df["scenario"] = scenario.value
+    df["id"] = df["product"] + "_" + df["scenario"] + "_" + df["month"] + df["place_id"]
+    
     return df
 
 
@@ -120,6 +119,8 @@ def _check_crs(raster: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.
 
 def calculate_zonal_statistics(raster_location: Path,
                                shapefile: gpd.GeoDataFrame,
+                               product: ChelsaProduct,
+                               scenario: Scenario,
                                month: Month,
                                provided_stats: str = "min mean max",
                                ) -> pd.DataFrame:
@@ -146,9 +147,13 @@ def calculate_zonal_statistics(raster_location: Path,
         shapefile[column_name] = [result[stat] for result in results]
     
     shapefile.drop(columns=['geometry'], inplace=True)
-    shapefile_with_month = _add_month_to_df(month=month, df=shapefile)
+    shapefile_with_ids = _add_product_identifiers(product=product,
+                                                  scenario=scenario,
+                                                  month=month,
+                                                  df=shapefile)
 
-    return shapefile_with_month
+    return shapefile_with_ids
+
 
 def _monthly_temperature_conversion(temperature: float) -> float:
     """Monthly climatologies are in C/10 units

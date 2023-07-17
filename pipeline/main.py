@@ -57,6 +57,8 @@ def process_masked_raster(
 def process_zonal_statistics(
         raster_location: Path,
         out_path: Path,
+        product: ChelsaProduct,
+        scenario: Scenario,
         month: Month,
         shp_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
        
@@ -65,6 +67,8 @@ def process_zonal_statistics(
     shapefile = get_shapefile(shp_path=shp_path)
     zonal_stats = calculate_zonal_statistics(raster_location=raster_location,
                                              shapefile=shapefile,
+                                             product=product,
+                                             scenario=scenario,
                                              month=month)
     
     zonal_stats.to_csv(out_path, encoding='utf-8', index=False)
