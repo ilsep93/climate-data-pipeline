@@ -28,6 +28,7 @@ def upload_to_db(df_path: Path, table_name: str, schema: str) -> None:
                 session.commit()
             except:
                 session.rollback()
+                logger.exception(f"Unable to add record to database.")
 
 
 
