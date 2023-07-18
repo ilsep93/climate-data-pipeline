@@ -17,6 +17,14 @@ class Country(Base):
     iso3_code = Column(String(3), primary_key=True, nullable=False)
     iso2_code = Column(String(2), nullable=False)
     name = Column(String, nullable=False)
+
+
+def delete_table():
+    with get_session() as Session:
+        with Session() as session:
+            Base.metadata.drop_all(bind=session.connection())
+
+
 def add_countries_to_db(countries_file: Path):
     with get_session() as Session:
         with Session() as session:
