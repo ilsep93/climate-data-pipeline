@@ -17,3 +17,21 @@ class Country(Base):
     iso3_code = Column(String(3), primary_key=True, nullable=False)
     iso2_code = Column(String(2), nullable=False)
     name = Column(String, nullable=False)
+def add_countries_to_db(countries_file: Path):
+    with get_session() as Session:
+        with Session() as session:
+            Base.metadata.create_all(bind=session.connection())
+            with open(countries_file) as file:
+                countries = pd.read_csv(file, keep_default_na=False)
+                for _, row in countries.iterrows():
+                    try:
+                        country = Country(**row)
+                        session.add(country)
+                        session.commit()
+                    except:
+                        session.rollback()
+                    
+
+
+if __name__ == "__main__":
+    add_countries_to_db(Path("db/countries.csv"))
