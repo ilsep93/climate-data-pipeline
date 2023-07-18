@@ -1,13 +1,13 @@
+from country import Country
 from sqlalchemy import Column, DateTime, Float, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import declared_attr
+from sqlalchemy.orm import declared_attr, relationship
 
 Base = declarative_base()
 
-class BaseTable(Base):
+class TableMixin(Base):
     id = Column(Integer, primary_key=True)
-    iso3_code = Column(String(3), nullable=False)
-    place_type = Column(String(128))
+    iso3_code = relationship('Country')
     place_name = Column(String(128), nullable=False)
     place_id = Column(String(128))
     month = Column(Integer, nullable=False)
