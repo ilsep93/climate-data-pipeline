@@ -6,9 +6,8 @@ from pathlib import Path
 import pandas as pd
 from climatology import ChelsaProduct, Month, Scenario, get_climatology
 from processing_functions import (calculate_zonal_statistics,
-                                  mask_raster_with_shp, read_raster,
+                                  crop_raster_with_geometry, read_raster,
                                   write_local_raster, yearly_table_generator)
-from vector_processing import get_shapefile
 from processing_steps import RasterProcessingStep, get_processing_steps
 from vector_processing import get_shapefile
 
@@ -47,7 +46,7 @@ def process_masked_raster(
         ) -> None:
 
     shapefile = get_shapefile(shp_path=shp_path)
-    masked_raster, profile = mask_raster_with_shp(raster_location=raw_raster_location,
+    masked_raster, profile = crop_raster_with_geometry(raster_location=raw_raster_location,
                                          gdf=shapefile,
                                          )
     write_local_raster(raster=masked_raster, profile=profile, out_path=masked_out_path)

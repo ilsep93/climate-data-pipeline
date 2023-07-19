@@ -75,7 +75,7 @@ def _add_product_identifiers(product: ChelsaProduct,
     return df
 
 
-def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame) -> Tuple[np.ndarray, Profile]:
+def crop_raster_with_geometry(raster_location: Path, gdf: gpd.GeoDataFrame) -> Tuple[np.ndarray, Profile]:
     """Masks raster with geodataframe
 
     Args:
