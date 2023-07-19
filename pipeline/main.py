@@ -10,9 +10,7 @@ from processing_functions import (calculate_zonal_statistics,
                                   write_local_raster, yearly_table_generator)
 from vector_processing import get_shapefile
 from processing_steps import RasterProcessingStep, get_processing_steps
-
-sys.path.insert(0, "utils")
-from timestamp import timestamp
+from vector_processing import get_shapefile
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -99,10 +97,10 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
                                             scenario=scenario,
                                             month=month)
     
-    logger.info(f"{timestamp()} - Processing steps: {processing_steps} for {product}_{scenario.name}_{month.name}")
+    logger.info(f"Processing steps: {processing_steps} for {product}_{scenario.name}_{month.name}")
 
     if RasterProcessingStep.DOWNLOAD in processing_steps:
-        logger.info(f"{timestamp()} : RasterProcessingStep.DOWNLOAD for {product}_{scenario.name}_{month.name}")
+        logger.info(f"RasterProcessingStep.DOWNLOAD for {product}_{scenario.name}_{month.name}")
 
         raster_raw_location = Path(os.path.join(ROOT_DIR, pathways[0], f"{scenario.value}_{month.value}"))       
         
@@ -112,7 +110,7 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
                            raw_out_path=raster_raw_location)
     
     if RasterProcessingStep.MASK in processing_steps:
-        logger.info(f"{timestamp()} : RasterProcessingStep.MASK for {product}_{scenario.name}_{month.name}")
+        logger.info(f"RasterProcessingStep.MASK for {product}_{scenario.name}_{month.name}")
 
         raw_raster_location = Path(os.path.join(ROOT_DIR, pathways[0], f"{scenario.value}_{month.value}"))
         masked_out_path = Path(os.path.join(ROOT_DIR, pathways[1], f"{scenario.value}_{month.value}"))
@@ -121,7 +119,7 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
                               masked_out_path=masked_out_path)
     
     if RasterProcessingStep.ZONAL_STATISTICS in processing_steps:
-        logger.info(f"{timestamp()} : RasterProcessingStep.ZONAL_STATISTICS for {product}_{scenario.name}_{month.name}")
+        logger.info(f"RasterProcessingStep.ZONAL_STATISTICS for {product}_{scenario.name}_{month.name}")
 
         masked_out_path = Path(os.path.join(ROOT_DIR, pathways[1], f"{scenario.value}_{month.value}"))
         zonal_out_path = Path(os.path.join(ROOT_DIR, pathways[2], f"{scenario.value}_{month.value}.csv"))
@@ -131,7 +129,7 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
                                  month=month)
     
     if RasterProcessingStep.YEARLY_TABLE in processing_steps:
-        logger.info(f"{timestamp()} : RasterProcessingStep.YEARLY_TABLE for {product}_{scenario.name}_{month.name}")
+        logger.info(f"RasterProcessingStep.YEARLY_TABLE for {product}_{scenario.name}_{month.name}")
         
         yearly_table_out_path = Path(os.path.join(ROOT_DIR, pathways[-1], f"{scenario.value}_yearly.csv"))
 
