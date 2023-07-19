@@ -9,7 +9,7 @@ from processing_functions import (calculate_zonal_statistics,
                                   crop_raster_with_geometry, read_raster,
                                   write_local_raster, yearly_table_generator)
 from processing_steps import RasterProcessingStep, get_processing_steps
-from vector_processing import get_shapefile
+from vector_processing import get_geometry
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -42,10 +42,10 @@ def process_raw_raster(
 def process_masked_raster(
         raw_raster_location: Path,
         masked_out_path: Path,
-        shp_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
+        geom_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
         ) -> None:
 
-    shapefile = get_shapefile(shp_path=shp_path)
+    shapefile = get_geometry(geom_path=geom_path)
     masked_raster, profile = crop_raster_with_geometry(raster_location=raw_raster_location,
                                          gdf=shapefile,
                                          )
@@ -57,11 +57,11 @@ def process_zonal_statistics(
         product: ChelsaProduct,
         scenario: Scenario,
         month: Month,
-        shp_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
+        geom_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
        
         ) -> None:
 
-    shapefile = get_shapefile(shp_path=shp_path)
+    shapefile = get_geometry(geom_path=geom_path)
     zonal_stats = calculate_zonal_statistics(raster_location=raster_location,
                                              shapefile=shapefile,
                                              product=product,
