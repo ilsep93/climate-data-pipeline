@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from typing import Optional
 
 import geopandas as gpd
 import pandas as pd
@@ -41,6 +42,7 @@ def get_geometry(geom_path: Path,
     logger.info(f"Geometry columns: {mapped_geoms.columns}")
   
     return mapped_geoms
+
 
 
 def _rename_geometry(geom: gpd.GeoDataFrame, column_mapping: dict) -> gpd.GeoDataFrame:
