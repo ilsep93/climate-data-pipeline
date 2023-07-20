@@ -67,6 +67,7 @@ def process_zonal_statistics(
                                              product=product,
                                              scenario=scenario,
                                              month=month)
+                                             place_id=place_id)
     
     zonal_stats.to_csv(out_path, encoding='utf-8', index=False)
 
@@ -126,6 +127,7 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
         process_zonal_statistics(raster_location=masked_out_path,
                                  out_path=zonal_out_path,
                                  month=month)
+                                 place_id="adm2_id")
     
     if RasterProcessingStep.YEARLY_TABLE in processing_steps:
         logger.info(f"RasterProcessingStep.YEARLY_TABLE for {product}_{scenario.name}_{month.name}")

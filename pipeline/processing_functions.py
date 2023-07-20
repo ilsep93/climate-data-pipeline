@@ -64,13 +64,14 @@ def write_local_raster(raster: np.ndarray, profile: Profile, out_path: Path) -> 
 def _add_product_identifiers(product: ChelsaProduct,
                             scenario: Scenario,
                             month: Month,
+                            place_id: str,
                             df: Union[gpd.GeoDataFrame, pd.DataFrame]
                      ) -> Union[gpd.GeoDataFrame, pd.DataFrame]:
     
-    df["product"] = product.Product
-    df["month"] = month.value
+    df["product"] = product.Product.name
+    df["month"] = month.name
     df["scenario"] = scenario.value
-    df["id"] = df["product"] + "_" + df["scenario"] + "_" + df["month"] + df["place_id"]
+    df["id"] = df["product"] + "_" + df["scenario"] + "_" + df["month"] + "_" + df[str(place_id)]
     
     return df
 
@@ -122,6 +123,7 @@ def calculate_zonal_statistics(raster_location: Path,
                                product: ChelsaProduct,
                                scenario: Scenario,
                                month: Month,
+                               place_id: str,
                                provided_stats: str = "min mean max",
                                ) -> pd.DataFrame:
     """Calculates zonal statistics based on provided list of desired statistics
