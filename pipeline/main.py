@@ -9,7 +9,7 @@ from processing_functions import (calculate_zonal_statistics,
                                   crop_raster_with_geometry, read_raster,
                                   write_local_raster, yearly_table_generator)
 from processing_steps import RasterProcessingStep, get_processing_steps
-from vector_processing import get_geometry
+from vector_processing import COLUMN_MAPPING, get_geometry
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
