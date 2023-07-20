@@ -45,9 +45,10 @@ def process_masked_raster(
         geom_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
         ) -> None:
 
-    shapefile = get_geometry(geom_path=geom_path)
+    geometry = get_geometry(geom_path=geom_path,
+                             column_mapping=COLUMN_MAPPING)
     masked_raster, profile = crop_raster_with_geometry(raster_location=raw_raster_location,
-                                         gdf=shapefile,
+                                         gdf=geometry,
                                          )
     write_local_raster(raster=masked_raster, profile=profile, out_path=masked_out_path)
 
@@ -61,12 +62,13 @@ def process_zonal_statistics(
        
         ) -> None:
 
-    shapefile = get_geometry(geom_path=geom_path)
+    geometry = get_geometry(geom_path=geom_path,
+                            column_mapping=COLUMN_MAPPING)
     zonal_stats = calculate_zonal_statistics(raster_location=raster_location,
-                                             shapefile=shapefile,
+                                             geometry=geometry,
                                              product=product,
                                              scenario=scenario,
-                                             month=month)
+                                             month=month,
                                              place_id=place_id)
     
     zonal_stats.to_csv(out_path, encoding='utf-8', index=False)

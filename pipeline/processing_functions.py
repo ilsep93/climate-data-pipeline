@@ -128,7 +128,7 @@ def _check_crs(raster: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.
 
 
 def calculate_zonal_statistics(raster_location: Path,
-                               shapefile: gpd.GeoDataFrame,
+                               geometry: gpd.GeoDataFrame,
                                product: ChelsaProduct,
                                scenario: Scenario,
                                month: Month,
@@ -139,15 +139,15 @@ def calculate_zonal_statistics(raster_location: Path,
 
     Args:
         raster_location (Path): Path to raster. By providing path, zonal_stats function can access the profile directly
-        shapefile (gpd.GeoDataFrame): Shapefile that will be the unit of analysis for zonal stats
+        geometry (gpd.GeoDataFrame): geometry that will be the unit of analysis for zonal stats
         month (Month): Scenario's month
         provided_stats (str, optional): Statistics to calculate. Defaults to "min mean max".
 
     Returns:
-        pd.DataFrame: Tabular results, where each row is a geometry in the shapefile
+        pd.DataFrame: Tabular results, where each row is a geometry in the geometry
     """
     raster_location = _check_tif_extension(raster_location)
-    results = zonal_stats(vectors=shapefile.geometry,
+    results = zonal_stats(vectors=geometry.geometry,
                             raster=raster_location,
                             nodata=-999,
                             stats=provided_stats)
@@ -155,15 +155,16 @@ def calculate_zonal_statistics(raster_location: Path,
     stats_list= provided_stats.split(" ")
     for stat in stats_list:
         column_name = f"{stat}_raw_value"
-        shapefile[column_name] = [result[stat] for result in results]
+        geometry[column_name] = [result[stat] for result in results]
     
-    shapefile.drop(columns=['geometry'], inplace=True)
-    shapefile_with_ids = _add_product_identifiers(product=product,
+    geometry.drop(columns=['geometry'], inplace=True)
+    geometry_with_ids = _add_product_identifiers(product=product,
                                                   scenario=scenario,
                                                   month=month,
-                                                  df=shapefile)
+                                                  place_id=place_id,
+                                                  df=geometry)
 
-    return shapefile_with_ids
+    return geometry_with_ids
 
 
 def _monthly_temperature_conversion(temperature: float) -> float:
