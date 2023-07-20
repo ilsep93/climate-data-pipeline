@@ -40,11 +40,13 @@ https://github.com/ilsep93/climate-data-pipeline/assets/54957973/572591c2-e0ea-4
 
 # Skills Practiced:
 
+* Creating Object-Relational Mapping (ORM) tables with `sqlalchemy`, including creating mixin tables with pre-defined columns that can be shared across tables (July 2023)
+* Separate business logic from implementation details, and delay the the specific implementation details for as long as possible. Inspired by reading "Clean Architecture: A Craftsman's Guide to Software Structure and Design" (July 2023).
 * Factory design pattern to create climatology products; concrete implementation is separate from client code that creates products. There is the option to add additional scenarios and products as they become available by expanding (rather than modifying) existing code (June 2023).
 * Utilizing iterfaces to abstract inputs and outputs, reducing coupling within and between modules (June 2023)
 * Plotly Dash framework, including a Flask server and dcc.Graph to create dashboard front-end (May 2023)
 * dbt to create views and materilized tables, using Jinja code to iterate through tables (March 2023)
-* Python packages to manipulate raster data, including geopandas and rasterio (March 2023)
+* Python packages to manipulate raster data, including `geopandas` and `rasterio` (March 2023)
 * Prefect to orchestrate pipeline (February 2023)
 * Docker to create network of pgadmin and a Postgres database (Feburary 2023)
 
