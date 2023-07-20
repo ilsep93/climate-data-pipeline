@@ -61,22 +61,22 @@ def write_local_raster(raster: np.ndarray, profile: Profile, out_path: Path) -> 
         dest.write(raster)
 
 
-def _add_month_to_df(month: Month,
-                     df: Union[gpd.GeoDataFrame, pd.DataFrame]
-                     ) -> Union[gpd.GeoDataFrame, pd.DataFrame]:
-    df["month"] = month.value
-    return df
-
-
-def _add_scenario_to_df(scenario: Scenario,
-                        df: Union[gpd.GeoDataFrame, pd.DataFrame]
+def _add_product_identifiers(product: ChelsaProduct,
+                            scenario: Scenario,
+                            month: Month,
+                            place_id: str,
+                            df: Union[gpd.GeoDataFrame, pd.DataFrame]
                      ) -> Union[gpd.GeoDataFrame, pd.DataFrame]:
     
-    df['scenario'] = scenario.value
+    df["product"] = product.Product.name
+    df["month"] = month.name
+    df["scenario"] = scenario.value
+    df["id"] = df["product"] + "_" + df["scenario"] + "_" + df["month"] + "_" + df[str(place_id)]
+    
     return df
 
 
-def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame) -> Tuple[np.ndarray, Profile]:
+def crop_raster_with_geometry(raster_location: Path, gdf: gpd.GeoDataFrame) -> Tuple[np.ndarray, Profile]:
     """Masks raster with geodataframe
 
     Args:
@@ -91,27 +91,36 @@ def mask_raster_with_shp(raster_location: Path, gdf: gpd.GeoDataFrame) -> Tuple[
     raster_location = _check_tif_extension(location=raster_location)
 
     with rasterio.open(raster_location, "r") as src:
-        profile = src.profile
-        gdf = _check_crs(raster=src, vector=gdf)
+        gdf = _check_crs(dataset_reader=src, vector=gdf)
 
-        masked_raster, _ = mask.mask(dataset=src, shapes=gdf.geometry, crop=True)
+        cropped_raster, cropped_transform = mask.mask(dataset=src, shapes=gdf.geometry, crop=True)
+
+        cropped_profile: Profile = src.profile.copy()
+
+        cropped_profile.update(
+            {
+                "width": cropped_raster.shape[2],
+                "height": cropped_raster.shape[1],
+                "transform": cropped_transform,
+            }
+        )
     
-    return masked_raster, profile
+    return cropped_raster, cropped_profile
 
 
-def _check_crs(raster: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
-    """Transform CRS of vector if CRS does not match raster
+def _check_crs(dataset_reader: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """Transform CRS of vector if CRS does not match dataset_reader
 
     Args:
-        raster (rasterio.DatasetReader): Raster dataset reader
+        dataset_reader (rasterio.DatasetReader): dataset_reader dataset reader
         vector (gpd.GeoDataFrame): Geodataframe to be modified if needed
 
     Returns:
         gpd.GeoDataFrame: Modified geodataframe
     """
 
-    if raster.crs != vector.crs:
-        reprojected_vector = vector.to_crs(raster.crs)
+    if dataset_reader.crs != vector.crs:
+        reprojected_vector = vector.to_crs(dataset_reader.crs)
         return gpd.GeoDataFrame(reprojected_vector)
     else:
         return vector
@@ -119,23 +128,26 @@ def _check_crs(raster: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.
 
 
 def calculate_zonal_statistics(raster_location: Path,
-                               shapefile: gpd.GeoDataFrame,
+                               geometry: gpd.GeoDataFrame,
+                               product: ChelsaProduct,
+                               scenario: Scenario,
                                month: Month,
+                               place_id: str,
                                provided_stats: str = "min mean max",
                                ) -> pd.DataFrame:
     """Calculates zonal statistics based on provided list of desired statistics
 
     Args:
         raster_location (Path): Path to raster. By providing path, zonal_stats function can access the profile directly
-        shapefile (gpd.GeoDataFrame): Shapefile that will be the unit of analysis for zonal stats
+        geometry (gpd.GeoDataFrame): geometry that will be the unit of analysis for zonal stats
         month (Month): Scenario's month
         provided_stats (str, optional): Statistics to calculate. Defaults to "min mean max".
 
     Returns:
-        pd.DataFrame: Tabular results, where each row is a geometry in the shapefile
+        pd.DataFrame: Tabular results, where each row is a geometry in the geometry
     """
     raster_location = _check_tif_extension(raster_location)
-    results = zonal_stats(vectors=shapefile.geometry,
+    results = zonal_stats(vectors=geometry.geometry,
                             raster=raster_location,
                             nodata=-999,
                             stats=provided_stats)
@@ -143,12 +155,17 @@ def calculate_zonal_statistics(raster_location: Path,
     stats_list= provided_stats.split(" ")
     for stat in stats_list:
         column_name = f"{stat}_raw_value"
-        shapefile[column_name] = [result[stat] for result in results]
+        geometry[column_name] = [result[stat] for result in results]
     
-    shapefile.drop(columns=['geometry'], inplace=True)
-    shapefile_with_month = _add_month_to_df(month=month, df=shapefile)
+    geometry.drop(columns=['geometry'], inplace=True)
+    geometry_with_ids = _add_product_identifiers(product=product,
+                                                  scenario=scenario,
+                                                  month=month,
+                                                  place_id=place_id,
+                                                  df=geometry)
 
-    return shapefile_with_month
+    return geometry_with_ids
+
 
 def _monthly_temperature_conversion(temperature: float) -> float:
     """Monthly climatologies are in C/10 units

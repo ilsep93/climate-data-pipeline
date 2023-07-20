@@ -11,12 +11,7 @@ from db.session import get_session
 load_dotenv("docker/.env")
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='uploads_logger.log', encoding='utf-8', level=logging.DEBUG)
 
-
-load_dotenv("docker/.env")
-
-logger = logging.getLogger(__name__)
 
 def upload_to_db(df_path: Path, table_name: str, schema: str) -> None:
 
@@ -33,6 +28,7 @@ def upload_to_db(df_path: Path, table_name: str, schema: str) -> None:
                 session.commit()
             except:
                 session.rollback()
+                logger.exception(f"Unable to add record to database.")
 
 
 
