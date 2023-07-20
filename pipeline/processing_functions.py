@@ -91,12 +91,21 @@ def crop_raster_with_geometry(raster_location: Path, gdf: gpd.GeoDataFrame) -> T
     raster_location = _check_tif_extension(location=raster_location)
 
     with rasterio.open(raster_location, "r") as src:
-        profile = src.profile
         gdf = _check_crs(raster=src, vector=gdf)
 
-        masked_raster, _ = mask.mask(dataset=src, shapes=gdf.geometry, crop=True)
+        cropped_raster, cropped_transform = mask.mask(dataset=src, shapes=gdf.geometry, crop=True)
+
+        cropped_profile: Profile = src.profile.copy()
+
+        cropped_profile.update(
+            {
+                "width": cropped_raster.shape[2],
+                "height": cropped_raster.shape[1],
+                "transform": cropped_transform,
+            }
+        )
     
-    return masked_raster, profile
+    return cropped_raster, cropped_profile
 
 
 def _check_crs(raster: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
