@@ -1,9 +1,10 @@
+import logging
 from pathlib import Path
 
 import geopandas as gpd
 import pandas as pd
 
-
+logger = logging.getLogger(__name__)
 
 COLUMN_MAPPING = {
     'admin0pcod': 'iso2_code',
@@ -36,6 +37,8 @@ def get_geometry(geom_path: Path,
     if lower_case:
         geometry.columns = map(str.lower, geometry.columns)
     mapped_geoms = _rename_geometry(geom=geometry, column_mapping=column_mapping)
+
+    logger.info(f"Geometry columns: {mapped_geoms.columns}")
   
     return mapped_geoms
 
