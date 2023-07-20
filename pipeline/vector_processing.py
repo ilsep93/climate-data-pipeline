@@ -19,7 +19,9 @@ def get_geometry(geom_path: Path,
                  lower_case: bool = True,
                  cols_to_drop: Optional[list[str]] = ['OBJECTID_1', 'Shape_Leng', 'Shape_Area', 'validOn', 'validTo', 'last_modif', 'source', 'date'],
                   ) -> gpd.GeoDataFrame:
-    """Get a clean version of the shapefile
+    """Reads geometry, drops unnecessary columns, 
+    transforms to lower case (optional), and renames columns
+    to align with database standards.
 
     Args:
         geom_path (Path): Path to .shp
@@ -29,16 +31,18 @@ def get_geometry(geom_path: Path,
     Returns:
         gpd.GeoDataFrame: Shapefile without specified columns, with optional lowercase column names
     """
-    shapefile = gpd.read_file(shp_path)
-    clean_shapefile = shapefile.drop(columns=cols_to_drop)
+    geometry = gpd.read_file(geom_path)
+    geometry.drop(columns=cols_to_drop, inplace=True)
     if lower_case:
-        clean_shapefile.columns = map(str.lower, clean_shapefile.columns)
+        geometry.columns = map(str.lower, geometry.columns)
     mapped_geoms = _rename_geometry(geom=geometry, column_mapping=column_mapping)
   
+    return mapped_geoms
+
+
 def _rename_geometry(geom: gpd.GeoDataFrame, column_mapping: dict) -> gpd.GeoDataFrame:
     """Rename geometries based on column mapping to align with database standards.
 
-    return clean_shapefile
     Args:
         geom (gpd.GeoDataFrame): Geometry to rename
         column_mapping (dict): Dictionary, where key is target name and value is current name.
