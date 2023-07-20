@@ -16,7 +16,7 @@ class Country(Base):
 
     iso3_code = Column(String(3), primary_key=True, nullable=False)
     iso2_code = Column(String(2), nullable=False)
-    name = Column(String, nullable=False)
+    adm0_name = Column(String, nullable=False)
 
 
 def delete_table():
