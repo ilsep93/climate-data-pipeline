@@ -1,9 +1,7 @@
 import logging
 import os
-import sys
 from pathlib import Path
 
-import pandas as pd
 from climatology import ChelsaProduct, Month, Scenario, get_climatology
 from processing_functions import (calculate_zonal_statistics,
                                   crop_raster_with_geometry, read_raster,
@@ -58,6 +56,7 @@ def process_zonal_statistics(
         product: ChelsaProduct,
         scenario: Scenario,
         month: Month,
+        place_id: str,
         geom_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
        
         ) -> None:
@@ -128,7 +127,9 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
 
         process_zonal_statistics(raster_location=masked_out_path,
                                  out_path=zonal_out_path,
-                                 month=month)
+                                 product=concrete_product,
+                                 scenario=scenario,
+                                 month=month,
                                  place_id="adm2_id")
     
     if RasterProcessingStep.YEARLY_TABLE in processing_steps:
