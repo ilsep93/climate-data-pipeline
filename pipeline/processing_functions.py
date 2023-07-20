@@ -91,7 +91,7 @@ def crop_raster_with_geometry(raster_location: Path, gdf: gpd.GeoDataFrame) -> T
     raster_location = _check_tif_extension(location=raster_location)
 
     with rasterio.open(raster_location, "r") as src:
-        gdf = _check_crs(raster=src, vector=gdf)
+        gdf = _check_crs(dataset_reader=src, vector=gdf)
 
         cropped_raster, cropped_transform = mask.mask(dataset=src, shapes=gdf.geometry, crop=True)
 
@@ -108,19 +108,19 @@ def crop_raster_with_geometry(raster_location: Path, gdf: gpd.GeoDataFrame) -> T
     return cropped_raster, cropped_profile
 
 
-def _check_crs(raster: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
-    """Transform CRS of vector if CRS does not match raster
+def _check_crs(dataset_reader: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """Transform CRS of vector if CRS does not match dataset_reader
 
     Args:
-        raster (rasterio.DatasetReader): Raster dataset reader
+        dataset_reader (rasterio.DatasetReader): dataset_reader dataset reader
         vector (gpd.GeoDataFrame): Geodataframe to be modified if needed
 
     Returns:
         gpd.GeoDataFrame: Modified geodataframe
     """
 
-    if raster.crs != vector.crs:
-        reprojected_vector = vector.to_crs(raster.crs)
+    if dataset_reader.crs != vector.crs:
+        reprojected_vector = vector.to_crs(dataset_reader.crs)
         return gpd.GeoDataFrame(reprojected_vector)
     else:
         return vector
