@@ -71,7 +71,7 @@ def _add_product_identifiers(product: ChelsaProduct,
                             df: Union[gpd.GeoDataFrame, pd.DataFrame]
                      ) -> Union[gpd.GeoDataFrame, pd.DataFrame]:
     
-    df["product"] = product.Product.name
+    df["product"] = product.product.name
     df["month"] = month.name
     df["scenario"] = scenario.value
     df["id"] = df["product"] + "_" + df["scenario"] + "_" + df["month"] + "_" + df[str(place_id)]

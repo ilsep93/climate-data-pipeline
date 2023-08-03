@@ -49,7 +49,7 @@ class ChelsaProduct(ABC):
     phase: Phase = Phase.CMIP5
     time_period: str = "2061-2080"
     base_url: str
-    Product: Product
+    product: Product
     scenarios: list[Scenario]
     months: list[Month]
 
@@ -109,7 +109,7 @@ class ChelsaProduct(ABC):
 class Temperature(ChelsaProduct):
     """Concrete implementation of temperature ChelsaProduct"""
 
-    Product = Product.TEMP
+    product = Product.TEMP
     scenarios = [Scenario.ACCESS1_0_rcp45,
                  Scenario.ACCESS1_0_rcp85,
                  Scenario.BNU_ESM_rcp26,
@@ -123,7 +123,7 @@ class Temperature(ChelsaProduct):
 class Bio(ChelsaProduct):
     """Concrete implementation of bio ChelsaProduct"""
 
-    Product = Product.BIO
+    product = Product.BIO
     scenarios = [Scenario.ACCESS1_0_rcp45,
                  Scenario.ACCESS1_0_rcp85,
                  Scenario.BNU_ESM_rcp26,
@@ -137,7 +137,7 @@ class Bio(ChelsaProduct):
 class Precipitation(ChelsaProduct):
     """Concrete implementation of precipitation ChelsaProduct"""
 
-    Product = Product.PREC
+    product = Product.PREC
     scenarios = [Scenario.ACCESS1_0_rcp45,
                  Scenario.ACCESS1_0_rcp85,
                  Scenario.BNU_ESM_rcp26,
@@ -151,7 +151,7 @@ class Precipitation(ChelsaProduct):
 class MaximumTemperature(ChelsaProduct):
     """Concrete implementation of maxiumum temperature ChelsaProduct"""
     
-    Product = Product.TMAX
+    product = Product.TMAX
     scenarios = [Scenario.ACCESS1_0_rcp45,
                  Scenario.ACCESS1_0_rcp85,
                  Scenario.BNU_ESM_rcp26,
@@ -165,7 +165,7 @@ class MaximumTemperature(ChelsaProduct):
 class MinimumTemperature(ChelsaProduct):
     """Concrete implementation of minimum temperature ChelsaProduct"""
     
-    Product = Product.TMIN
+    product = Product.TMIN
     scenarios = [Scenario.ACCESS1_0_rcp45,
                  Scenario.ACCESS1_0_rcp85,
                  Scenario.BNU_ESM_rcp26,
