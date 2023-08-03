@@ -25,7 +25,6 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 
-ROOT_DIR = Path(__file__).parent.parent
 config = read_config("config.json")
 
 def process_raw_raster(

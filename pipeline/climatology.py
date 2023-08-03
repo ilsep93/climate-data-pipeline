@@ -3,7 +3,6 @@ from abc import ABC
 from enum import Enum, auto
 from pathlib import Path
 
-ROOT_DIR = Path(__file__).parent.parent
 from config import read_config
 
 config = read_config("config.json")
