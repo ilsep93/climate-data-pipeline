@@ -22,7 +22,6 @@ def get_processing_steps(product: ChelsaProduct, scenario: Scenario, month: Mont
     TODO: Log pipeline runs on postgres database.
     """
 
-    all_pathways = product.get_pathways(scenario=scenario)
 
     raw_path = [str(path) for path in all_pathways if "raw" in path]
     masked_path = [str(path) for path in all_pathways if "mask" in path]

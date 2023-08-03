@@ -76,8 +76,6 @@ class ChelsaProduct(ABC):
     def set_pathways_as_attributes(self, scenario: Scenario, month: Month):
         base_path = Path(f"{config.root_dir}/{self.phase.value}/{self.product.value}/{scenario.value}/")
 
-    def get_pathways(self, scenario: Scenario) -> list:
-        """Generates pathways for different processing steps and creates directories
         self.raw_raster_dir = Path(f"{base_path}/{config.raw_raster_dir}/")
         self.cropped_raster_dir = Path(f"{base_path}/{config.cropped_raster_dir}/")
         self.zonal_stats_dir = Path(f"{base_path}/{config.zonal_stats_dir}/")
@@ -88,35 +86,14 @@ class ChelsaProduct(ABC):
         self.zonal_file_path = Path(f"{self.zonal_stats_dir}/{scenario.value}_{month.value}.csv")
         self.yearly_aggregate_path = Path(f"{self.yearly_aggregate_dir}/{scenario.value}_{month.value}_yearly.csv")
 
-        Returns:
-            list: List of pathways for each processing step
         directories = [self.raw_raster_dir, self.cropped_raster_dir, self.zonal_stats_dir, self.yearly_aggregate_dir]
 
-        # TODO: Add folders based on RasterProcessing class
-        """
-        if scenario not in self.scenarios:
-            raise ValueError(f"Scenario not available. \
-                             Options include {self.scenarios}")
-        pathways = []
-        base_export_path = Path(f"{ROOT_DIR}/data/{self.phase.value}/{self.Product.value}/{scenario.value}")
-        folders = ["raw", "masked", "zonal_statistics", "time_series"]
-
-        for folder in folders:
-            path = os.path.join(base_export_path, folder)
-            pathways.append(path)
-        
-        self._create_directories(pathways=pathways)
         self._create_directories(pathways=directories)
 
-        return pathways
-    
-    def set_pathways_as_attributes(self):
-        # TODO: Find a way to set pathways as an attribute so path changes only need to be made in one place
-        ...
-    
     def _create_directories(self, pathways: list) -> None:
         """Create local directories to save downloaded and processed data"""
-    
+
+
         for path in pathways:
             if not os.path.exists(path):
                 os.makedirs(path, exist_ok=True)
