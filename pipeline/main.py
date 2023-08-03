@@ -93,6 +93,7 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
     # Return concrete implementation of climatology object
     concrete_product = get_climatology(product=product)
     pathways = concrete_product.get_pathways(scenario=scenario)
+    concrete_product.set_pathways_as_attributes(scenario=scenario, month=month)
 
     # Determine which processing steps are needed for product's scenario 
     processing_steps = get_processing_steps(product=concrete_product,

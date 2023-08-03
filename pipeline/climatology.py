@@ -52,6 +52,7 @@ class ChelsaProduct(ABC):
     scenarios: list[Scenario]
     months: list[Month]
 
+
     def get_url(self, scenario: Scenario, month: Month) -> str:
         """Constructs a URL based on a given scenario and month for a given product.
 
@@ -71,12 +72,25 @@ class ChelsaProduct(ABC):
                         _r1i1p1_g025.nc_{month.value}_{self.time_period}_V1.2.tif"
         return download_url
 
+    
+    def set_pathways_as_attributes(self, scenario: Scenario, month: Month):
+        base_path = Path(f"{config.root_dir}/{self.phase.value}/{self.product.value}/{scenario.value}/")
 
     def get_pathways(self, scenario: Scenario) -> list:
         """Generates pathways for different processing steps and creates directories
+        self.raw_raster_dir = Path(f"{base_path}/{config.raw_raster_dir}/")
+        self.cropped_raster_dir = Path(f"{base_path}/{config.cropped_raster_dir}/")
+        self.zonal_stats_dir = Path(f"{base_path}/{config.zonal_stats_dir}/")
+        self.yearly_aggregate_dir = Path(f"{base_path}/{config.yearly_aggregate_dir}/")
+        
+        self.raw_raster_path = Path(f"{self.raw_raster_dir}/{scenario.value}_{month.value}.tif")
+        self.cropped_raster_path = Path(f"{self.cropped_raster_dir}/{scenario.value}_{month.value}.tif")
+        self.zonal_file_path = Path(f"{self.zonal_stats_dir}/{scenario.value}_{month.value}.csv")
+        self.yearly_aggregate_path = Path(f"{self.yearly_aggregate_dir}/{scenario.value}_{month.value}_yearly.csv")
 
         Returns:
             list: List of pathways for each processing step
+        directories = [self.raw_raster_dir, self.cropped_raster_dir, self.zonal_stats_dir, self.yearly_aggregate_dir]
 
         # TODO: Add folders based on RasterProcessing class
         """
@@ -92,6 +106,7 @@ class ChelsaProduct(ABC):
             pathways.append(path)
         
         self._create_directories(pathways=pathways)
+        self._create_directories(pathways=directories)
 
         return pathways
     

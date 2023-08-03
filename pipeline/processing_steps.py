@@ -28,6 +28,7 @@ def get_processing_steps(product: ChelsaProduct, scenario: Scenario, month: Mont
     masked_path = [str(path) for path in all_pathways if "mask" in path]
     zonal_dir = [str(path) for path in all_pathways if "zonal" in path]
     time_series_path = [str(path) for path in all_pathways if "time" in path]
+    product.set_pathways_as_attributes(scenario=scenario, month=month)
 
     processing_steps = []
     
