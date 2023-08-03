@@ -136,7 +136,7 @@ def calculate_zonal_statistics(raster_location: Path,
                                scenario: Scenario,
                                month: Month,
                                place_id: str,
-                               provided_stats: str = "min mean max",
+                               provided_stats: str = config.zonal_stats_aggregates,
                                ) -> pd.DataFrame:
     """Calculates zonal statistics based on provided list of desired statistics
 
@@ -182,7 +182,7 @@ def _monthly_temperature_conversion(temperature: float) -> float:
 
 def _check_temperature_converter(product:ChelsaProduct,
                                  df: pd.DataFrame,
-                                 provided_stats: str = "min mean max"
+                                 provided_stats: str = config.zonal_stats_aggregates
                                  ) -> pd.DataFrame:
     """Checks if product is a temperature product. If so, new column is created with celsius values.
 

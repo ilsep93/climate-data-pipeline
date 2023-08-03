@@ -41,7 +41,7 @@ def process_raw_raster(
 def process_masked_raster(
         raw_raster_location: Path,
         masked_out_path: Path,
-        geom_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
+        geom_path: Path = config.geom_path,
         ) -> None:
 
     geometry = get_geometry(geom_path=geom_path,
@@ -58,7 +58,7 @@ def process_zonal_statistics(
         scenario: Scenario,
         month: Month,
         place_id: str,
-        geom_path: Path = Path(f"{ROOT_DIR}/data/adm2/wca_admbnda_adm2_ocha.shp"),
+        geom_path: Path = config.geom_path,
        
         ) -> None:
 
