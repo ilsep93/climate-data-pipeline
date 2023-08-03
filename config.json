@@ -1,0 +1,12 @@
+{
+    "root_dir": "/Users/ilsepaniagua/Documents/Github/climate-data-pipeline/data/",
+    "geom_path" : "data/adm2/wca_admbnda_adm2_ocha.shp",
+    "zonal_stats_aggregates": "min mean max",
+    "raw_raster_dir": "raw",
+    "cropped_raster_dir": "masked",
+    "zonal_stats_dir": "zonal_statistics",
+    "yearly_aggregate_dir": "yearly",
+    "product": "temp",
+    "scenario": "Scenario.ACCESS1_0_rcp45",
+    "month": "Month.JANUARY"
+}
