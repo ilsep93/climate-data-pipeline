@@ -7,9 +7,12 @@ import numpy as np
 import pandas as pd
 import rasterio
 from climatology import ChelsaProduct, Month, Scenario, TemperatureProduct
+from config import read_config
 from rasterio import mask
 from rasterio.profiles import Profile
 from rasterstats import zonal_stats
+
+config = read_config("config.json")
 
 
 def read_raster(location: Union[str, Path]) -> Tuple[np.ndarray, Profile]:

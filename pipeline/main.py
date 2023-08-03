@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 
 from climatology import ChelsaProduct, Month, Scenario, get_climatology
+from config import read_config
 from processing_functions import (calculate_zonal_statistics,
                                   crop_raster_with_geometry, read_raster,
                                   write_local_raster, yearly_table_generator)
@@ -25,6 +26,7 @@ logger.addHandler(file_handler)
 
 
 ROOT_DIR = Path(__file__).parent.parent
+config = read_config("config.json")
 
 def process_raw_raster(
         product: ChelsaProduct,
