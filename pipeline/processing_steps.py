@@ -17,7 +17,11 @@ class RasterProcessingStep(Enum):
     YEARLY_TABLE = auto()
 
 
-def get_processing_steps(product: ChelsaProduct, scenario: Scenario, month: Month) -> list[RasterProcessingStep]:
+def get_processing_steps(product:
+                         ChelsaProduct,
+                         scenario: Scenario,
+                         month: Month
+                         ) -> list[RasterProcessingStep]:
     """Determine which processing steps are needed for a given month of the product's scenario.
     Each pipeline run is for a specific product, month, and scenario pair.
     
@@ -44,7 +48,15 @@ def get_processing_steps(product: ChelsaProduct, scenario: Scenario, month: Mont
     return processing_steps
 
 
-def _check_monthly_zonal_stats_complete(zonal_path: Path):
+def _check_monthly_zonal_stats_complete(zonal_path: Path) -> bool:
+    """Return True if all 12 months for a product's scenario are available
+
+    Args:
+        zonal_path (Path): Directory of scenario's zonal statistics
+
+    Returns:
+        bool: True if 12 files are available
+    """
     available_files = [path for path in os.listdir(zonal_path) if path.endswith(".csv")]
     if len(available_files) == 12:
         return True

@@ -10,6 +10,13 @@ logger = setup_logger()
 
 # TODO: add overwrite that will replace the existing file if needed
 def raster_processing_flow(product: str, scenario: Scenario, month: Month):
+    """_summary_
+
+    Args:
+        product (str): _description_
+        scenario (Scenario): _description_
+        month (Month): _description_
+    """
     
     # Return concrete implementation of climatology object
     chelsa_product = get_climatology(product=product)
@@ -28,7 +35,7 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
                              month=month)
 
 def raster_processing_parent_flow(product: str, scenario: Scenario):
-    # All months for a given product's scenario
+    """All months for a given product's scenario"""
     available_months = [month for month in Month]
     
     for month in available_months:
