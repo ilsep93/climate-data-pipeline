@@ -42,41 +42,10 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
     
     logger.info(f"Processing steps: {processing_steps} for {product}_{scenario.name}_{month.name}")
 
-    if RasterProcessingStep.DOWNLOAD in processing_steps:
-        logger.info(f"RasterProcessingStep.DOWNLOAD for {product}_{scenario.name}_{month.name}")
-        
-        process_raw_raster(product=concrete_product,
-                           scenario=scenario,
-                           month=month,
-                           raw_out_path=concrete_product.raw_raster_path)
-    
-    if RasterProcessingStep.MASK in processing_steps:
-        logger.info(f"RasterProcessingStep.MASK for {product}_{scenario.name}_{month.name}")
-
-        process_masked_raster(raw_raster_location=concrete_product.raw_raster_path,
-                              masked_out_path=concrete_product.cropped_raster_path)
-    
-    if RasterProcessingStep.ZONAL_STATISTICS in processing_steps:
-        logger.info(f"RasterProcessingStep.ZONAL_STATISTICS for {product}_{scenario.name}_{month.name}")
-
-        process_zonal_statistics(raster_location=concrete_product.cropped_raster_path,
-                                 out_path=concrete_product.zonal_file_path,
-                                 product=concrete_product,
-                                 scenario=scenario,
-                                 month=month,
-                                 place_id="adm2_id")
-    
-    if RasterProcessingStep.YEARLY_TABLE in processing_steps:
-        logger.info(f"RasterProcessingStep.YEARLY_TABLE for {product}_{scenario.name}_{month.name}")
-        
-        process_yearly_table(product = concrete_product,
-                             zonal_dir=concrete_product.zonal_stats_dir,
-                             out_path=concrete_product.yearly_aggregate_path,
-                             sort_values=["admin2pcod", "month"])
-    
-    if len(processing_steps) == 0:
-        logger.info(f"All available steps already completed for {product}_{scenario.name}_{month.name}")
-
+    execute_processing_steps(processing_steps=processing_steps,
+                             chelsa_product=chelsa_product,
+                             scenario=scenario,
+                             month=month)
 
 def raster_processing_parent_flow(product: str, scenario: Scenario):
     # All months for a given product's scenario
