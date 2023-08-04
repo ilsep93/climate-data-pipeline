@@ -50,9 +50,9 @@ To use the pipeline, edit `config.json` with the following parameters:
     "cropped_raster_dir": Name of the directory where cropped rasters will be saved
     "zonal_stats_dir": Name of the directory where zonal statistics will be saved
     "yearly_aggregate_dir": Name of the directory where the yearly aggregate with all monthly projections will be saved
-    "product": Climatology product. Options are "temp", "tmix", "tmax", "prec"
+    "product": Climatology product. Options are "TEMP", "TMIN", "TMAX", "PREC"
     "scenario": Scenario to be processed. May vary by product.
-    "month": Month to be processed
+    "month": Month to be processed. Month in upper case
 ```
 
 # Skills Practiced:
