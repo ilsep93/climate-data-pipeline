@@ -7,6 +7,7 @@ import pandas as pd
 
 logger = logging.getLogger(__name__)
 
+#TODO: add column mapping to config
 COLUMN_MAPPING = {
     'admin0pcod': 'iso2_code',
     'admin0name': 'adm0_name',
