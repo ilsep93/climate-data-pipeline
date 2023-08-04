@@ -38,8 +38,26 @@ CHELSA_[short_name]_[timeperiod]_[model] _[ssp] _[Version].tif
 
 https://github.com/ilsep93/climate-data-pipeline/assets/54957973/572591c2-e0ea-4a9e-87e8-639ec7f453cd
 
+# Usage
+
+To use the pipeline, edit `config.json` with the following parameters:
+
+```json
+    "root_dir": Location to save downloaded data
+    "geom_path" : Path to the geometry object that will be used to extract zonal statistics
+    "zonal_stats_aggregates": The types of aggregate statistics for zonal statistics. Options are "mean", "median", "min", and "max".
+    "raw_raster_dir": Name of the directory where raw rasters will be downloaded
+    "cropped_raster_dir": Name of the directory where cropped rasters will be saved
+    "zonal_stats_dir": Name of the directory where zonal statistics will be saved
+    "yearly_aggregate_dir": Name of the directory where the yearly aggregate with all monthly projections will be saved
+    "product": Climatology product. Options are "TEMP", "TMIN", "TMAX", "PREC"
+    "scenario": Scenario to be processed. May vary by product.
+    "month": Month to be processed. Month in upper case
+```
+
 # Skills Practiced:
 
+* Creating config objects where users can directly specify desired directories, rather than having to make direct code-level changes (August 2023)
 * Creating Object-Relational Mapping (ORM) tables with `sqlalchemy`, including creating mixin tables with pre-defined columns that can be shared across tables (July 2023)
 * Separate business logic from implementation details, and delay the the specific implementation details for as long as possible. Inspired by reading "Clean Architecture: A Craftsman's Guide to Software Structure and Design" (July 2023).
 * Factory design pattern to create climatology products; concrete implementation is separate from client code that creates products. There is the option to add additional scenarios and products as they become available by expanding (rather than modifying) existing code (June 2023).
@@ -52,7 +70,8 @@ https://github.com/ilsep93/climate-data-pipeline/assets/54957973/572591c2-e0ea-4
 
 # TODOs
 
-- [] Set attributes for pathways
+- [X] Set attributes for pathways
+- [] Command line arguments to run pipeline
 - [] Log database runs in Postgres
 - [] Github Actions with pytest
 - [] Create start.bash to build containers and run pipeline

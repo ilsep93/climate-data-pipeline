@@ -7,9 +7,12 @@ import numpy as np
 import pandas as pd
 import rasterio
 from climatology import ChelsaProduct, Month, Scenario, TemperatureProduct
+from config import read_config
 from rasterio import mask
 from rasterio.profiles import Profile
 from rasterstats import zonal_stats
+
+config = read_config("config.json")
 
 
 def read_raster(location: Union[str, Path]) -> Tuple[np.ndarray, Profile]:
@@ -68,7 +71,7 @@ def _add_product_identifiers(product: ChelsaProduct,
                             df: Union[gpd.GeoDataFrame, pd.DataFrame]
                      ) -> Union[gpd.GeoDataFrame, pd.DataFrame]:
     
-    df["product"] = product.Product.name
+    df["product"] = product.product.name
     df["month"] = month.name
     df["scenario"] = scenario.value
     df["id"] = df["product"] + "_" + df["scenario"] + "_" + df["month"] + "_" + df[str(place_id)]
@@ -133,7 +136,7 @@ def calculate_zonal_statistics(raster_location: Path,
                                scenario: Scenario,
                                month: Month,
                                place_id: str,
-                               provided_stats: str = "min mean max",
+                               provided_stats: str = config.zonal_stats_aggregates,
                                ) -> pd.DataFrame:
     """Calculates zonal statistics based on provided list of desired statistics
 
@@ -179,7 +182,7 @@ def _monthly_temperature_conversion(temperature: float) -> float:
 
 def _check_temperature_converter(product:ChelsaProduct,
                                  df: pd.DataFrame,
-                                 provided_stats: str = "min mean max"
+                                 provided_stats: str = config.zonal_stats_aggregates
                                  ) -> pd.DataFrame:
     """Checks if product is a temperature product. If so, new column is created with celsius values.
 
