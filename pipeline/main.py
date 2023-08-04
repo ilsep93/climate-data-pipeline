@@ -26,18 +26,6 @@ logger.addHandler(file_handler)
 
 
 config = read_config("config.json")
-
-def process_raw_raster(
-        product: ChelsaProduct,
-        scenario: Scenario,
-        month: Month,
-        raw_out_path: Path) -> None:
-    
-    url = product.get_url(scenario=scenario, month=month)
-    raster, profile = read_raster(location=url)
-    write_local_raster(raster=raster, profile=profile, out_path=raw_out_path)
-
-
 def process_masked_raster(
         raw_raster_location: Path,
         masked_out_path: Path,
