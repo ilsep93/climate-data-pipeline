@@ -1,7 +1,8 @@
 import logging
 from pathlib import Path
 
-from climatology import ChelsaProduct, Month, Scenario, get_climatology
+from climatology import (ChelsaProduct, Month, Product, Scenario,
+                         get_climatology)
 from config import read_config
 from processing_functions import (calculate_zonal_statistics,
                                   crop_raster_with_geometry, read_raster,
@@ -148,5 +149,6 @@ def raster_processing_parent_flow(product: str, scenario: Scenario):
     logging.shutdown()
 
 if __name__=="__main__":
-    raster_processing_parent_flow(product="temp",
-                                  scenario=Scenario.ACCESS1_0_rcp45)                                  scenario=Scenario.BNU_ESM_rcp26)
+    raster_processing_flow(product=Product[config.product],
+                                  scenario=Scenario[config.scenario],
+                                  month=Month[config.month])
