@@ -5,6 +5,7 @@ from pathlib import Path
 
 
 class Product(Enum):
+    """CHELSA products available under CMIP"""
     TEMP = "temp"
     BIO = "bio"
     PREC = "prec"
@@ -13,6 +14,9 @@ class Product(Enum):
 
 
 class Scenario(Enum):
+    """Sample of scenarios available under CMIP.
+    List can be expanded by users
+    """
     ACCESS1_0_rcp45 = "ACCESS1-0_rcp45"
     ACCESS1_0_rcp85 = "ACCESS1-0_rcp85"
     BNU_ESM_rcp26 = "BNU-ESM_rcp26"
@@ -21,11 +25,13 @@ class Scenario(Enum):
 
 
 class Phase(Enum):
+    """CMIP phases available as of 2023"""
     CMIP5 = "cmip5"
     CMIP6 = "cmip6"
 
 
 class Month(Enum):
+    """Months of the year available as CHELSA simulations"""
     JANUARY = 1
     FEBRUARY = 2
     MARCH = 3
@@ -71,6 +77,14 @@ class ChelsaProduct(ABC):
 
     
     def set_pathways_as_attributes(self, scenario: Scenario, month: Month):
+        """Generate directories and file paths as class attributes
+        Used to determine if files are already available, or should
+        be processed by pipeline
+
+        Args:
+            scenario (Scenario): Scenario to be processed
+            month (Month): Month to be processed
+        """
 
         from config import read_config
         config = read_config("config.json")
