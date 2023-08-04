@@ -2,9 +2,12 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
+from climatology import Month, Product, Scenario
+
 
 @dataclass
 class CMIPConfig:
+    """Config objects that should be specified in config.json"""
     root_dir: Path
     geom_path: Path
     zonal_stats_aggregates: str
@@ -12,9 +15,9 @@ class CMIPConfig:
     cropped_raster_dir: str
     zonal_stats_dir: str
     yearly_aggregate_dir: str
-    product: str
-    scenario: str
-    month: str
+    product: Product
+    scenario: Scenario
+    month: Month
 
 
 def read_config(config_file: str) -> CMIPConfig:
