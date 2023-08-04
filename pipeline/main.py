@@ -26,29 +26,6 @@ logger.addHandler(file_handler)
 
 
 config = read_config("config.json")
-def process_zonal_statistics(
-        raster_location: Path,
-        out_path: Path,
-        product: ChelsaProduct,
-        scenario: Scenario,
-        month: Month,
-        place_id: str,
-        geom_path: Path = config.geom_path,
-       
-        ) -> None:
-
-    geometry = get_geometry(geom_path=geom_path,
-                            column_mapping=COLUMN_MAPPING)
-    zonal_stats = calculate_zonal_statistics(raster_location=raster_location,
-                                             geometry=geometry,
-                                             product=product,
-                                             scenario=scenario,
-                                             month=month,
-                                             place_id=place_id)
-    
-    zonal_stats.to_csv(out_path, encoding='utf-8', index=False)
-
-
 def process_yearly_table(product: ChelsaProduct,
                          zonal_dir: Path,
                          out_path: Path,
