@@ -1,21 +1,14 @@
 import logging
-from pathlib import Path
 
-from climatology import (ChelsaProduct, Month, Product, Scenario,
-                         get_climatology)
+from climatology import Month, Product, Scenario, get_climatology
 from config import read_config
-from processing_functions import (calculate_zonal_statistics,
-                                  crop_raster_with_geometry, read_raster,
-                                  write_local_raster, yearly_table_generator)
-from processing_steps import RasterProcessingStep, get_processing_steps
-from vector_processing import COLUMN_MAPPING, get_geometry
 from log import setup_logger
+from processing_steps import execute_processing_steps, get_processing_steps
 
 config = read_config("config.json")
 logger = setup_logger()
 
 # TODO: add overwrite that will replace the existing file if needed
-
 def raster_processing_flow(product: str, scenario: Scenario, month: Month):
     
     # Return concrete implementation of climatology object

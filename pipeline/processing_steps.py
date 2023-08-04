@@ -3,6 +3,11 @@ from enum import Enum, auto
 from pathlib import Path
 
 from climatology import ChelsaProduct, Month, Scenario
+from crop import process_masked_raster
+from download import process_raw_raster
+from log import setup_logger
+from yearly_table import process_yearly_table
+from zonal_stats import process_zonal_statistics
 
 logger = setup_logger()
 class RasterProcessingStep(Enum):
@@ -37,6 +42,7 @@ def get_processing_steps(product: ChelsaProduct, scenario: Scenario, month: Mont
         processing_steps.append(RasterProcessingStep.YEARLY_TABLE)
     
     return processing_steps
+
 
 def _check_monthly_zonal_stats_complete(zonal_path: Path):
     available_files = [path for path in os.listdir(zonal_path) if path.endswith(".csv")]
