@@ -187,7 +187,8 @@ def get_climatology(product: str) -> ChelsaProduct:
         ChelsaProduct: Concrete implementation of CHELSA product
     """
     available_products = [product.value for product in Product]
-    if product not in available_products:
+    lower_case_product = str(product.value).lower()
+    if lower_case_product not in available_products:
         raise ValueError(f"This product is not available. \
                          Options include {available_products}")
 
@@ -199,4 +200,4 @@ def get_climatology(product: str) -> ChelsaProduct:
         "tmin": MinimumTemperature(),
     }
 
-    return factories[product]
+    return factories[lower_case_product]
