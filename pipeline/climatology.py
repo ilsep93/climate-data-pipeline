@@ -3,9 +3,6 @@ from abc import ABC
 from enum import Enum, auto
 from pathlib import Path
 
-from config import read_config
-
-config = read_config("config.json")
 
 class Product(Enum):
     TEMP = "temp"
@@ -74,6 +71,10 @@ class ChelsaProduct(ABC):
 
     
     def set_pathways_as_attributes(self, scenario: Scenario, month: Month):
+
+        from config import read_config
+        config = read_config("config.json")
+
         base_path = Path(f"{config.root_dir}/{self.phase.value}/{self.product.value}/{scenario.value}/")
 
         self.raw_raster_dir = Path(f"{base_path}/{config.raw_raster_dir}/")
