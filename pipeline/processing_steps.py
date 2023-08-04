@@ -4,7 +4,7 @@ from pathlib import Path
 
 from climatology import ChelsaProduct, Month, Scenario
 
-
+logger = setup_logger()
 class RasterProcessingStep(Enum):
     DOWNLOAD = auto()
     MASK = auto()

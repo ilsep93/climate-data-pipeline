@@ -9,23 +9,10 @@ from processing_functions import (calculate_zonal_statistics,
                                   write_local_raster, yearly_table_generator)
 from processing_steps import RasterProcessingStep, get_processing_steps
 from vector_processing import COLUMN_MAPPING, get_geometry
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
-console_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
-
-file_handler = logging.FileHandler("pipeline_dev.log", encoding="utf-8")
-file_handler.setLevel(logging.WARNING)
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
-
+from log import setup_logger
 
 config = read_config("config.json")
+logger = setup_logger()
 
 # TODO: add overwrite that will replace the existing file if needed
 
