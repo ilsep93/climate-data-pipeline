@@ -1,4 +1,3 @@
-from country import Country
 from sqlalchemy import Column, DateTime, Float, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import declared_attr, relationship
