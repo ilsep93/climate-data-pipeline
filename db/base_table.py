@@ -15,7 +15,7 @@ class TableMixin(Base):
     adm2_id = Column(String(128))
     product = Column(String(10), nullable=False)
     scenario = Column(String(40), nullable=False)
-    month = Column(Integer, nullable=False)
+    month = Column(String, nullable=False)
     mean_raw = Column(Float)
     min_raw = Column(Float)
     max_raw = Column(Float)
