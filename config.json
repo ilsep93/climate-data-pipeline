@@ -1,6 +1,7 @@
 {
     "root_dir": "/Users/ilsepaniagua/Documents/Github/climate-data-pipeline/data/",
     "geom_path" : "data/adm2/wca_admbnda_adm2_ocha.shp",
+    "adm_unique_id": "adm2_id",
     "zonal_stats_aggregates": "min mean max",
     "raw_raster_dir": "raw",
     "cropped_raster_dir": "masked",

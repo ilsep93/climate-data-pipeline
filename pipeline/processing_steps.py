@@ -3,6 +3,7 @@ from enum import Enum, auto
 from pathlib import Path
 
 from climatology import ChelsaProduct, Month, Scenario
+from config import read_config
 from crop import process_masked_raster
 from download import process_raw_raster
 from log import setup_logger
@@ -10,6 +11,8 @@ from yearly_table import process_yearly_table
 from zonal_stats import process_zonal_statistics
 
 logger = setup_logger()
+
+config = read_config("config.json")
 class RasterProcessingStep(Enum):
     DOWNLOAD = auto()
     MASK = auto()
@@ -99,7 +102,7 @@ def execute_processing_steps(processing_steps: list[RasterProcessingStep],
                                 product=chelsa_product,
                                 scenario=scenario,
                                 month=month,
-                                place_id="adm2_id")
+                                place_id=config.adm_unique_id)
     
     if RasterProcessingStep.YEARLY_TABLE in processing_steps:
         logger.info(f"RasterProcessingStep.YEARLY_TABLE for {chelsa_product}_{scenario.name}_{month.name}")
@@ -107,7 +110,7 @@ def execute_processing_steps(processing_steps: list[RasterProcessingStep],
         process_yearly_table(product = chelsa_product,
                             zonal_dir=chelsa_product.zonal_stats_dir,
                             out_path=chelsa_product.yearly_aggregate_path,
-                            sort_values=["admin2pcod", "month"])
+                            sort_values=[config.adm_unique_id, "month"])
     
     if len(processing_steps) == 0:
         logger.info(f"All available steps already completed for {chelsa_product}_{scenario.name}_{month.name}")
