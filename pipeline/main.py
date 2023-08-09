@@ -26,8 +26,9 @@ def raster_processing_flow(product: str, scenario: Scenario, month: Month):
     processing_steps = get_processing_steps(product=chelsa_product,
                                             scenario=scenario,
                                             month=month)
+    processing_step_names = [step.name for step in processing_steps]
     
-    logger.info(f"Processing steps: {processing_steps} for {product}_{scenario.name}_{month.name}")
+    logger.info(f"Processing steps: {processing_step_names} for {chelsa_product.product.name}_{scenario.name}_{month.name}")
 
     execute_processing_steps(processing_steps=processing_steps,
                              chelsa_product=chelsa_product,
