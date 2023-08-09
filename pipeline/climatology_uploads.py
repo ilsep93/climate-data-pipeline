@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 from dotenv import load_dotenv
 
-from db.base_table import BaseTable
+from db.base_table import TableMixin
 from db.session import get_session
 
 load_dotenv("docker/.env")
@@ -21,7 +21,7 @@ def upload_to_db(df_path: Path, table_name: str, schema: str) -> None:
         with Session() as session:
             try:
                 for _, row in df.iterrows():
-                    record  = BaseTable(**row, uploaded_at=datetime.now())
+                    record  = TableMixin(**row, uploaded_at=datetime.now())
                     record.__tablename__ = table_name
                     record.__table_args__= schema
                     session.add(record)
