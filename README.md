@@ -53,6 +53,15 @@ To use the pipeline, edit `config.json` with the following parameters:
     "scenario": Scenario to be processed. May vary by product.
     "month": Month to be processed. Month in upper case
 
+# Database Design
+
+* Each product is a table with a SQLAlchemy Object Relational Mapping (ORM) representation
+* Scenarios and months are appended to their product's table.
+* Each month of zonal statistics is uploaded as it is ready (instead of waiting until the yearly aggregate is available).
+  * A plus of this approach is that users do not have to wait for all months to be available in order to query data. A minus is that there will be more uploads (one per month rather than one per year).
+  * The pipeline will check if a given scenario and month is already present in the database.
+  * An assumption is that each row of a shapefile is uploaded for a given month (no partial uploads).
+
 # Skills Practiced:
 
 * Creating config objects where users can directly specify desired directories, rather than having to make direct code-level changes (August 2023)
