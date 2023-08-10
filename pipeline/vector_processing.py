@@ -39,11 +39,8 @@ def get_geometry(geom_path: Path,
     if lower_case:
         geometry.columns = map(str.lower, geometry.columns)
     mapped_geoms = _rename_geometry(geom=geometry, column_mapping=column_mapping)
-
-    logger.info(f"Geometry columns: {mapped_geoms.columns}")
   
     return mapped_geoms
-
 
 
 def _rename_geometry(geom: gpd.GeoDataFrame, column_mapping: dict) -> gpd.GeoDataFrame:

@@ -81,22 +81,17 @@ def execute_processing_steps(processing_steps: list[RasterProcessingStep],
     """
 
     if RasterProcessingStep.DOWNLOAD in processing_steps:
-        logger.info(f"RasterProcessingStep.DOWNLOAD for {chelsa_product}_{scenario.name}_{month.name}")
-        
         process_raw_raster(product=chelsa_product,
                         scenario=scenario,
                         month=month,
                         raw_out_path=chelsa_product.raw_raster_path)
         
     if RasterProcessingStep.MASK in processing_steps:
-        logger.info(f"RasterProcessingStep.MASK for {chelsa_product}_{scenario.name}_{month.name}")
 
         process_masked_raster(raw_raster_location=chelsa_product.raw_raster_path,
                             masked_out_path=chelsa_product.cropped_raster_path)
     
     if RasterProcessingStep.ZONAL_STATISTICS in processing_steps:
-        logger.info(f"RasterProcessingStep.ZONAL_STATISTICS for {chelsa_product}_{scenario.name}_{month.name}")
-
         process_zonal_statistics(raster_location=chelsa_product.cropped_raster_path,
                                 out_path=chelsa_product.zonal_file_path,
                                 product=chelsa_product,
@@ -105,13 +100,10 @@ def execute_processing_steps(processing_steps: list[RasterProcessingStep],
                                 place_id=config.adm_unique_id)
     
     if RasterProcessingStep.YEARLY_TABLE in processing_steps:
-        logger.info(f"RasterProcessingStep.YEARLY_TABLE for {chelsa_product}_{scenario.name}_{month.name}")
-        
         process_yearly_table(product = chelsa_product,
                             zonal_dir=chelsa_product.zonal_stats_dir,
                             out_path=chelsa_product.yearly_aggregate_path,
                             sort_values=[config.adm_unique_id, "month"])
     
     if len(processing_steps) == 0:
-        logger.info(f"All available steps already completed for {chelsa_product}_{scenario.name}_{month.name}")
 
