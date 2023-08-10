@@ -1,18 +1,29 @@
 import logging
 from datetime import datetime
 from pathlib import Path
+from typing import Literal
 
 import pandas as pd
 from dotenv import load_dotenv
-
-from db.base_table import TableMixin
-from db.session import get_session
+from session import get_session
+from sqlalchemy.engine.reflection import Inspector
 from tables import get_table
 
 load_dotenv("docker/.env")
 
+table_names = Literal["temp", "tmin", "tmax", "prec"]
+
 logger = logging.getLogger(__name__)
 
+
+def _check_if_table_exists(table_name: Literal[table_names]) -> bool:
+    with get_session() as Session:
+        with Session() as session:
+            inspector = Inspector.from_engine(session.bind)
+            if inspector.has_table(table_name):
+                return True
+            else:
+                return False
 
 
 def upload_to_db(df_path: Path, table_name: Literal[table_names]) -> None:
