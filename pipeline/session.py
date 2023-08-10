@@ -16,7 +16,7 @@ def get_session():
     db=os.getenv("POSTGRES_DB")
     port=os.getenv("LOCAL_PORT")
 
-    engine = create_engine(f'postgresql://{username}:{password}@localhost:{port}/{db}')
+    engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
     session_maker = sessionmaker(bind=engine)
 
     yield session_maker

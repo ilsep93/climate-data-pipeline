@@ -42,7 +42,6 @@ https://github.com/ilsep93/climate-data-pipeline/assets/54957973/572591c2-e0ea-4
 
 To use the pipeline, edit `config.json` with the following parameters:
 
-```json
     "root_dir": Location to save downloaded data
     "geom_path" : Path to the geometry object that will be used to extract zonal statistics
     "zonal_stats_aggregates": The types of aggregate statistics for zonal statistics. Options are "mean", "median", "min", and "max".
@@ -53,7 +52,15 @@ To use the pipeline, edit `config.json` with the following parameters:
     "product": Climatology product. Options are "TEMP", "TMIN", "TMAX", "PREC"
     "scenario": Scenario to be processed. May vary by product.
     "month": Month to be processed. Month in upper case
-```
+
+# Database Design
+
+* Each product is a table with a SQLAlchemy Object Relational Mapping (ORM) representation
+* Scenarios and months are appended to their product's table.
+* Each month of zonal statistics is uploaded as it is ready (instead of waiting until the yearly aggregate is available).
+  * A plus of this approach is that users do not have to wait for all months to be available in order to query data. A minus is that there will be more uploads (one per month rather than one per year).
+  * The pipeline will check if a given scenario and month is already present in the database.
+  * An assumption is that each row of a shapefile is uploaded for a given month (no partial uploads).
 
 # Skills Practiced:
 

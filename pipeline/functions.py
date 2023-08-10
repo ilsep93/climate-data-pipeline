@@ -157,7 +157,7 @@ def calculate_zonal_statistics(raster_location: Path,
     
     stats_list= provided_stats.split(" ")
     for stat in stats_list:
-        column_name = f"{stat}_raw_value"
+        column_name = f"{stat}_raw"
         geometry[column_name] = [result[stat] for result in results]
     
     geometry.drop(columns=['geometry'], inplace=True)
