@@ -42,7 +42,6 @@ https://github.com/ilsep93/climate-data-pipeline/assets/54957973/572591c2-e0ea-4
 
 To use the pipeline, edit `config.json` with the following parameters:
 
-```json
     "root_dir": Location to save downloaded data
     "geom_path" : Path to the geometry object that will be used to extract zonal statistics
     "zonal_stats_aggregates": The types of aggregate statistics for zonal statistics. Options are "mean", "median", "min", and "max".
@@ -53,7 +52,6 @@ To use the pipeline, edit `config.json` with the following parameters:
     "product": Climatology product. Options are "TEMP", "TMIN", "TMAX", "PREC"
     "scenario": Scenario to be processed. May vary by product.
     "month": Month to be processed. Month in upper case
-```
 
 # Skills Practiced:
 
