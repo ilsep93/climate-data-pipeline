@@ -29,12 +29,3 @@ def upload_to_db(df_path: Path, table_name: Literal[table_names]) -> None:
             except:
                 session.rollback()
                 logger.exception(f"Unable to add record to database.")
-
-
-
-if __name__ == "__main__":
-    upload_to_db(
-        df_path=Path("data/cmip5/temp/ACCESS1-0_rcp45/time_series/ACCESS1-0_rcp45_yearly.csv"),
-        table_name="test_table",
-        schema="test_schema"
-    )
