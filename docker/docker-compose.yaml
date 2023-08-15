@@ -1,13 +1,13 @@
 version: "3.9"
-name: west-africa-climatology
+name: cmip-pipeline
 services:
   pgdatabase:
     container_name: climate_postgres
     image: postgres:13
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${DBUSER}
+      - POSTGRES_PASSWORD=${DBPASSWORD}
+      - POSTGRES_DB=${DB}
     volumes:
       - type: bind
         source: ${SOURCE}

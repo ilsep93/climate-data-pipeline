@@ -64,6 +64,7 @@ To use the pipeline, edit `config.json` with the following parameters:
 
 # Skills Practiced:
 
+* Alembic revisions to make updates to tables specified using SQLAlchemy (August 2023)
 * Creating config objects where users can directly specify desired directories, rather than having to make direct code-level changes (August 2023)
 * Creating Object-Relational Mapping (ORM) tables with `sqlalchemy`, including creating mixin tables with pre-defined columns that can be shared across tables (July 2023)
 * Separate business logic from implementation details, and delay the the specific implementation details for as long as possible. Inspired by reading "Clean Architecture: A Craftsman's Guide to Software Structure and Design" (July 2023).
@@ -78,10 +79,9 @@ To use the pipeline, edit `config.json` with the following parameters:
 # TODOs
 
 - [X] Set attributes for pathways
-- [] Command line arguments to run pipeline
 - [] Log database runs in Postgres
 - [] Github Actions with pytest
-- [] Create start.bash to build containers and run pipeline
+- [] Create Makefile for pipeline shortcuts
 - [] Unit test for raster functions
 - [] Provide reference period for climate projections
 - [] Build an API to send formatted data based on a requested prod

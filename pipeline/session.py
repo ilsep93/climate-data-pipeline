@@ -7,16 +7,17 @@ from sqlalchemy.orm import sessionmaker
 
 load_dotenv("docker/.env")
 
+
 @contextmanager
 def get_session():
     """Yield database session"""
-    username=os.getenv("POSTGRES_USER")
-    password=os.getenv("POSTGRES_PASSWORD")
-    host="localhost"
-    db=os.getenv("POSTGRES_DB")
-    port=os.getenv("LOCAL_PORT")
+    username = os.getenv("DBUSER")
+    password = os.getenv("DBPASSWORD")
+    host = os.getenv("LOCALHOST")
+    db = os.getenv("DB")
+    port = os.getenv("PORT")
 
-    engine = create_engine(f'postgresql://{username}:{password}@{host}:{port}/{db}')
+    engine = create_engine(f"postgresql://{username}:{password}@{host}:{port}/{db}")
     session_maker = sessionmaker(bind=engine)
 
     yield session_maker
