@@ -1,5 +1,4 @@
 from sqlalchemy import Column, DateTime, Float, Integer, String
-from sqlalchemy.orm import declared_attr
 
 
 class BaseTable:
