@@ -22,7 +22,7 @@ class PrecipitationTable(Base, BaseTable):
 
 
 class BioTable(Base, BaseTable):
-    __tablename__ = "prec"
+    __tablename__ = "bio"
 
 
 def get_table(table_name: str):
