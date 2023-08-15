@@ -11,10 +11,10 @@ load_dotenv("docker/.env")
 @contextmanager
 def get_session():
     """Yield database session"""
-    username = os.getenv("POSTGRES_USER")
-    password = os.getenv("POSTGRES_PASSWORD")
+    username = os.getenv("DBUSER")
+    password = os.getenv("DBPASSWORD")
     host = os.getenv("LOCAL_HOST")
-    db = os.getenv("POSTGRES_DB")
+    db = os.getenv("DB")
     port = os.getenv("LOCAL_PORT")
 
     engine = create_engine(f"postgresql://{username}:{password}@{host}:{port}/{db}")
