@@ -1,9 +1,7 @@
-from base_table import BaseTable
-from climatology import Product
 from sqlalchemy import MetaData
 from sqlalchemy.orm import declarative_base
 
-Base = declarative_base()
+from pipeline.base_table import BaseTable
 
 metadata = MetaData()
 Base = declarative_base(metadata=metadata)
