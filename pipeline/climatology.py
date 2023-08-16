@@ -61,12 +61,12 @@ class TemperatureProduct(Enum):
 class ChelsaProduct(ABC):
     """Abstract class for all CHELSA Product products"""
 
+    available_scenarios: list[Scenario] = field(init=False)
+    available_months: list[Month] = field(init=False)
     phase: Phase = Phase.CMIP5
     time_period: str = "2061-2080"
     base_url: str
     product: Product
-    scenarios: list[Scenario]
-    months: list[Month]
 
     def get_url(self, scenario: Scenario, month: Month) -> str:
         """Constructs a URL based on a given scenario and month for a given product.
@@ -74,16 +74,16 @@ class ChelsaProduct(ABC):
         Returns:
             download_url: URL that can be used to download raster .tif file
         """
-        if scenario not in self.scenarios:
+        if scenario not in self.available_scenarios:
             raise ValueError(
                 f"This product is not available. \
-                         Options include {self.scenarios}"
+                         Options include {self.available_scenarios}"
             )
 
-        if month not in self.months:
+        if month not in self.available_months:
             raise ValueError(
                 f"This month is not available. \
-                         Options include {self.months}"
+                         Options include {self.available_months}"
             )
 
         download_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.product.value}/CHELSA_{self.base_url}_mon_{scenario.value}_r1i1p1_g025.nc_{month.value}_{self.time_period}_V1.2.tif"
@@ -146,14 +146,14 @@ class Temperature(ChelsaProduct):
     """Concrete implementation of temperature ChelsaProduct"""
 
     product = Product.TEMP
-    scenarios = [
+    available_scenarios = [
         Scenario.ACCESS1_0_rcp45,
         Scenario.ACCESS1_0_rcp85,
         Scenario.BNU_ESM_rcp26,
         Scenario.BNU_ESM_rcp45,
         Scenario.CCSM4_rcp60,
     ]
-    months = [month for month in Month]
+    available_months = [month for month in Month]
     base_url = "tas"
 
 
@@ -161,14 +161,14 @@ class Bio(ChelsaProduct):
     """Concrete implementation of bio ChelsaProduct"""
 
     product = Product.BIO
-    scenarios = [
+    available_scenarios = [
         Scenario.ACCESS1_0_rcp45,
         Scenario.ACCESS1_0_rcp85,
         Scenario.BNU_ESM_rcp26,
         Scenario.BNU_ESM_rcp45,
         Scenario.CCSM4_rcp60,
     ]
-    months = [month for month in Month]
+    available_months = [month for month in Month]
     base_url = "bio"
 
 
@@ -176,14 +176,14 @@ class Precipitation(ChelsaProduct):
     """Concrete implementation of precipitation ChelsaProduct"""
 
     product = Product.PREC
-    scenarios = [
+    available_scenarios = [
         Scenario.ACCESS1_0_rcp45,
         Scenario.ACCESS1_0_rcp85,
         Scenario.BNU_ESM_rcp26,
         Scenario.BNU_ESM_rcp45,
         Scenario.CCSM4_rcp60,
     ]
-    months = [month for month in Month]
+    available_months = [month for month in Month]
     base_url = "pr"
 
 
@@ -191,14 +191,14 @@ class MaximumTemperature(ChelsaProduct):
     """Concrete implementation of maxiumum temperature ChelsaProduct"""
 
     product = Product.TMAX
-    scenarios = [
+    available_scenarios = [
         Scenario.ACCESS1_0_rcp45,
         Scenario.ACCESS1_0_rcp85,
         Scenario.BNU_ESM_rcp26,
         Scenario.BNU_ESM_rcp45,
         Scenario.CCSM4_rcp60,
     ]
-    months = [month for month in Month]
+    available_months = [month for month in Month]
     base_url = "tasmax"
 
 
@@ -206,14 +206,14 @@ class MinimumTemperature(ChelsaProduct):
     """Concrete implementation of minimum temperature ChelsaProduct"""
 
     product = Product.TMIN
-    scenarios = [
+    available_scenarios = [
         Scenario.ACCESS1_0_rcp45,
         Scenario.ACCESS1_0_rcp85,
         Scenario.BNU_ESM_rcp26,
         Scenario.BNU_ESM_rcp45,
         Scenario.CCSM4_rcp60,
     ]
-    months = [month for month in Month]
+    available_months = [month for month in Month]
     base_url = "tasmin"
 
 
