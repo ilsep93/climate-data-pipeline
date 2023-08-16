@@ -1,7 +1,6 @@
+from base_table import BaseTable
 from sqlalchemy import MetaData
 from sqlalchemy.orm import declarative_base
-
-from pipeline.base_table import BaseTable
 
 metadata = MetaData()
 Base = declarative_base(metadata=metadata)
