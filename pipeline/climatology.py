@@ -50,6 +50,14 @@ class Month(Enum):
     DECEMBER = 12
 
 
+class TemperatureProduct(Enum):
+    """Convenience class to identify temperature products"""
+
+    Temperature = auto()
+    MinimumTemperature = auto()
+    MaximumTemperature = auto()
+
+
 class ChelsaProduct(ABC):
     """Abstract class for all CHELSA Product products"""
 
@@ -208,13 +216,6 @@ class MinimumTemperature(ChelsaProduct):
     months = [month for month in Month]
     base_url = "tasmin"
 
-
-class TemperatureProduct(Enum):
-    """Convenience class to identify temperature products"""
-
-    Temperature = auto()
-    MinimumTemperature = auto()
-    MaximumTemperature = auto()
 
 
 def get_climatology(product: str) -> ChelsaProduct:
