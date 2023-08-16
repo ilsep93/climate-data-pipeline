@@ -1,5 +1,6 @@
 import os
 from abc import ABC
+from dataclasses import dataclass, field
 from enum import Enum, auto
 from pathlib import Path
 
@@ -58,15 +59,16 @@ class TemperatureProduct(Enum):
     MaximumTemperature = auto()
 
 
+@dataclass
 class ChelsaProduct(ABC):
     """Abstract class for all CHELSA Product products"""
 
+    base_url: str = field(init=False)
+    product: Product = field(init=False)
     available_scenarios: list[Scenario] = field(init=False)
     available_months: list[Month] = field(init=False)
     phase: Phase = Phase.CMIP5
     time_period: str = "2061-2080"
-    base_url: str
-    product: Product
 
     def get_url(self, scenario: Scenario, month: Month) -> str:
         """Constructs a URL based on a given scenario and month for a given product.
@@ -142,6 +144,7 @@ class ChelsaProduct(ABC):
                 os.makedirs(path, exist_ok=True)
 
 
+@dataclass
 class Temperature(ChelsaProduct):
     """Concrete implementation of temperature ChelsaProduct"""
 
@@ -157,6 +160,7 @@ class Temperature(ChelsaProduct):
     base_url = "tas"
 
 
+@dataclass
 class Bio(ChelsaProduct):
     """Concrete implementation of bio ChelsaProduct"""
 
@@ -172,6 +176,7 @@ class Bio(ChelsaProduct):
     base_url = "bio"
 
 
+@dataclass
 class Precipitation(ChelsaProduct):
     """Concrete implementation of precipitation ChelsaProduct"""
 
@@ -187,6 +192,8 @@ class Precipitation(ChelsaProduct):
     base_url = "pr"
 
 
+
+@dataclass
 class MaximumTemperature(ChelsaProduct):
     """Concrete implementation of maxiumum temperature ChelsaProduct"""
 
@@ -202,6 +209,7 @@ class MaximumTemperature(ChelsaProduct):
     base_url = "tasmax"
 
 
+@dataclass
 class MinimumTemperature(ChelsaProduct):
     """Concrete implementation of minimum temperature ChelsaProduct"""
 
@@ -218,7 +226,9 @@ class MinimumTemperature(ChelsaProduct):
 
 
 
-def get_climatology(product: str) -> ChelsaProduct:
+def get_climatology(
+    product: Product, scenario: Scenario, month: Month
+) -> ChelsaProduct:
     """Returns concrete implementation based on user provided product
 
     Args:
@@ -236,11 +246,11 @@ def get_climatology(product: str) -> ChelsaProduct:
         )
 
     factories = {
-        "temp": Temperature(),
-        "bio": Bio(),
-        "prec": Precipitation(),
-        "tmax": MaximumTemperature(),
-        "tmin": MinimumTemperature(),
+        "temp": Temperature(scenario=scenario, month=month),
+        "bio": Bio(scenario=scenario, month=month),
+        "prec": Precipitation(scenario=scenario, month=month),
+        "tmax": MaximumTemperature(scenario=scenario, month=month),
+        "tmin": MinimumTemperature(scenario=scenario, month=month),
     }
 
     return factories[lower_case_product]
