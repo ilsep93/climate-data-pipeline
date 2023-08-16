@@ -9,7 +9,7 @@ config = read_config("config.json")
 logger = setup_logger()
 
 
-def run_single_month(product: str, scenario: Scenario, month: Month):
+def run_single_month(product: Product, scenario: Scenario, month: Month):
     """Runs pipeline given a product, scenario, and month.
     Steps include downloading, cropping, zonal statistics, uploading to the database.
     If all 12 months for a scenario are available, a yearly aggregate is generated.
@@ -41,7 +41,7 @@ def run_single_month(product: str, scenario: Scenario, month: Month):
     )
 
 
-def run_all_months(product: str, scenario: Scenario):
+def run_all_months(product: Product, scenario: Scenario):
     """All months for a given product's scenario"""
     available_months = [month for month in Month]
 
@@ -52,7 +52,7 @@ def run_all_months(product: str, scenario: Scenario):
 
 
 if __name__ == "__main__":
-    raster_processing_flow(
+    run_single_month(
         product=Product[config.product],
         scenario=Scenario[config.scenario],
         month=Month[config.month],
