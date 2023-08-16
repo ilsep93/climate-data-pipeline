@@ -85,6 +85,7 @@ def execute_processing_steps(
         month (Month): Month to be processed
     """
     if RasterProcessingStep.DOWNLOAD in processing_steps:
+        logger.info("Starting raster download")
         process_raw_raster(
             product=chelsa_product,
             scenario=chelsa_product.scenario,
@@ -92,13 +93,18 @@ def execute_processing_steps(
             raw_out_path=chelsa_product.raw_raster_path,
         )
 
+        logger.info("Finished raster download")
+
     if RasterProcessingStep.MASK in processing_steps:
+        logger.info("Starting raster cropping")
         process_masked_raster(
             raw_raster_location=chelsa_product.raw_raster_path,
             masked_out_path=chelsa_product.cropped_raster_path,
         )
+        logger.info("Finished raster cropping")
 
     if RasterProcessingStep.ZONAL_STATISTICS in processing_steps:
+        logger.info("Starting zonal statistics")
         process_zonal_statistics(
             raster_location=chelsa_product.cropped_raster_path,
             out_path=chelsa_product.zonal_file_path,
@@ -107,20 +113,25 @@ def execute_processing_steps(
             month=chelsa_product.month,
             place_id=config.adm_unique_id,
         )
+        logger.info("Finished zonal statistics")
 
     if RasterProcessingStep.YEARLY_TABLE in processing_steps:
+        logger.info("Starting yearly table")
         process_yearly_table(
             product=chelsa_product,
             zonal_dir=chelsa_product.zonal_stats_dir,
             out_path=chelsa_product.yearly_aggregate_path,
             sort_values=[config.adm_unique_id, "month"],
         )
+        logger.info("Finished yearly ")
 
     if RasterProcessingStep.UPLOAD in processing_steps:
+        logger.info("Starting DB upload")
         upload_to_db(
             df_path=chelsa_product.zonal_file_path,
             table_name=chelsa_product.product.value,
         )
+        logger.info("Finished DB upload")
 
     if len(processing_steps) == 0:
         logger.info(
