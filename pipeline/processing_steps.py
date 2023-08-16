@@ -3,11 +3,11 @@ from enum import Enum, auto
 from pathlib import Path
 
 from climatology import ChelsaProduct, Month, Product, Scenario
-from climatology_uploads import _check_if_table_exists, upload_to_db
 from config import read_config
 from crop import process_masked_raster
 from download import process_raw_raster
 from log import setup_logger
+from upload import _check_if_table_exists, upload_to_db
 from yearly_table import process_yearly_table
 from zonal_stats import process_zonal_statistics
 
