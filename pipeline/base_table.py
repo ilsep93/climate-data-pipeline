@@ -2,7 +2,7 @@ from sqlalchemy import Column, DateTime, Float, Integer, String
 
 
 class BaseTable:
-    id = Column(Integer, primary_key=True)
+    id = Column(String, primary_key=True)
     iso2_code = Column(String(2))
     adm0_name = Column(String(128))
     adm1_name = Column(String(128))
