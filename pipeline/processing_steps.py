@@ -33,19 +33,21 @@ def get_processing_steps(chelsa_product: ChelsaProduct) -> list[RasterProcessing
 
     processing_steps = []
 
-    if not os.path.exists(product.raw_raster_path):
+    if not os.path.exists(chelsa_product.raw_raster_path):
         processing_steps.append(RasterProcessingStep.DOWNLOAD)
 
-    if not os.path.exists(product.cropped_raster_path):
+    if not os.path.exists(chelsa_product.cropped_raster_path):
         processing_steps.append(RasterProcessingStep.MASK)
 
-    if not os.path.exists(product.zonal_file_path):
+    if not os.path.exists(chelsa_product.zonal_file_path):
         processing_steps.append(RasterProcessingStep.ZONAL_STATISTICS)
 
     all_months_available = _check_monthly_zonal_stats_complete(
-        zonal_path=Path(product.zonal_stats_dir)
+        zonal_path=Path(chelsa_product.zonal_stats_dir)
     )
-    if all_months_available and not os.path.exists(product.yearly_aggregate_path):
+    if all_months_available and not os.path.exists(
+        chelsa_product.yearly_aggregate_path
+    ):
         processing_steps.append(RasterProcessingStep.YEARLY_TABLE)
 
     # table_exists = _check_if_table_exists(table_name=f"{scenario}_{month}")
