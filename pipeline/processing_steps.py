@@ -2,7 +2,7 @@ import os
 from enum import Enum, auto
 from pathlib import Path
 
-from climatology import ChelsaProduct, Month, Product, Scenario
+from climatology import ChelsaProduct
 from config import read_config
 from crop import process_masked_raster
 from download import process_raw_raster
@@ -24,9 +24,7 @@ class RasterProcessingStep(Enum):
     UPLOAD = auto()
 
 
-def get_processing_steps(
-    product: ChelsaProduct, scenario: Scenario, month: Month
-) -> list[RasterProcessingStep]:
+def get_processing_steps(chelsa_product: ChelsaProduct) -> list[RasterProcessingStep]:
     """Determine which processing steps are needed for a given month of the product's scenario.
     Each pipeline run is for a specific product, month, and scenario pair.
 
@@ -74,10 +72,7 @@ def _check_monthly_zonal_stats_complete(zonal_path: Path) -> bool:
 
 
 def execute_processing_steps(
-    processing_steps: list[RasterProcessingStep],
-    chelsa_product: ChelsaProduct,
-    scenario: Scenario,
-    month: Month,
+    processing_steps: list[RasterProcessingStep], chelsa_product: ChelsaProduct
 ) -> None:
     """Execute downloads, cropping, zonal statistics, and yearly table depending on processing steps
 
@@ -90,8 +85,8 @@ def execute_processing_steps(
     if RasterProcessingStep.DOWNLOAD in processing_steps:
         process_raw_raster(
             product=chelsa_product,
-            scenario=scenario,
-            month=month,
+            scenario=chelsa_product.scenario,
+            month=chelsa_product.month,
             raw_out_path=chelsa_product.raw_raster_path,
         )
 
@@ -106,8 +101,8 @@ def execute_processing_steps(
             raster_location=chelsa_product.cropped_raster_path,
             out_path=chelsa_product.zonal_file_path,
             product=chelsa_product,
-            scenario=scenario,
-            month=month,
+            scenario=chelsa_product.scenario,
+            month=chelsa_product.month,
             place_id=config.adm_unique_id,
         )
 
@@ -127,5 +122,5 @@ def execute_processing_steps(
 
     if len(processing_steps) == 0:
         logger.info(
-            f"All available steps already completed for {chelsa_product}_{scenario.name}_{month.name}"
+            f"All available steps already completed for {chelsa_product}_{chelsa_product.scenario.name}_{chelsa_product.month.name}"
         )

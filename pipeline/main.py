@@ -24,9 +24,7 @@ def run_single_month(product: Product, scenario: Scenario, month: Month):
     chelsa_product = get_climatology(product=product, scenario=scenario, month=month)
 
     # Determine which processing steps are needed for product's scenario
-    processing_steps = get_processing_steps(
-        product=chelsa_product, scenario=scenario, month=month
-    )
+    processing_steps = get_processing_steps(chelsa_product=chelsa_product)
     processing_step_names = [step.name for step in processing_steps]
 
     logger.info(
@@ -34,10 +32,7 @@ def run_single_month(product: Product, scenario: Scenario, month: Month):
     )
 
     execute_processing_steps(
-        processing_steps=processing_steps,
-        chelsa_product=chelsa_product,
-        scenario=scenario,
-        month=month,
+        processing_steps=processing_steps, chelsa_product=chelsa_product
     )
 
 
