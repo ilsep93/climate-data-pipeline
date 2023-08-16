@@ -65,10 +65,15 @@ class ChelsaProduct(ABC):
 
     base_url: str = field(init=False)
     product: Product = field(init=False)
+    scenario: Scenario
+    month: Month
     available_scenarios: list[Scenario] = field(init=False)
     available_months: list[Month] = field(init=False)
     phase: Phase = Phase.CMIP5
     time_period: str = "2061-2080"
+
+    def __post_init__(self):
+        self._set_pathways_as_attributes()
 
     def get_url(self, scenario: Scenario, month: Month) -> str:
         """Constructs a URL based on a given scenario and month for a given product.
@@ -159,6 +164,9 @@ class Temperature(ChelsaProduct):
     available_months = [month for month in Month]
     base_url = "tas"
 
+    def __post_init__(self):
+        super(Temperature, self).__post_init__()
+
 
 @dataclass
 class Bio(ChelsaProduct):
@@ -174,6 +182,9 @@ class Bio(ChelsaProduct):
     ]
     available_months = [month for month in Month]
     base_url = "bio"
+
+    def __post_init__(self):
+        super(Bio, self).__post_init__()
 
 
 @dataclass
@@ -191,6 +202,8 @@ class Precipitation(ChelsaProduct):
     available_months = [month for month in Month]
     base_url = "pr"
 
+    def __post_init__(self):
+        super(Precipitation, self).__post_init__()
 
 
 @dataclass
@@ -208,6 +221,9 @@ class MaximumTemperature(ChelsaProduct):
     available_months = [month for month in Month]
     base_url = "tasmax"
 
+    def __post_init__(self):
+        super(MaximumTemperature, self).__post_init__()
+
 
 @dataclass
 class MinimumTemperature(ChelsaProduct):
@@ -224,6 +240,8 @@ class MinimumTemperature(ChelsaProduct):
     available_months = [month for month in Month]
     base_url = "tasmin"
 
+    def __post_init__(self):
+        super(MinimumTemperature, self).__post_init__()
 
 
 def get_climatology(

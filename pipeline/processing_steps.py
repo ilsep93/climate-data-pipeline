@@ -33,8 +33,6 @@ def get_processing_steps(
     TODO: Log pipeline runs on postgres database.
     """
 
-    product.set_pathways_as_attributes(scenario=scenario, month=month)
-
     processing_steps = []
 
     if not os.path.exists(product.raw_raster_path):
