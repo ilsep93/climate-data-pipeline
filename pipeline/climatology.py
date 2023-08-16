@@ -91,7 +91,7 @@ class ChelsaProduct(ABC):
         download_url = f"https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/{self.phase.value}/{self.time_period}/{self.product.value}/CHELSA_{self.base_url}_mon_{scenario.value}_r1i1p1_g025.nc_{month.value}_{self.time_period}_V1.2.tif"
         return download_url
 
-    def set_pathways_as_attributes(self, scenario: Scenario, month: Month):
+    def _set_pathways_as_attributes(self) -> None:
         """Generate directories and file paths as class attributes
         Used to determine if files are already available, or should
         be processed by pipeline
@@ -106,7 +106,7 @@ class ChelsaProduct(ABC):
         config = read_config("config.json")
 
         base_path = Path(
-            f"{config.root_dir}/{self.phase.value}/{self.product.value}/{scenario.value}/"
+            f"{config.root_dir}/{self.phase.value}/{self.product.value}/{self.scenario.value}/"
         )
 
         self.raw_raster_dir = Path(f"{base_path}/{config.raw_raster_dir}/")
@@ -115,16 +115,16 @@ class ChelsaProduct(ABC):
         self.yearly_aggregate_dir = Path(f"{base_path}/{config.yearly_aggregate_dir}/")
 
         self.raw_raster_path = Path(
-            f"{self.raw_raster_dir}/{scenario.value}_{month.value}.tif"
+            f"{self.raw_raster_dir}/{self.scenario.value}_{self.month.value}.tif"
         )
         self.cropped_raster_path = Path(
-            f"{self.cropped_raster_dir}/{scenario.value}_{month.value}.tif"
+            f"{self.cropped_raster_dir}/{self.scenario.value}_{self.month.value}.tif"
         )
         self.zonal_file_path = Path(
-            f"{self.zonal_stats_dir}/{scenario.value}_{month.value}.csv"
+            f"{self.zonal_stats_dir}/{self.scenario.value}_{self.month.value}.csv"
         )
         self.yearly_aggregate_path = Path(
-            f"{self.yearly_aggregate_dir}/{scenario.value}_{month.value}_yearly.csv"
+            f"{self.yearly_aggregate_dir}/{self.scenario.value}_{self.month.value}_yearly.csv"
         )
 
         directories = [
