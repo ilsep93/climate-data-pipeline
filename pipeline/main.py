@@ -21,7 +21,7 @@ def run_single_month(product: Product, scenario: Scenario, month: Month):
     """
 
     # Return concrete implementation of climatology object
-    chelsa_product = get_climatology(product=product)
+    chelsa_product = get_climatology(product=product, scenario=scenario, month=month)
 
     # Determine which processing steps are needed for product's scenario
     processing_steps = get_processing_steps(
