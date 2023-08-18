@@ -1,13 +1,12 @@
 import json
-from dataclasses import dataclass
 from pathlib import Path
 
 from climatology import Month, Product, Scenario
 
 
-@dataclass
-class CMIPConfig:
+class CMIPConfig(BaseSettings):
     """Config objects that should be specified in config.json"""
+
     root_dir: Path
     geom_path: Path
     adm_unique_id: str
