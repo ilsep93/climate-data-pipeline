@@ -7,7 +7,7 @@
     "cropped_raster_dir": "masked",
     "zonal_stats_dir": "zonal_statistics",
     "yearly_aggregate_dir": "yearly",
-    "product": "TMIN",
-    "scenario": "ACCESS1_0_rcp45",
-    "month": "JANUARY"
+    "product": "tmin",
+    "scenario": "ACCESS1-0_rcp45",
+    "month": 4
 }
