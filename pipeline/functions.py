@@ -76,10 +76,32 @@ def _add_product_identifiers(product: ChelsaProduct,
     df["scenario"] = scenario.value
     df["id"] = df["product"] + "_" + df["scenario"] + "_" + df["month"] + "_" + df[str(place_id)]
     
+    if any(~df.duplicated(place_id)):
+        place_id, df = _create_unique_place_id(df=df)
+
     return df
 
 
 def crop_raster_with_geometry(raster_location: Path, gdf: gpd.GeoDataFrame) -> Tuple[np.ndarray, Profile]:
+def _create_unique_place_id(
+    df: Union[gpd.GeoDataFrame, pd.DataFrame]
+) -> Tuple[str, Union[gpd.GeoDataFrame, pd.DataFrame]]:
+    """Creates unique id based on iso2_code and number of geoms per iso2_code
+
+    Args:
+        df (Union[gpd.GeoDataFrame, pd.DataFrame]): Dataframe that needs unique id
+
+    Returns:
+        Tuple[str, Union[gpd.GeoDataFrame, pd.DataFrame]]: Dataframe with unique id
+    """
+    place_id_col = "place_id"
+
+    df[place_id_col] = df.groupby("iso2_code").cumcount() + 1
+    df[place_id_col] = df["iso2_code"] + df[place_id_col].astype(str)
+
+    return place_id_col, df
+
+
     """Masks raster with geodataframe
 
     Args:
