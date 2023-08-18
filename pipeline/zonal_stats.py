@@ -14,6 +14,15 @@ def process_zonal_statistics(
         geom_path: Path = config.geom_path,
        
         ) -> None:
+    """Processes zonal statistics for a CHELSA product
+
+    Args:
+        raster_location (Path): Location of raster that will be used for zonal statistics
+        out_path (Path): Location where tabular zonal statistics will be saved
+        chelsa_product (ChelsaProduct): Used to insert product identifiers to zonal statistics
+        place_id (str): Column that contains a unique ID per geometry
+        geom_path (Path, optional): Path to geometry used for zonal statistics. Defaults to config.geom_path.
+    """
 
     geometry = get_geometry(geom_path=geom_path,
                             column_mapping=COLUMN_MAPPING)

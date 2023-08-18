@@ -76,6 +76,16 @@ def _add_product_identifiers(product: ChelsaProduct,
     df["scenario"] = scenario.value
     df["id"] = df["product"] + "_" + df["scenario"] + "_" + df["month"] + "_" + df[str(place_id)]
     
+    """Add product, scenario, month, and id columns to df
+
+    Args:
+        product (ChelsaProduct): _description_
+        place_id (str): Column that uniquely identifies each row in the df. If none exists, one is created
+        df (Union[gpd.GeoDataFrame, pd.DataFrame]): Dataframe that will receive product identifier columns
+
+    Returns:
+        Union[gpd.GeoDataFrame, pd.DataFrame]: Dataframe with product identifiers
+    """
     if any(~df.duplicated(place_id)):
         place_id, df = _create_unique_place_id(df=df)
 
