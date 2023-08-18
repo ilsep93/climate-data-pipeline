@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Literal, Tuple, Union
 
 import geopandas as gpd
 import numpy as np
@@ -28,8 +28,8 @@ def read_raster(location: Union[str, Path]) -> Tuple[np.ndarray, Profile]:
 
     location = _check_tif_extension(location)
     with rasterio.open(location, "r") as rast:
-            raster = rast.read()
-            profile = rast.profile
+        raster = rast.read()
+        profile = rast.profile
     return raster, profile
 
 
@@ -44,12 +44,12 @@ def _check_tif_extension(location: Union[str, Path]) -> Path:
     """
     if isinstance(location, str):
         location = Path(location)
-    
+
     if not location.suffix == ".tif":
         location = location.with_suffix(".tif")
 
     return location
-    
+
 
 def write_local_raster(raster: np.ndarray, profile: Profile, out_path: Path) -> None:
     """Write .tif file to specified location
@@ -64,22 +64,65 @@ def write_local_raster(raster: np.ndarray, profile: Profile, out_path: Path) -> 
         dest.write(raster)
 
 
-def _add_product_identifiers(product: ChelsaProduct,
-                            scenario: Scenario,
-                            month: Month,
-                            place_id: str,
-                            df: Union[gpd.GeoDataFrame, pd.DataFrame]
-                     ) -> Union[gpd.GeoDataFrame, pd.DataFrame]:
-    
-    df["product"] = product.product.name
-    df["month"] = month.name
-    df["scenario"] = scenario.value
-    df["id"] = df["product"] + "_" + df["scenario"] + "_" + df["month"] + "_" + df[str(place_id)]
-    
+def _add_product_identifiers(
+    chelsa_product: ChelsaProduct,
+    place_id: str,
+    df: Union[gpd.GeoDataFrame, pd.DataFrame],
+) -> Union[gpd.GeoDataFrame, pd.DataFrame]:
+    """Add product, scenario, month, and id columns to df
+
+    Args:
+        product (ChelsaProduct): _description_
+        place_id (str): Column that uniquely identifies each row in the df. If none exists, one is created
+        df (Union[gpd.GeoDataFrame, pd.DataFrame]): Dataframe that will receive product identifier columns
+
+    Returns:
+        Union[gpd.GeoDataFrame, pd.DataFrame]: Dataframe with product identifiers
+    """
+    if any(~df.duplicated(place_id)):
+        place_id, df = _create_unique_place_id(df=df)
+
+    df["product"] = chelsa_product.product.value
+    df["month"] = str(chelsa_product.month.value)
+    df["scenario"] = chelsa_product.scenario.value
+    df["id"] = (
+        df["product"]
+        + "_"
+        + df["scenario"]
+        + "_"
+        + (df["month"])
+        + "_"
+        + df[place_id].astype(str)
+    )
+
+    if place_id in df:
+        df = df.drop(place_id, axis=1)
+
     return df
 
 
-def crop_raster_with_geometry(raster_location: Path, gdf: gpd.GeoDataFrame) -> Tuple[np.ndarray, Profile]:
+def _create_unique_place_id(
+    df: Union[gpd.GeoDataFrame, pd.DataFrame]
+) -> Tuple[str, Union[gpd.GeoDataFrame, pd.DataFrame]]:
+    """Creates unique id based on iso2_code and number of geoms per iso2_code
+
+    Args:
+        df (Union[gpd.GeoDataFrame, pd.DataFrame]): Dataframe that needs unique id
+
+    Returns:
+        Tuple[str, Union[gpd.GeoDataFrame, pd.DataFrame]]: Dataframe with unique id
+    """
+    place_id_col = "place_id"
+
+    df[place_id_col] = df.groupby("iso2_code").cumcount() + 1
+    df[place_id_col] = df["iso2_code"] + df[place_id_col].astype(str)
+
+    return place_id_col, df
+
+
+def crop_raster_with_geometry(
+    raster_location: Path, gdf: gpd.GeoDataFrame
+) -> Tuple[np.ndarray, Profile]:
     """Masks raster with geodataframe
 
     Args:
@@ -96,7 +139,9 @@ def crop_raster_with_geometry(raster_location: Path, gdf: gpd.GeoDataFrame) -> T
     with rasterio.open(raster_location, "r") as src:
         gdf = _check_crs(dataset_reader=src, vector=gdf)
 
-        cropped_raster, cropped_transform = mask.mask(dataset=src, shapes=gdf.geometry, crop=True)
+        cropped_raster, cropped_transform = mask.mask(
+            dataset=src, shapes=gdf.geometry, crop=True
+        )
 
         cropped_profile: Profile = src.profile.copy()
 
@@ -107,11 +152,13 @@ def crop_raster_with_geometry(raster_location: Path, gdf: gpd.GeoDataFrame) -> T
                 "transform": cropped_transform,
             }
         )
-    
+
     return cropped_raster, cropped_profile
 
 
-def _check_crs(dataset_reader: rasterio.DatasetReader, vector: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+def _check_crs(
+    dataset_reader: rasterio.DatasetReader, vector: gpd.GeoDataFrame
+) -> gpd.GeoDataFrame:
     """Transform CRS of vector if CRS does not match dataset_reader
 
     Args:
@@ -127,17 +174,15 @@ def _check_crs(dataset_reader: rasterio.DatasetReader, vector: gpd.GeoDataFrame)
         return gpd.GeoDataFrame(reprojected_vector)
     else:
         return vector
-    
 
 
-def calculate_zonal_statistics(raster_location: Path,
-                               geometry: gpd.GeoDataFrame,
-                               product: ChelsaProduct,
-                               scenario: Scenario,
-                               month: Month,
-                               place_id: str,
-                               provided_stats: str = config.zonal_stats_aggregates,
-                               ) -> pd.DataFrame:
+def calculate_zonal_statistics(
+    raster_location: Path,
+    geometry: gpd.GeoDataFrame,
+    chelsa_product: ChelsaProduct,
+    place_id: str,
+    provided_stats: Literal["mean median min max"] = config.zonal_stats_aggregates,
+) -> pd.DataFrame:
     """Calculates zonal statistics based on provided list of desired statistics
 
     Args:
@@ -150,22 +195,22 @@ def calculate_zonal_statistics(raster_location: Path,
         pd.DataFrame: Tabular results, where each row is a geometry in the geometry
     """
     raster_location = _check_tif_extension(raster_location)
-    results = zonal_stats(vectors=geometry.geometry,
-                            raster=raster_location,
-                            nodata=-999,
-                            stats=provided_stats)
-    
-    stats_list= provided_stats.split(" ")
+    results = zonal_stats(
+        vectors=geometry.geometry,
+        raster=raster_location,
+        nodata=-999,
+        stats=provided_stats,
+    )
+
+    stats_list = provided_stats.split(" ")
     for stat in stats_list:
         column_name = f"{stat}_raw"
         geometry[column_name] = [result[stat] for result in results]
-    
-    geometry.drop(columns=['geometry'], inplace=True)
-    geometry_with_ids = _add_product_identifiers(product=product,
-                                                  scenario=scenario,
-                                                  month=month,
-                                                  place_id=place_id,
-                                                  df=geometry)
+
+    geometry.drop(columns=["geometry"], inplace=True)
+    geometry_with_ids = _add_product_identifiers(
+        chelsa_product=chelsa_product, place_id=place_id, df=geometry
+    )
 
     return geometry_with_ids
 
@@ -180,10 +225,11 @@ def _monthly_temperature_conversion(temperature: float) -> float:
     return temperature / 10
 
 
-def _check_temperature_converter(product:ChelsaProduct,
-                                 df: pd.DataFrame,
-                                 provided_stats: str = config.zonal_stats_aggregates
-                                 ) -> pd.DataFrame:
+def _check_temperature_converter(
+    product: ChelsaProduct,
+    df: pd.DataFrame,
+    provided_stats: str = config.zonal_stats_aggregates,
+) -> pd.DataFrame:
     """Checks if product is a temperature product. If so, new column is created with celsius values.
 
     Args:
@@ -194,18 +240,22 @@ def _check_temperature_converter(product:ChelsaProduct,
     Returns:
         pd.DataFrame: _description_
     """
-    
+
     if type(product).__name__ in [tp.name for tp in TemperatureProduct]:
         cols_to_convert_celsius = provided_stats.split(" ")
         for stat in cols_to_convert_celsius:
             raw_column_name = f"{stat}_raw_value"
             celsius_column_name = f"{stat}_celsius_value"
-            df[celsius_column_name] = df[raw_column_name].apply(_monthly_temperature_conversion)
-    
+            df[celsius_column_name] = df[raw_column_name].apply(
+                _monthly_temperature_conversion
+            )
+
     return df
 
 
-def yearly_table_generator(product: ChelsaProduct, zonal_dir: Path, sort_values: list[str]) -> pd.DataFrame:
+def yearly_table_generator(
+    product: ChelsaProduct, zonal_dir: Path, sort_values: list[str]
+) -> pd.DataFrame:
     """Iterates through CSV files in zonal directory and appends them together to create a yearly table,
     with one row per month.
 
@@ -222,11 +272,11 @@ def yearly_table_generator(product: ChelsaProduct, zonal_dir: Path, sort_values:
     yearly_table = pd.DataFrame()
     for file in os.listdir(zonal_dir):
         if file.endswith(".csv"):
-            with open(f"{os.path.join(zonal_dir, file)}", 'r') as f:
-                df = pd.read_csv(f, index_col=None, header=0, encoding='utf-8')
+            with open(f"{os.path.join(zonal_dir, file)}", "r") as f:
+                df = pd.read_csv(f, index_col=None, header=0, encoding="utf-8")
                 li.append(df)
                 yearly_table = pd.concat(li, axis=0, ignore_index=True)
-    
+
     yearly_table = _check_temperature_converter(product=product, df=yearly_table)
     yearly_table.sort_values(by=sort_values, inplace=True)
 
