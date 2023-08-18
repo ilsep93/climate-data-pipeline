@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from climatology import ChelsaProduct, Month, Scenario
+from climatology import ChelsaProduct
 from config import read_config
 from functions import calculate_zonal_statistics
 from vector_processing import COLUMN_MAPPING, get_geometry

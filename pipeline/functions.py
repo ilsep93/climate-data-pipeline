@@ -6,7 +6,7 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 import rasterio
-from climatology import ChelsaProduct, Month, Scenario, TemperatureProduct
+from climatology import ChelsaProduct, TemperatureProduct
 from config import read_config
 from rasterio import mask
 from rasterio.profiles import Profile
