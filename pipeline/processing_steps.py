@@ -108,9 +108,7 @@ def execute_processing_steps(
         process_zonal_statistics(
             raster_location=chelsa_product.cropped_raster_path,
             out_path=chelsa_product.zonal_file_path,
-            product=chelsa_product,
-            scenario=chelsa_product.scenario,
-            month=chelsa_product.month,
+            chelsa_product=chelsa_product,
             place_id=config.adm_unique_id,
         )
         logger.info("Finished zonal statistics")

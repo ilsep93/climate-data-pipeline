@@ -10,9 +10,6 @@ config = read_config("config.json")
 def process_zonal_statistics(
         raster_location: Path,
         out_path: Path,
-        product: ChelsaProduct,
-        scenario: Scenario,
-        month: Month,
         place_id: str,
         geom_path: Path = config.geom_path,
        
