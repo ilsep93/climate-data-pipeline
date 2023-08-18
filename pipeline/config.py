@@ -1,13 +1,13 @@
 import json
-from dataclasses import dataclass
 from pathlib import Path
 
 from climatology import Month, Product, Scenario
+from pydantic import BaseSettings, ValidationError
 
 
-@dataclass
-class CMIPConfig:
+class CMIPConfig(BaseSettings):
     """Config objects that should be specified in config.json"""
+
     root_dir: Path
     geom_path: Path
     adm_unique_id: str
@@ -22,6 +22,9 @@ class CMIPConfig:
 
 
 def read_config(config_file: str) -> CMIPConfig:
-    with open(config_file) as file:
-        config = json.load(file)
-        return CMIPConfig(**config)
+    try:
+        with open(config_file) as file:
+            config = json.load(file)
+            return CMIPConfig(**config)
+    except ValidationError as e:
+        raise ValueError("Invalid config: " + str(e))

@@ -49,9 +49,9 @@ To use the pipeline, edit `config.json` with the following parameters:
     "cropped_raster_dir": Name of the directory where cropped rasters will be saved
     "zonal_stats_dir": Name of the directory where zonal statistics will be saved
     "yearly_aggregate_dir": Name of the directory where the yearly aggregate with all monthly projections will be saved
-    "product": Climatology product. Options are "TEMP", "TMIN", "TMAX", "PREC"
+    "product": Climatology product. Options are controlled by enumerated class.
     "scenario": Scenario to be processed. May vary by product.
-    "month": Month to be processed. Month in upper case
+    "month": Month to be processed, accepted as an integer
 
 # Database Design
 
@@ -64,6 +64,7 @@ To use the pipeline, edit `config.json` with the following parameters:
 
 # Skills Practiced:
 
+* `pydantic` validation of JSON configurations (August 2023)
 * Alembic revisions to make updates to tables specified using SQLAlchemy (August 2023)
 * Creating config objects where users can directly specify desired directories, rather than having to make direct code-level changes (August 2023)
 * Creating Object-Relational Mapping (ORM) tables with `sqlalchemy`, including creating mixin tables with pre-defined columns that can be shared across tables (July 2023)

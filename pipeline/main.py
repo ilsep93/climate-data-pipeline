@@ -48,7 +48,7 @@ def run_all_months(product: Product, scenario: Scenario):
 
 if __name__ == "__main__":
     run_single_month(
-        product=Product[config.product],
-        scenario=Scenario[config.scenario],
-        month=Month[config.month],
+        product=config.product,
+        scenario=config.scenario,
+        month=config.month,
     )
