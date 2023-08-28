@@ -1,3 +1,4 @@
+import logging
 import os
 from enum import Enum, auto
 from pathlib import Path
@@ -6,12 +7,11 @@ from climatology import ChelsaProduct
 from config import read_config
 from crop import process_masked_raster
 from download import process_raw_raster
-from log import setup_logger
 from upload import _check_if_table_exists, upload_to_db
 from yearly_table import process_yearly_table
 from zonal_stats import process_zonal_statistics
 
-logger = setup_logger()
+logger = logging.getLogger(__name__)
 
 config = read_config("config.json")
 
