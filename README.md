@@ -21,18 +21,15 @@ ensambles. The four models from which data were taken are: CESM1-BGC run by Nati
 
 Both CMIP5 and CMIP6 are supported through this pipeline. CMIP6 features a new start year for future scenarios (2015 for CMIP6 compared to 2006 for CMIP5), as well as updated climate models and scenarios (O’Neill, 2016).
 
-# Processing Overview
+# System Design
 
-The pipeline takes data from a CHELSA AWS S3 bucket, downloads rasters (by product, scenario, time period, and month), masks the raster given a geojson, calculates zonal statistics (mean, max, min), and uploads yearly table to Postgres database. Dbt creates scenario aggregates by product. Finally, a Plotly Dash app visualizes different scenarios for users.
+* **Dependency Inversion Principle**: Higher level components do not know about implementation details, but implementation details know about higher level components. For example, the raster cropping class does not know concrete details about the geometry used for masking (eg. no hard-coded columns or file names).
+* **Use of Interfaces**: The interface `ChelsaProduct` adds the flexibility of accessing multiple Chelsa Products and acts as the most stable business rule and data. It does not know any implementation details, but is accessed by lower level components like `Download` and `Crop`.
+* **Partial Separation**: The project does not currently follow a microservice approach. However, services that change for the same reason are already grouped together in separate files. This would make it easier to implement and scale in the cloud as needed. 
+* **Separate execution**: This project assumes it is possible for a raster to be downloaded, but not yet masked, aggregated, or uploaded. Therefore, the `Processing Steps` determines the services that should be executed. This adds more flexibility to the system by not requiring a download step (the lengthiest component of the pipeline) if a product needs to be re-processed.
+* **Easy entrypoint by users**: The only user requirements are to provide a geometry and config JSON file. Direct edits to code are limited.
 
-The filename of each CHELSA data product follows a similar structure including the respective model used, the variable short name, the respective time variables, and the accumulation (or mean) period in the following basic format (Karger et al, 2020):
-
-CHELSA_[short_name]_[timeperiod]_[Version].tif
-
-For CMIP6 data:
-CHELSA_[short_name]_[timeperiod]_[model] _[ssp] _[Version].tif
-
-[Hold for pipeline DAG]
+![System Design DAG](image.png)
 
 ### Plotly Dash Demo
 
