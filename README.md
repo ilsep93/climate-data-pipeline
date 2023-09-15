@@ -29,7 +29,7 @@ Both CMIP5 and CMIP6 are supported through this pipeline. CMIP6 features a new s
 * **Separate execution**: This project assumes it is possible for a raster to be downloaded, but not yet masked, aggregated, or uploaded. Therefore, the `Processing Steps` determines the services that should be executed. This adds more flexibility to the system by not requiring a download step (the lengthiest component of the pipeline) if a product needs to be re-processed.
 * **Easy entrypoint by users**: The only user requirements are to provide a geometry and config JSON file. Direct edits to code are limited.
 
-![System Design DAG](image.png)
+![System Design DAG](cmip_dag.png)
 
 ### Plotly Dash Demo
 
